@@ -3,8 +3,8 @@
   
   # ✨ ColorFulCraft｜多彩工艺✨
 </div>
-*默认文档*  *|*  *[维护文档](readme_admin.md)*
 ---
+*默认文档*  *|*  *[维护文档](readme_admin.md)*
 > 最后更新时间：2025-08-10  
 > 文档维护：ColorFulCraft 管理组
 ---
