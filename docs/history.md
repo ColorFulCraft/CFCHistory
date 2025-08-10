@@ -37,3 +37,6 @@
 等待续写中
 
 Awawawawawawawawawawa
+
+
+[下一页](history_2.md)
