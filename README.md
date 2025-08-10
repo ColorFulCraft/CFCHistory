@@ -1,4 +1,4 @@
-# ✨ ColorFulCraft｜多彩工艺 —— 服务器名片 ✨
+# ✨ ColorFulCraft｜多彩工艺✨
 *[默认文档](readme.md)*  |  *[维护文档](readme_admin.md)*
 ---
 > 最后更新时间：2025-08-10  
@@ -45,4 +45,8 @@
 
 ---
 
-> 感谢每一位玩家与建设者，让 ColorFulCraft 更加多彩！  
+## 6. 贡献者
+感谢这些为项目做出贡献的开发者们：
+[![Contributors](https://contrib.rocks/image?repo=colorfulcraft/cfchistory)](https://github.com/colorfulcraft/cfchistory/graphs/contributors)
+
+> 感谢每一位玩家与建设者，让 ColorFulCraft 更加多彩！
