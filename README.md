@@ -45,7 +45,7 @@
 
 ---
 
-## 6. 贡献者
+## 仓库贡献者
 [![Contributors](https://contrib.rocks/image?repo=colorfulcraft/cfchistory)](https://github.com/colorfulcraft/cfchistory/graphs/contributors)
 
 > 感谢每一位玩家与建设者，让 ColorFulCraft 更加多彩！
