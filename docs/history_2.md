@@ -1,8 +1,6 @@
 # CFC历史 | Page 2
 
-# MC服务器时期
-
-
+> MC服务器时期
 
 ## 三、NVMT Server/NvmtCraft时期  
 
