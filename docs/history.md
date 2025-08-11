@@ -1,5 +1,9 @@
 # CFC历史 | Page 1
 
+
+
+# 前计算机团队时期
+
 ## 一、VM team时期
 
 ### 1.建立：
@@ -22,7 +26,7 @@
 
 ## 二、NVMT team时期
 
-2022年5月中旬，VM team正式改名为NVMT，意思是"The New VM Team"，因为NVMT名称的使用跨越了计算机团队时期和mc服务器时期，故将此阶段命名为"NVMT team时期"。
+2022年5月末，VM team正式改名为NVMT，意思是"The New VM Team"，因为NVMT名称的使用跨越了计算机团队时期和mc服务器时期，故将此阶段命名为"NVMT team时期"。
 
 ### 7·31事件
 
@@ -35,6 +39,9 @@
 #### 相关资料：
 [2022.7.31 NVMT内部交流群部分聊天记录](https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/7.31-img.md)<br>
 
+
+
+# Minecraft服务器时期
 
 ## 三、NVMT Server时期
 
