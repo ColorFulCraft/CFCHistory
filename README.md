@@ -55,4 +55,4 @@
 ---
 
 ## 🗓️ 最近提交
-![GitHub commit activity](https://github.com/ColorFulCraft/CFCHistory/graphs/commit-activity)
+![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg "Repobeats analytics image")
