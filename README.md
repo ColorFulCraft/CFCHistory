@@ -2,10 +2,10 @@
   <img src="https://github.com/ColorFulCraft/CFCHistory/raw/main/pictures/icon.jpg" alt="ColorFulCraft Icon" width="150">
   
   # ✨ ColorFulCraft｜多彩工艺✨
+  *默认文档*  *|*  *[维护文档](readme_admin.md)*
 </div>
 
 ---
-*默认文档*  *|*  *[维护文档](readme_admin.md)*
 > 最后更新时间：2025-08-10  
 > 文档维护：ColorFulCraft 管理组
 ---
