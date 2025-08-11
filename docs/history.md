@@ -41,13 +41,6 @@
 
 
 
-# Minecraft服务器时期
-
-## 三、NVMT Server时期
-
-（时间待完善）在这时步入了NVMT Server时期，服务器团队迎来了新的成员（待续写）
-
-Awawawawawawawawawawa
 
 
 [下一页](history_2.md)
