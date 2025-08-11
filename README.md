@@ -55,4 +55,4 @@
 ---
 
 ## 🗓️ 最近提交
-![commit-activity](https://camo.githubusercontent.com/8c5c0d2c2b2b0e8e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e/68747470733a2f2f6769746875622e636f6d2f436f6c6f7246756c43726166742f434643486973746f72792f6772617068732f636f6d6d69742d61637469766974792e737667)
+![GitHub commit activity](https://github.com/ColorFulCraft/CFCHistory/graphs/commit-activity)
