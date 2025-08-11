@@ -40,7 +40,7 @@
 [2022.7.31 NVMT内部交流群部分聊天记录](https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/7.31-img.md)<br>
 
 
-
+---
 
 
 [下一页](history_2.md)
