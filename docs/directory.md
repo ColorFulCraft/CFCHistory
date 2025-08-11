@@ -1,2 +1,0 @@
-- [第一页](history.md)
-- [第二页](history_2.md)
