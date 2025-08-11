@@ -28,6 +28,23 @@
 | 官方 QQ 群 | 584937263 |
 | 官网 | [戳我](https://blog.xhil.cn/)|
 
+## 3. 服务器历史大事记
+| 日期 | 事件 |
+| --- | --- |
+| 2022-07-25 | 服务器正式开服，采用纯生存玩法。 |
+| 详细内容 | [请戳我](docs/Directory.md) |
+
+---
+
+## 📈 仓库 Star 历史
+[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date)](https://star-history.com/#ColorFulCraft/CFCHistory&Date)
+
+---
+
+## 🗓️ 最近提交
+![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg "Repobeats analytics image")
+
+<!-- 服务器实时状态监控 -->
 <style>
         body_status {
             width: 100%;
@@ -164,7 +181,7 @@
     
     <div class="cards-container" id="status-container">
         <div class="loading">
-            <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg SVG namespace SVG namespace  ">
+            <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.2)" stroke-width="5" fill="none"></circle>
                 <circle cx="25" cy="25" r="20" stroke="#4facfe" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="125" stroke-dashoffset="100">
                     <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"></animateTransform>
@@ -187,7 +204,7 @@
             const statusContainer = document.getElementById('status-container');
             statusContainer.innerHTML = `
                 <div class="loading">
-                    <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg SVG namespace SVG namespace  ">
+                    <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.2)" stroke-width="5" fill="none"></circle>
                         <circle cx="25" cy="25" r="20" stroke="#4facfe" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="125" stroke-dashoffset="100">
                             <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"></animateTransform>
@@ -199,8 +216,8 @@
             
             // Fetch both servers' data
             Promise.all([
-                fetch('https://list.mczfw.cn/api/mc.cfcmc.cc   '),
-                fetch('https://list.mczfw.cn/api/mm.rainplay.cn:20478   ')
+                fetch('https://list.mczfw.cn/api/mc.cfcmc.cc'),
+                fetch('https://list.mczfw.cn/api/mm.rainplay.cn:20478')
             ])
             .then(responses => Promise.all(responses.map(response => {
                 if (!response.ok) {
@@ -298,19 +315,3 @@
         }
     </script>
 </body_status>
-
-## 3. 服务器历史大事记
-| 日期 | 事件 |
-| --- | --- |
-| 2022-07-25 | 服务器正式开服，采用纯生存玩法。 |
-| 详细内容 | [请戳我](docs/Directory.md) |
-
----
-
-## 📈 仓库 Star 历史
-[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date)](https://star-history.com/#ColorFulCraft/CFCHistory&Date)
-
----
-
-## 🗓️ 最近提交
-![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg "Repobeats analytics image")
