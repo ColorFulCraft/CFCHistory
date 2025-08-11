@@ -2,7 +2,7 @@
   <img src="https://github.com/ColorFulCraft/CFCHistory/raw/main/pictures/icon.jpg" alt="ColorFulCraft Icon" width="150">
   
   # ✨ ColorFulCraft｜多彩工艺✨
-  *默认文档*  *|*  *[维护文档](readme_admin.md)*
+  *默认文档*  *|*  *[维护文档](readme_admin.md)* */* *[图片展示](pictures.md)*
 </div>
 
 ---
