@@ -32,8 +32,9 @@
 
 这个事件使vmware 17放弃计算机科技研究，转战Minecraft服务器区。
 
-### 相关资料：
+#### 相关资料：
 [2022.7.31 NVMT内部交流群部分聊天记录](https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/7.31-img.md)<br>
+
 
 ## 三、NVMT Server时期
 
