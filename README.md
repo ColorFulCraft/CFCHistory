@@ -6,7 +6,7 @@
 </div>
 
 ---
-> 最后更新时间：2025-08-10  
+> 最后更新时间：2025-08-11
 > 文档维护：ColorFulCraft 管理组
 ---
 
@@ -49,7 +49,11 @@
 
 ---
 
-## 仓库贡献者
-[![动态贡献者列表](https://contrib.rocks/image?repo=colorfulcraft/cfchistory&cache=20240810)](https://github.com/colorfulcraft/cfchistory/graphs/contributors)
+## 📈 仓库 Star 历史
+[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date)](https://star-history.com/#ColorFulCraft/CFCHistory&Date)
 
-> 感谢每一位玩家与建设者，让 ColorFulCraft 更加多彩！
+---
+
+## 🗓️ 最近提交
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ColorFulCraft/CFCHistory)
+![GitHub last commit](https://img.shields.io/github/last-commit/ColorFulCraft/CFCHistory)
