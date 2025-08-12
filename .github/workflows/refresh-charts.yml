@@ -1,51 +1,70 @@
-name: Refresh Charts
+name: 自动更新图表和状态图
 
 on:
   schedule:
-    # 每天 08:30 UTC
-    - cron: '30 8 * * *'
-  workflow_dispatch:      # 也支持手动触发
+    - cron: '30 8 * * *'  # 每天UTC时间8:30运行
+  workflow_dispatch:      # 支持手动触发
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # 允许 push
+      contents: write     # 允许推送
 
     steps:
-      - name: Checkout
+      - name: 检出代码
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # 获取完整历史记录，解决冲突需要
 
-      - name: Create pictures dir
+      - name: 创建图片目录
         run: mkdir -p pictures
 
-      - name: Download new star-history.svg
+      - name: 下载Star历史图表
         run: |
           curl -sL "https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date" \
                -o pictures/star-history.svg
 
-      - name: Download new repobeats.svg
+      - name: 下载Repo活动图表
         run: |
           curl -sL "https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg" \
                -o pictures/repobeats.svg
 
-      - name: Refresh mczfw.cn server status image
+      - name: 刷新服务器状态图
         run: |
-          # 用时间戳或随机数做查询串，强制刷新
           ts=$(date +%s)
           curl -sL "https://list.mczfw.cn/mc/mc.cfcmc.cc.png?t=${ts}" \
                -o pictures/server-status.png
 
-      - name: Commit & push if changed
+      - name: 提交并推送变更
         run: |
-          git config user.name  "github-actions[bot]"
+          # 配置Git用户
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pictures/star-history.svg pictures/repobeats.svg pictures/server-status.png
+          
+          # 添加所有图片文件
+          git add pictures/
+          
+          # 检查是否有变更
           if git diff --cached --quiet; then
-            echo "No changes, skipping commit."
+            echo "没有变更，跳过提交"
           else
-            git commit -m "chore: refresh charts & server-status"
-            git push
+            # 获取远程最新更改
+            git pull origin main --rebase
+            
+            # 提交变更
+            git commit -m "自动更新: 图表和状态图 $(date +'%Y-%m-%d %H:%M')"
+            
+            # 尝试推送，最多重试3次
+            for i in {1..3}; do
+              if git push origin main; then
+                echo "推送成功"
+                break
+              else
+                echo "推送失败，尝试重新拉取并合并 (尝试 $i/3)"
+                git pull origin main --rebase
+                sleep 5
+              fi
+            done
           fi
