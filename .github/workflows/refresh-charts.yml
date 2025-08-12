@@ -12,60 +12,60 @@ jobs:
       contents: write
 
     steps:
-      - name: 检出代码（含现有图片）
+      - name: 检出代码
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: .  # 明确指定检出到当前目录
+          fetch-depth: 0
 
-      - name: 创建图片目录（强制存在）
-        run: |
-          mkdir -p pictures
-          ls -la pictures/  # 调试：列出目录内容
+      - name: 创建图片目录
+        run: mkdir -p pictures
 
       - name: 下载Star历史图表
         run: |
-          echo "正在下载 star-history.svg..."
           curl -sL "https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date" \
                -o pictures/star-history.svg
-          ls -la pictures/  # 验证文件是否存在
 
       - name: 下载Repo活动图表
         run: |
-          echo "正在下载 repobeats.svg..."
           curl -sL "https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg" \
                -o pictures/repobeats.svg
-          ls -la pictures/
 
       - name: 刷新服务器状态图
         run: |
           ts=$(date +%s)
-          echo "正在下载 server-status.png..."
           curl -sL "https://list.mczfw.cn/mc/mc.cfcmc.cc.png?t=${ts}" \
                -o pictures/server-status.png
-          ls -la pictures/
-
-      - name: 验证文件内容
-        run: |
-          echo "----- 文件大小检查 -----"
-          du -h pictures/*
-          echo "----- 文件类型检查 -----"
-          file pictures/*
 
       - name: 提交并推送变更
         run: |
+          # 配置Git身份
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 显式添加每个文件（避免.gitignore影响）
-          git add pictures/star-history.svg
-          git add pictures/repobeats.svg
-          git add pictures/server-status.png
+          # 添加所有图片文件
+          git add pictures/
           
+          # 检查是否有变更
           if git diff --cached --quiet; then
             echo "没有变更，跳过提交"
-          else
-            git pull origin main --rebase
-            git commit -m "自动更新图片 [$(date +'%Y-%m-%d %H:%M')]"
-            git push origin main
+            exit 0
           fi
+          
+          # 先提交本地更改
+          git commit -m "自动更新: 图表和状态图 $(date +'%Y-%m-%d %H:%M')"
+          
+          # 再拉取远程更改（使用merge而非rebase）
+          git fetch origin
+          git merge origin/main --no-edit
+          
+          # 解决可能的冲突（保留本地更改）
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "存在冲突，优先保留本地更改"
+            git checkout --ours pictures/
+            git add pictures/
+            git commit -m "解决冲突: 保留最新图片"
+          fi
+          
+          # 推送更改
+          git push origin main
