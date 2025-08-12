@@ -39,4 +39,4 @@
 
 ---
 
-[下一页](history_2.md)
+[目录](Directory.md) | [下一页](history_2.md)
