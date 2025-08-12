@@ -3,3 +3,10 @@
 [NVMT团队官网](https://github.com/Win13Pro/NVMT_Old_Website/)<br>
 [CFC一周年](https://github.com/Win13Pro/CFC1year/)<br>
 [NVMT基岩服生存服存档（2022.8）](https://pan.baidu.com/s/1d_4-xFDgPCs204rf1lUo9Q?pwd=cfcc)
+
+## 请输入验证码
+![](https://www.luogu.com.cn/api/verify/captcha)
+|$\textcolor{gray}{点击输入验证码} \text{      }$|
+| :----------: |
+
+[提交验证](https://985.so/b69vg)
