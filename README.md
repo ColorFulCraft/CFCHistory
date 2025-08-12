@@ -28,7 +28,7 @@
 | 官方 QQ 群 | 584937263 |
 | 官网 | [戳我](https://blog.xhil.cn/)|
 
-![服务器状态](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/server-status.png)
+<img loading="lazy" src="https://list.mczfw.cn/mc/mc.cfcmc.cc.png"/>
 
 
 ## 3. 服务器历史大事记
