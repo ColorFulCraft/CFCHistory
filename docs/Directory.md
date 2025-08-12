@@ -1,6 +1,8 @@
 # CFCHistory | Docs Directory
 ## [关于我们](about.md)
 
+---
+
 - [第一页](history.md)
 > [VM team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#%E4%B8%80vm-team%E6%97%B6%E6%9C%9F)
 >> [NVMT team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#%E4%BA%8Cnvmt-team%E6%97%B6%E6%9C%9F)
