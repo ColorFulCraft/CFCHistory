@@ -1,0 +1,63 @@
+name: Refresh Charts
+
+on:
+  schedule:
+    # 每天 08:30 UTC
+    - cron: '30 8 * * *'
+  workflow_dispatch:      # 也支持手动触发
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # 允许 push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create pictures dir
+        run: mkdir -p pictures
+
+      - name: Download new star-history.svg
+        run: |
+          curl -sL "https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date" \
+               -o pictures/star-history.svg
+
+      - name: Download new repobeats.svg
+        run: |
+          curl -sL "https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg" \
+               -o pictures/repobeats.svg
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pictures/star-history.svg pictures/repobeats.svg
+          if git diff --cached --quiet; then
+            echo "No changes, skipping commit."
+          else
+            git commit -m "chore: refresh charts"
+            git push
+          fi
+
+            - name: Refresh mczfw.cn server status image
+        run: |
+          # 用时间戳或随机数做查询串，强制刷新
+          ts=$(date +%s)
+          curl -sL "https://list.mczfw.cn/mc/mc.cfcmc.cc.png?t=${ts}" \
+               -o pictures/server-status.png
+
+      - name: Commit all updated images
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pictures/star-history.svg pictures/repobeats.svg pictures/server-status.png
+          if git diff --cached --quiet; then
+            echo "No changes, skipping commit."
+          else
+            git commit -m "chore: refresh charts & server-status"
+            git push
+          fi
