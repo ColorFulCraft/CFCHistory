@@ -28,7 +28,7 @@
 | 官方 QQ 群 | 584937263 |
 | 官网 | [戳我](https://blog.xhil.cn/)|
 
-<img loading="lazy" src="https://list.mczfw.cn/mc/mc.cfcmc.cc.png"/>
+<img loading="lazy" src="pictures/server-status.png" alt="Server Status"/>
 
 
 ## 3. 服务器历史大事记
@@ -40,10 +40,10 @@
 ---
 
 ## 📈 仓库 Star 历史
-[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=Date)](https://star-history.com/#ColorFulCraft/CFCHistory&Date)
+![Star History](pictures/star-history.svg)
 
 ---
 
 ## 🗓️ 最近提交
-![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg "Repobeats analytics image")
+![Repobeats](pictures/repobeats.svg)
 
