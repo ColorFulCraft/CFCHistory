@@ -31,26 +31,14 @@ jobs:
           curl -sL "https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg" \
                -o pictures/repobeats.svg
 
-      - name: Commit & push if changed
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pictures/star-history.svg pictures/repobeats.svg
-          if git diff --cached --quiet; then
-            echo "No changes, skipping commit."
-          else
-            git commit -m "chore: refresh charts"
-            git push
-          fi
-
-            - name: Refresh mczfw.cn server status image
+      - name: Refresh mczfw.cn server status image
         run: |
           # 用时间戳或随机数做查询串，强制刷新
           ts=$(date +%s)
           curl -sL "https://list.mczfw.cn/mc/mc.cfcmc.cc.png?t=${ts}" \
                -o pictures/server-status.png
 
-      - name: Commit all updated images
+      - name: Commit & push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
