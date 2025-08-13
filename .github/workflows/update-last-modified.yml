@@ -2,25 +2,37 @@ name: Update Last Modified Date
 
 on:
   push:
-    branches: [ "main" ] 
+    branches: [ "main" ]  
 
 jobs:
   update-date:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Update last modified date in README
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  
+
+      - name: Update last modified date
+        id: update-date
         run: |
-          # 获取当前日期时间（格式：YYYY-MM-DD）
-          CURRENT_DATE=$(date +%Y-%m-%d)
-          
-          # 替换 README.md 中的最后更新时间
+          CURRENT_DATE=$(date +"%Y-%m-%d")
           sed -i "s/> 最后更新时间：.*/> 最后更新时间：$CURRENT_DATE/" README.md
           
-          # 配置 git 并提交更改
+          # 检查是否有更改
+          if git diff --exit-code --quiet README.md; then
+            echo "没有变更，跳过提交"
+            echo "should_commit=false" >> $GITHUB_OUTPUT
+          else
+            echo "检测到更改，准备提交"
+            echo "should_commit=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.update-date.outputs.should_commit == 'true'
+        run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
-          git commit -m "自动更新最后修改日期 [$CURRENT_DATE]" || echo "没有变更需要提交"
+          git commit -m "📅 自动更新最后修改日期 [$CURRENT_DATE]"
           git push
