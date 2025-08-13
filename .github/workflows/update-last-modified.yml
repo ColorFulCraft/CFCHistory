@@ -1,0 +1,26 @@
+name: Update Last Modified Date
+
+on:
+  push:
+    branches: [ "main" ] 
+
+jobs:
+  update-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Update last modified date in README
+        run: |
+          # 获取当前日期时间（格式：YYYY-MM-DD）
+          CURRENT_DATE=$(date +%Y-%m-%d)
+          
+          # 替换 README.md 中的最后更新时间
+          sed -i "s/> 最后更新时间：.*/> 最后更新时间：$CURRENT_DATE/" README.md
+          
+          # 配置 git 并提交更改
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add README.md
+          git commit -m "自动更新最后修改日期 [$CURRENT_DATE]" || echo "没有变更需要提交"
+          git push
