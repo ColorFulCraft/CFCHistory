@@ -22,6 +22,6 @@
 
 - [第三页](history_3.md)
 > [ColorFulCraft时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md)
->> 1.[三周目服务器](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md#1%E7%BB%93%E6%9D%9F%E4%BA%86%E5%86%8D%E4%B8%80%E6%AC%A1%E4%B8%89%E5%91%A8%E7%9B%AE)
->> 2.[并入和退出Mistral](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md#1%E7%BB%93%E6%9D%9F%E4%BA%86%E5%86%8D%E4%B8%80%E6%AC%A1%E4%B8%89%E5%91%A8%E7%9B%AE)
+>> 1.[三周目服务器](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md#1-%E4%B8%89%E5%91%A8%E7%9B%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
+>> 2.[并入和退出Mistral](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md#2-%E5%B9%B6%E5%85%A5%E5%92%8C%E9%80%80%E5%87%BAmistral)
 >> [咕咕咕……]
