@@ -13,4 +13,5 @@
 >>    2、[一周目服务器](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_2.md#2%E4%B8%80%E5%91%A8%E7%9B%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
 >>    3、[二周目服务器](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_2.md#3%E4%BA%8C%E5%91%A8%E7%9B%AE%E6%9C%8D%E5%8A%A1%E5%99%A8)
 > [ColorFulCraft时期（上）](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_2.md#%E5%9B%9Bcolorfulcraft%E6%97%B6%E6%9C%9F)
+- [第三页](history_3.md)
 > [ColorFulCraft时期（下）](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_3.md)
