@@ -10,7 +10,6 @@
 >>3.[VM team开发过的项目](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#3vm-team%E5%BC%80%E5%8F%91%E8%BF%87%E7%9A%84%E9%A1%B9%E7%9B%AE)
 
 > [NVMT Team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#%E4%BA%8Cnvmt-team%E6%97%B6%E6%9C%9F)
-
 >>1.[衰落](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#1%E6%94%B9%E9%9D%A9)
 >>2.[7·31事件](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#3731%E4%BA%8B%E4%BB%B6)
 
