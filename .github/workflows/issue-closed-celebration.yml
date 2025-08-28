@@ -17,6 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
       - name: Process closed issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,24 +32,34 @@ jobs:
           CREATED_AT="${{ github.event.issue.created_at }}"
           CLOSED_AT="${{ github.event.issue.closed_at }}"
           
-          # 获取分配的管理人员
-          ASSIGNEES="${{ github.event.issue.assignees.*.login }}"
-          ASSIGNEE_LIST=$(echo "$ASSIGNEES" | tr ' ' '\n' | grep -v "^$" | tr '\n' ' ')
-          
           echo "Issue #$ISSUE_NUMBER closed by $ISSUE_AUTHOR"
-          echo "Assignees: $ASSIGNEE_LIST"
           echo "Created at: $CREATED_AT"
           echo "Closed at: $CLOSED_AT"
 
+          # 获取分配的管理人员
+          ASSIGNEES_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}")
+          
+          ASSIGNEE_LIST=$(echo "$ASSIGNEES_JSON" | jq -r '.assignees[].login' | tr '\n' ' ' | sed 's/ $//')
+          echo "Assignees: $ASSIGNEE_LIST"
+
           # 获取从issue创建到关闭期间的所有提交
-          COMMITS=$(git log --since="$CREATED_AT" --until="$CLOSED_AT" --pretty=format:"%an" | sort | uniq -c | sort -nr)
+          TOP_USER=""
+          TOP_COUNT=0
+          HAS_COMMITS=false
           
-          # 提取贡献最多的用户
-          TOP_CONTRIBUTOR=$(echo "$COMMITS" | head -n 1 | awk '{print $2 ":" $1}')
-          TOP_USER=$(echo "$TOP_CONTRIBUTOR" | cut -d: -f1)
-          TOP_COUNT=$(echo "$TOP_CONTRIBUTOR" | cut -d: -f2)
-          
-          echo "Top contributor: $TOP_USER with $TOP_COUNT commits"
+          # 检查是否有提交
+          if git log --since="$CREATED_AT" --until="$CLOSED_AT" --oneline > /dev/null 2>&1; then
+            COMMITS=$(git log --since="$CREATED_AT" --until="$CLOSED_AT" --pretty=format:"%an" | sort | uniq -c | sort -nr)
+            if [ -n "$COMMITS" ]; then
+              HAS_COMMITS=true
+              TOP_CONTRIBUTOR=$(echo "$COMMITS" | head -n 1)
+              TOP_USER=$(echo "$TOP_CONTRIBUTOR" | awk '{print $2}')
+              TOP_COUNT=$(echo "$TOP_CONTRIBUTOR" | awk '{print $1}')
+              echo "Top contributor: $TOP_USER with $TOP_COUNT commits"
+            fi
+          fi
 
           # 获取issue的所有评论并统计有权限用户的评论次数
           echo "Fetching issue comments..."
@@ -55,66 +70,73 @@ jobs:
           # 统计每个用户的评论次数（排除issue作者）
           declare -A COMMENT_COUNTS
           HAS_COMMUNITY_CONTRIBUTORS=false
-          
-          # 提取评论数据
-          COMMENT_DATA=$(echo "$COMMENTS_RESPONSE" | jq -r '.[] | select(.user.login != "'$ISSUE_AUTHOR'") | .user.login')
-          
-          # 统计评论次数
-          while read -r commenter; do
-            if [ -n "$commenter" ]; then
-              # 检查用户权限
-              PERMISSION_CHECK=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/collaborators/${commenter}/permission")
-              
-              PERMISSION_LEVEL=$(echo "$PERMISSION_CHECK" | jq -r '.permission')
-              
-              # 只统计有权限的用户（admin, write, maintain）
-              if [ "$PERMISSION_LEVEL" = "admin" ] || [ "$PERMISSION_LEVEL" = "write" ] || [ "$PERMISSION_LEVEL" = "maintain" ]; then
-                ((COMMENT_COUNTS[$commenter]++))
-                HAS_COMMUNITY_CONTRIBUTORS=true
-                echo "Found comment from staff: $commenter (permission: $PERMISSION_LEVEL)"
-              fi
-            fi
-          done <<< "$COMMENT_DATA"
-          
-          # 找出评论最多的社区贡献者
           TOP_COMMENTER=""
           TOP_COMMENT_COUNT=0
-          for commenter in "${!COMMENT_COUNTS[@]}"; do
-            if [ "${COMMENT_COUNTS[$commenter]}" -gt "$TOP_COMMENT_COUNT" ]; then
-              TOP_COMMENT_COUNT="${COMMENT_COUNTS[$commenter]}"
-              TOP_COMMENTER="$commenter"
-            fi
-          done
+          
+          # 提取评论用户
+          COMMENTERS=$(echo "$COMMENTS_RESPONSE" | jq -r '.[] | select(.user.login != "'$ISSUE_AUTHOR'") | .user.login')
+          
+          if [ -n "$COMMENTERS" ]; then
+            while read -r commenter; do
+              if [ -n "$commenter" ]; then
+                # 检查用户权限
+                PERMISSION_CHECK=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/collaborators/${commenter}/permission" 2>/dev/null || echo '{"permission":"none"}')
+                
+                PERMISSION_LEVEL=$(echo "$PERMISSION_CHECK" | jq -r '.permission')
+                
+                # 只统计有权限的用户（admin, write, maintain）
+                if [ "$PERMISSION_LEVEL" = "admin" ] || [ "$PERMISSION_LEVEL" = "write" ] || [ "$PERMISSION_LEVEL" = "maintain" ]; then
+                  ((COMMENT_COUNTS[$commenter]++))
+                  HAS_COMMUNITY_CONTRIBUTORS=true
+                  echo "Found comment from staff: $commenter (permission: $PERMISSION_LEVEL)"
+                  
+                  # 更新最多评论者
+                  if [ "${COMMENT_COUNTS[$commenter]}" -gt "$TOP_COMMENT_COUNT" ]; then
+                    TOP_COMMENT_COUNT="${COMMENT_COUNTS[$commenter]}"
+                    TOP_COMMENTER="$commenter"
+                  fi
+                fi
+              fi
+            done <<< "$COMMENTERS"
+          fi
 
           # 构建消息
           MESSAGE="@$ISSUE_AUTHOR 你的问题解决啦，嘻嘻 🎉\n\n"
           
           # 如果有分配的管理人员，感谢他们
           if [ -n "$ASSIGNEE_LIST" ]; then
-            MESSAGE+="$(echo "$ASSIGNEE_LIST" | sed 's/ / /g' | sed 's/^/@/g' | sed 's/ / @/g') 感谢你们的付出！👏\n\n"
-          fi
-          
-          # 如果有代码贡献最多的用户，特别感谢
-          if [ -n "$TOP_USER" ] && [ "$TOP_COUNT" -gt 0 ]; then
-            MESSAGE+="特别感谢：@$TOP_USER ：累计贡献 $TOP_COUNT 次！🚀\n\n"
+            MESSAGE+="@$ASSIGNEE_LIST 感谢你们的付出！👏\n\n"
           else
-            MESSAGE+="感谢所有参与解决问题的贡献者！💪\n\n"
+            MESSAGE+="感谢所有参与解决问题的贡献者！👏\n\n"
           fi
           
-          # 如果有社区评论贡献者，添加感谢
-          if [ "$HAS_COMMUNITY_CONTRIBUTORS" = true ] && [ -n "$TOP_COMMENTER" ] && [ "$TOP_COMMENT_COUNT" -gt 0 ]; then
-            MESSAGE+="感谢社区贡献：@$TOP_COMMENTER （累计回复 $TOP_COMMENT_COUNT 次）🙌"
+          # 代码贡献统计
+          MESSAGE+="**代码贡献统计：**\n"
+          if [ "$HAS_COMMITS" = true ] && [ -n "$TOP_USER" ] && [ "$TOP_COUNT" -gt 0 ]; then
+            MESSAGE+="🏆 最高贡献：@$TOP_USER （$TOP_COUNT 次提交）\n"
+          else
+            MESSAGE+="📊 暂无代码提交数据\n"
           fi
+          
+          # 社区评论贡献统计
+          MESSAGE+="\n**社区互动统计：**\n"
+          if [ "$HAS_COMMUNITY_CONTRIBUTORS" = true ] && [ -n "$TOP_COMMENTER" ] && [ "$TOP_COMMENT_COUNT" -gt 0 ]; then
+            MESSAGE+="💬 最活跃回复：@$TOP_COMMENTER （$TOP_COMMENT_COUNT 次回复）\n"
+          else
+            MESSAGE+="💬 暂无社区回复数据\n"
+          fi
+
+          MESSAGE+="\n感谢大家的共同努力！❤️"
 
           # 添加评论到已关闭的issue
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                -X POST \
-               -d "{\"body\":\"$MESSAGE\"}" \
+               -d "{\"body\":\"$(echo -e "$MESSAGE")\"}" \
                "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
 
           echo "Comment added to issue #$ISSUE_NUMBER"
           echo "Final message:"
-          echo "$MESSAGE"
+          echo -e "$MESSAGE"
