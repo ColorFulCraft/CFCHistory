@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
@@ -19,6 +20,11 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transition: background-color 0.5s ease;
+        }
+
+        body.dark-mode {
+            background-color: rgba(0, 0, 0, 0.7);
         }
 
         /* 流动的渐变色背景 */
@@ -32,6 +38,11 @@
             background-size: 400% 400%;
             animation: gradientFlow 15s ease infinite;
             z-index: -1;
+            transition: filter 0.5s ease;
+        }
+
+        body.dark-mode .gradient-bg {
+            filter: brightness(0.6) hue-rotate(25deg);
         }
 
         @keyframes gradientFlow {
@@ -53,6 +64,11 @@
             border-radius: 50%;
             filter: blur(5px);
             z-index: -1;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode .cloud {
+            background: rgba(150, 150, 150, 0.6);
         }
 
         .cloud:nth-child(1) {
@@ -165,9 +181,17 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
+        body.dark-mode .jump-btn {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+
         /* 加入我们按钮样式 */
         .join-btn {
             background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        body.dark-mode .join-btn {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
         }
 
         @keyframes btnPulse {
@@ -225,6 +249,239 @@
             opacity: 1;
         }
 
+        /* 暗色模式切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(255, 165, 0, 0.3);
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background: rgba(255, 165, 0, 0.5);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .theme-toggle svg {
+            fill: #ffa500;
+            transform: rotate(180deg);
+        }
+
+        /* 模式提示 */
+        .theme-tooltip {
+            position: fixed;
+            top: 75px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .theme-toggle:hover + .theme-tooltip {
+            opacity: 1;
+        }
+
+        /* 侧边栏样式 */
+        .wiki-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001; 
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode .wiki-sidebar {
+            background: rgba(40, 40, 40, 0.95);
+            color: #f0f0f0;
+        }
+
+        .wiki-sidebar.active {
+            left: 0;
+        }
+
+        /* 侧边栏开关按钮 */
+        .sidebar-toggle {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            z-index: 901;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .sidebar-toggle {
+            background: rgba(40, 40, 40, 0.9);
+        }
+
+        .sidebar-toggle:hover {
+            width: 28px;
+            background: rgba(255, 255, 255, 1);
+        }
+
+        body.dark-mode .sidebar-toggle:hover {
+            background: rgba(60, 60, 60, 1);
+        }
+
+        .sidebar-toggle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #333;
+            border-bottom: 2px solid #333;
+            transform: rotate(-45deg);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .sidebar-toggle::after {
+            border-color: #f0f0f0;
+        }
+
+        .wiki-sidebar.active + .sidebar-toggle::after {
+            transform: rotate(135deg);
+        }
+
+        .wiki-sidebar h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            color: #333;
+        }
+
+        body.dark-mode .wiki-sidebar h2 {
+            color: #f0f0f0;
+            border-bottom: 2px solid #555;
+        }
+
+        .wiki-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .wiki-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .wiki-link {
+            background: rgba(60, 60, 60, 0.7);
+            color: #f0f0f0;
+        }
+
+        .wiki-link:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .wiki-link:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+
+        .wiki-link span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .wiki-link span {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+
+        .wiki-link:hover span {
+            transform: scale(1.05);
+        }
+
+        /* 页脚样式 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.9rem;
+            z-index: 800;
+            backdrop-filter: blur(5px);
+        }
+
+        .footer a {
+            color: #a0e7ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             h1 {
@@ -264,6 +521,15 @@
                 width: 150px;
                 height: 60px;
             }
+
+            .wiki-sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .wiki-sidebar.active {
+                left: 0;
+            }
         }
     </style>
 </head>
@@ -275,6 +541,48 @@
     <div class="cloud"></div>
     <div class="cloud"></div>
     <div class="cloud"></div>
+    
+    <!-- 暗色模式切换按钮 -->
+    <button class="theme-toggle" id="themeToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 18c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6zm0-10c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm-9-2h2v-2h-2v2zm0 12h2v-2h-2v2zm12 0h2v-2h-2v2zm0-12h2v-2h-2v2z"/>
+        </svg>
+    </button>
+    <div class="theme-tooltip">切换浅色/暗色模式</div>
+    
+    <!-- 技术Wiki侧边栏 -->
+    <div class="wiki-sidebar" id="wikiSidebar">
+        <h2>技术Wiki</h2>
+        <div class="wiki-links">
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/about.md" class="wiki-link" target="_blank">
+                查看服务器团队及其现状
+            </a>
+            <a href="https://blog.xhil.cn/" class="wiki-link" target="_blank">
+                官网
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/Directory.md" class="wiki-link" target="_blank">
+                服务器历史大事记目录
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/music/readme.md" class="wiki-link" target="_blank">
+                音乐
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/README.md" class="wiki-link" target="_blank">
+                旧文件
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/readme.md" class="wiki-link" target="_blank">
+                图片
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log" class="wiki-link" target="_blank">
+                更新日志
+            </a>
+            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/videos/README.md" class="wiki-link" target="_blank">
+                视频
+            </a>
+        </div>
+    </div>
+    
+    <!-- 侧边栏开关按钮 -->
+    <button class="sidebar-toggle" id="sidebarToggle"></button>
     
     <div class="content">
         <h1>ColorFulCraft | 历史博物馆</h1>
@@ -289,5 +597,49 @@
             </button>
         </div>
     </div>
+    
+    <!-- 页脚 -->
+    <div class="footer">
+        所有解释权归ColorFulCraft所有！其他请遵循MIT协议，<a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE" target="_blank">许可证文件</a>
+    </div>
+
+    <script>
+        // 暗色模式切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            // 保存用户偏好
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // 侧边栏切换功能
+        const sidebar = document.getElementById('wikiSidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // 点击侧边栏外部关闭侧边栏
+        document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('active') && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
