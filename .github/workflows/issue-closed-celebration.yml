@@ -41,7 +41,6 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}")
           
-          # 修复：正确处理JSON数组
           ASSIGNEE_LIST=$(echo "$ASSIGNEES_JSON" | jq -r '.assignees[]?.login' | tr '\n' ' ' | sed 's/ $//')
           echo "Assignees: $ASSIGNEE_LIST"
 
@@ -52,13 +51,15 @@ jobs:
           
           # 检查是否有提交
           if git log --since="$CREATED_AT" --until="$CLOSED_AT" --oneline > /dev/null 2>&1; then
+            # 修复：使用格式字符串确保获取完整用户名
             COMMITS=$(git log --since="$CREATED_AT" --until="$CLOSED_AT" --pretty=format:"%an" | sort | uniq -c | sort -nr)
-            if [ -n "$COMMITS" ]; then
+            if [ -n "$COMMITS" ] && [ "$COMMITS" != "" ]; then
               HAS_COMMITS=true
+              # 修复：正确提取完整用户名
               TOP_CONTRIBUTOR=$(echo "$COMMITS" | head -n 1)
-              TOP_USER=$(echo "$TOP_CONTRIBUTOR" | awk '{$1=""; print $0}' | sed 's/^ //') # 修复：获取完整用户名
               TOP_COUNT=$(echo "$TOP_CONTRIBUTOR" | awk '{print $1}')
-              echo "Top contributor: $TOP_USER with $TOP_COUNT commits"
+              TOP_USER=$(echo "$TOP_CONTRIBUTOR" | awk '{$1=""; print $0}' | sed 's/^ *//') # 移除前面的空格
+              echo "Top contributor: '$TOP_USER' with $TOP_COUNT commits"
             fi
           fi
 
@@ -73,35 +74,46 @@ jobs:
           HAS_COMMUNITY_CONTRIBUTORS=false
           TOP_COMMENTER=""
           TOP_COMMENT_COUNT=0
+          TOTAL_COMMENTS=0
           
-          # 提取评论用户
-          COMMENTERS=$(echo "$COMMENTS_RESPONSE" | jq -r '.[] | select(.user.login != "'$ISSUE_AUTHOR'") | .user.login')
+          # 修复：使用jq正确解析评论数据
+          COMMENT_COUNT=$(echo "$COMMENTS_RESPONSE" | jq 'length')
+          echo "Total comments found: $COMMENT_COUNT"
           
-          if [ -n "$COMMENTERS" ]; then
-            while read -r commenter; do
-              if [ -n "$commenter" ]; then
-                # 检查用户权限
-                PERMISSION_CHECK=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                  -H "Accept: application/vnd.github.v3+json" \
-                  "https://api.github.com/repos/${{ github.repository }}/collaborators/${commenter}/permission" 2>/dev/null || echo '{"permission":"none"}')
-                
-                PERMISSION_LEVEL=$(echo "$PERMISSION_CHECK" | jq -r '.permission')
-                
-                # 只统计有权限的用户（admin, write, maintain）
-                if [ "$PERMISSION_LEVEL" = "admin" ] || [ "$PERMISSION_LEVEL" = "write" ] || [ "$PERMISSION_LEVEL" = "maintain" ]; then
-                  ((COMMENT_COUNTS["$commenter"]++))
-                  HAS_COMMUNITY_CONTRIBUTORS=true
-                  echo "Found comment from staff: $commenter (permission: $PERMISSION_LEVEL)"
+          if [ "$COMMENT_COUNT" -gt 0 ]; then
+            # 提取所有评论者（排除issue作者）
+            COMMENTERS=$(echo "$COMMENTS_RESPONSE" | jq -r '.[] | select(.user.login != "'$ISSUE_AUTHOR'") | .user.login')
+            
+            if [ -n "$COMMENTERS" ]; then
+              while read -r commenter; do
+                if [ -n "$commenter" ]; then
+                  # 检查用户权限
+                  PERMISSION_CHECK=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/${{ github.repository }}/collaborators/${commenter}/permission" 2>/dev/null || echo '{"permission":"none"}')
                   
-                  # 更新最多评论者
-                  if [ "${COMMENT_COUNTS["$commenter"]}" -gt "$TOP_COMMENT_COUNT" ]; then
-                    TOP_COMMENT_COUNT="${COMMENT_COUNTS["$commenter"]}"
-                    TOP_COMMENTER="$commenter"
+                  PERMISSION_LEVEL=$(echo "$PERMISSION_CHECK" | jq -r '.permission')
+                  
+                  # 只统计有权限的用户（admin, write, maintain）
+                  if [ "$PERMISSION_LEVEL" = "admin" ] || [ "$PERMISSION_LEVEL" = "write" ] || [ "$PERMISSION_LEVEL" = "maintain" ]; then
+                    ((COMMENT_COUNTS["$commenter"]++))
+                    HAS_COMMUNITY_CONTRIBUTORS=true
+                    TOTAL_COMMENTS=$((TOTAL_COMMENTS + 1))
+                    echo "Found comment from staff: $commenter (permission: $PERMISSION_LEVEL)"
+                    
+                    # 更新最多评论者
+                    if [ "${COMMENT_COUNTS["$commenter"]}" -gt "$TOP_COMMENT_COUNT" ]; then
+                      TOP_COMMENT_COUNT="${COMMENT_COUNTS["$commenter"]}"
+                      TOP_COMMENTER="$commenter"
+                    fi
                   fi
                 fi
-              fi
-            done <<< "$COMMENTERS"
+              done <<< "$COMMENTERS"
+            fi
           fi
+
+          echo "Total community comments: $TOTAL_COMMENTS"
+          echo "Top commenter: $TOP_COMMENTER with $TOP_COMMENT_COUNT comments"
 
           # 构建消息
           MESSAGE="@$ISSUE_AUTHOR 你的问题解决啦，嘻嘻 🎉\n\n"
@@ -128,8 +140,11 @@ jobs:
           
           # 社区评论贡献统计
           MESSAGE+="\n**社区互动统计：**\n"
-          if [ "$HAS_COMMUNITY_CONTRIBUTORS" = true ] && [ -n "$TOP_COMMENTER" ] && [ "$TOP_COMMENT_COUNT" -gt 0 ]; then
-            MESSAGE+="💬 最活跃回复：@$TOP_COMMENTER （$TOP_COMMENT_COUNT 次回复）\n"
+          if [ "$TOTAL_COMMENTS" -gt 0 ]; then
+            if [ -n "$TOP_COMMENTER" ] && [ "$TOP_COMMENT_COUNT" -gt 0 ]; then
+              MESSAGE+="💬 最活跃回复：@$TOP_COMMENTER （$TOP_COMMENT_COUNT 次回复）\n"
+            fi
+            MESSAGE+="📝 总回复数：$TOTAL_COMMENTS 条\n"
           else
             MESSAGE+="💬 暂无社区回复数据\n"
           fi
@@ -137,7 +152,6 @@ jobs:
           MESSAGE+="\n感谢大家的共同努力！❤️"
 
           # 添加评论到已关闭的issue
-          # 修复：正确处理JSON转义
           JSON_BODY=$(jq -n --arg body "$(echo -e "$MESSAGE")" '{"body": $body}')
           
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
