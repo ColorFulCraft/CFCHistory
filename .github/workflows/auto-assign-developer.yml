@@ -1,0 +1,28 @@
+name: Auto Assign Developer and Add Label
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  assign-developer:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Assign Developer and Add Label
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          COMMENT="@${{ github.actor }} 您好，已收到您的问题，我们会尽快处理。\n@xiaoshaziYA 有新的问题需要确认。"
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -X POST \
+               -d "{\"body\":\"$COMMENT\"}" \
+               "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -X POST \
+               -d '{"labels":["×等待开发者确认"]}' \
+               "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/labels"
