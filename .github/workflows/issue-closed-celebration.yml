@@ -41,7 +41,8 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}")
           
-          ASSIGNEE_LIST=$(echo "$ASSIGNEES_JSON" | jq -r '.assignees[].login' | tr '\n' ' ' | sed 's/ $//')
+          # 修复：正确处理JSON数组
+          ASSIGNEE_LIST=$(echo "$ASSIGNEES_JSON" | jq -r '.assignees[]?.login' | tr '\n' ' ' | sed 's/ $//')
           echo "Assignees: $ASSIGNEE_LIST"
 
           # 获取从issue创建到关闭期间的所有提交
@@ -55,7 +56,7 @@ jobs:
             if [ -n "$COMMITS" ]; then
               HAS_COMMITS=true
               TOP_CONTRIBUTOR=$(echo "$COMMITS" | head -n 1)
-              TOP_USER=$(echo "$TOP_CONTRIBUTOR" | awk '{print $2}')
+              TOP_USER=$(echo "$TOP_CONTRIBUTOR" | awk '{$1=""; print $0}' | sed 's/^ //') # 修复：获取完整用户名
               TOP_COUNT=$(echo "$TOP_CONTRIBUTOR" | awk '{print $1}')
               echo "Top contributor: $TOP_USER with $TOP_COUNT commits"
             fi
@@ -88,13 +89,13 @@ jobs:
                 
                 # 只统计有权限的用户（admin, write, maintain）
                 if [ "$PERMISSION_LEVEL" = "admin" ] || [ "$PERMISSION_LEVEL" = "write" ] || [ "$PERMISSION_LEVEL" = "maintain" ]; then
-                  ((COMMENT_COUNTS[$commenter]++))
+                  ((COMMENT_COUNTS["$commenter"]++))
                   HAS_COMMUNITY_CONTRIBUTORS=true
                   echo "Found comment from staff: $commenter (permission: $PERMISSION_LEVEL)"
                   
                   # 更新最多评论者
-                  if [ "${COMMENT_COUNTS[$commenter]}" -gt "$TOP_COMMENT_COUNT" ]; then
-                    TOP_COMMENT_COUNT="${COMMENT_COUNTS[$commenter]}"
+                  if [ "${COMMENT_COUNTS["$commenter"]}" -gt "$TOP_COMMENT_COUNT" ]; then
+                    TOP_COMMENT_COUNT="${COMMENT_COUNTS["$commenter"]}"
                     TOP_COMMENTER="$commenter"
                   fi
                 fi
@@ -106,8 +107,13 @@ jobs:
           MESSAGE="@$ISSUE_AUTHOR 你的问题解决啦，嘻嘻 🎉\n\n"
           
           # 如果有分配的管理人员，感谢他们
-          if [ -n "$ASSIGNEE_LIST" ]; then
-            MESSAGE+="@$ASSIGNEE_LIST 感谢你们的付出！👏\n\n"
+          if [ -n "$ASSIGNEE_LIST" ] && [ "$ASSIGNEE_LIST" != "null" ]; then
+            # 为每个分配者添加@
+            ASSIGNEE_MENTIONS=""
+            for assignee in $ASSIGNEE_LIST; do
+              ASSIGNEE_MENTIONS+="@$assignee "
+            done
+            MESSAGE+="$ASSIGNEE_MENTIONS 感谢你们的付出！👏\n\n"
           else
             MESSAGE+="感谢所有参与解决问题的贡献者！👏\n\n"
           fi
@@ -131,10 +137,13 @@ jobs:
           MESSAGE+="\n感谢大家的共同努力！❤️"
 
           # 添加评论到已关闭的issue
+          # 修复：正确处理JSON转义
+          JSON_BODY=$(jq -n --arg body "$(echo -e "$MESSAGE")" '{"body": $body}')
+          
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                -X POST \
-               -d "{\"body\":\"$(echo -e "$MESSAGE")\"}" \
+               -d "$JSON_BODY" \
                "https://api.github.com/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments"
 
           echo "Comment added to issue #$ISSUE_NUMBER"
