@@ -2,18 +2,59 @@ name: PR Handler
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, closed]
 
 jobs:
-  pr-greeting:
+  pr-handler:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       issues: write
-      contents: read   
+      contents: read
     steps:
-      - name: Greet PR Contributor
+      - name: Check PR event type
+        run: echo "Event: ${{ github.event.action }}"
+
+      # 处理新开的PR
+      - name: Greet PR Contributor (on open)
+        if: github.event.action == 'opened'
         uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-message: "你好 @${{ github.actor }}，感谢提交PR！\nHi @${{ github.actor }}, thanks for opening the Pull Request!\n我们会尽早审核回应😊\nWe will respond to it as soon as possible😊"
+          pr-message: |
+            你好 @${{ github.actor }}，感谢提交PR！
+            Hi @${{ github.actor }}, thanks for opening the Pull Request!
+            我们会尽早审核回应😊
+            We will respond to it as soon as possible😊
+
+      # 处理合并的PR
+      - name: Thank Contributor (on merge)
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          MESSAGE="感谢 @$AUTHOR 的贡献！您的PR已被合并，感谢您为项目做出的努力！🎉\nThank you @$AUTHOR for your contribution! Your PR has been merged. We appreciate your effort! 🎉"
+          
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -X POST \
+               -d "{\"body\":\"$MESSAGE\"}" \
+               "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+
+      # 处理关闭的PR（未合并）
+      - name: Acknowledge Closed PR
+        if: github.event.action == 'closed' && github.event.pull_request.merged == false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          MESSAGE="@$AUTHOR 辛苦了！虽然这次PR没有合并，但还是感谢您的付出，期待下次合作！🙏\n@$AUTHOR, thank you for your effort! Although this PR wasn't merged, we appreciate your contribution and look forward to collaborating again! 🙏"
+          
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -X POST \
+               -d "{\"body\":\"$MESSAGE\"}" \
+               "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
