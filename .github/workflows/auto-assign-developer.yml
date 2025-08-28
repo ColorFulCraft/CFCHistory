@@ -21,7 +21,7 @@ jobs:
           if [ "${{ github.event_name }}" = "issues" ] && [ "${{ github.event.action }}" = "opened" ]; then
             echo "Processing new issue..."
             ISSUE_NUMBER=${{ github.event.issue.number }}
-            COMMENT="@${{ github.actor }} 您好，已收到您的问题，我们会尽快处理。\n@xiaoshaziYA 有新的问题需要确认。"
+            COMMENT="@${{ github.actor }} 您好，已收到您的问题，我们会尽快处理。\n@xiaoshaziYA 有新的问题需要确认，在此issues下回复“确认”以进行确认。"
             
             # 添加评论
             curl -s -H "Authorization: token $GITHUB_TOKEN" \
