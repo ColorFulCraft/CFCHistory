@@ -42,8 +42,8 @@ jobs:
           elif [ "${{ github.event_name }}" = "issue_comment" ] && [ "${{ github.event.action }}" = "created" ]; then
             echo "Processing comment..."
             
-            # 获取评论内容和评论者信息
-            COMMENT_BODY=$(echo "$COMMENT_BODY" | jq -r .)
+            # 获取评论内容和评论者信息（直接使用环境变量，不需要jq解析）
+            COMMENT_BODY="$COMMENT_BODY"  # 已经是原始文本内容
             COMMENTER="${{ github.event.comment.user.login }}"
             COMMENT_ID="${{ github.event.comment.id }}"
             ISSUE_NUMBER=${{ github.event.issue.number }}
