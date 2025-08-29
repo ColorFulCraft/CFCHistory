@@ -30,6 +30,8 @@ jobs:
   MSDO:
     # currently only windows latest is supported
     runs-on: windows-latest
+    permissions:
+      contents: read
 
     steps:
     - uses: actions/checkout@v4
