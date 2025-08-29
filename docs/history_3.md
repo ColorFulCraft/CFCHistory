@@ -37,7 +37,7 @@
 结果：当天补偿完了
 2. 2025.8.29 高管FL777给予玩家XIAOXV创造模式并利用神权召唤大量隐身铁傀儡，并在背包内添加各种神权涉政物品
 结果：kill @e 杀死了98个铁傀儡 并 clear XIAOXV、ban XIAOXV forever
-[查看现场图片](../IMG_3349.png)
+[查看现场图片](../pictures/IMG_3349.png)
 
 
 
