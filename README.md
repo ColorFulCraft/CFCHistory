@@ -28,7 +28,6 @@
 | 直连 IP | `mc.cfcmc.cc` |
 | 备用移动 IP1 | `120.220.76.232:38888` |
 | 官方 QQ 群 | 584937263 |
-| 官网 | [戳我](https://blog.xhil.cn/)|
 
 <img loading="lazy" src="https://list.mczfw.cn/mc/mc.cfcmc.cc.png"/>
 
