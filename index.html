@@ -683,11 +683,94 @@
                 gap: 5px;
             }
         }
+                /* 贡献者容器样式 */
+        .contributors-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 900;
+            overflow: hidden;
+        }
+
+        .contributor-avatar {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            pointer-events: auto;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .contributor-avatar:hover {
+            transform: scale(1.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 910;
+        }
+
+        /* 贡献者信息提示框 */
+        .contributor-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            max-width: 200px;
+            z-index: 920;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            transform: translateY(-100%) translateX(-50%);
+            left: 50%;
+            top: -10px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .contributor-avatar:hover .contributor-tooltip {
+            opacity: 1;
+        }
+
+        .contributor-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contributor-stats {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .contributor-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .contributor-tooltip {
+                font-size: 0.8rem;
+                max-width: 150px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="gradient-bg"></div>
     
+    <!-- 贡献者头像容器 -->
+    <div class="contributors-container" id="contributorsContainer"></div>    
     <!-- 下雨效果容器 -->
     <div class="rain-effect" id="rainEffect"></div>
     
@@ -903,6 +986,203 @@
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault(); // 阻止默认右键菜单
                 createEmojiFeedback(e);
+            });
+        });
+                // 贡献者数据结构
+        let contributors = [];
+        
+        // 获取贡献者数据
+        async function fetchContributors() {
+            // 检查缓存
+            const cachedContributors = localStorage.getItem('cfc_contributors');
+            const cacheTimestamp = localStorage.getItem('cfc_contributors_timestamp');
+            
+            // 如果缓存存在且未过期（1小时）
+            if (cachedContributors && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < 3600000) {
+                contributors = JSON.parse(cachedContributors);
+                createContributorAvatars();
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/contributors');
+                if (!response.ok) throw new Error('获取贡献者数据失败');
+                
+                const data = await response.json();
+                
+                // 获取额外信息（贡献次数和最近贡献时间）
+                const contributorsWithDetails = await Promise.all(
+                    data.map(async contributor => {
+                        try {
+                            const detailsResponse = await fetch(contributor.url);
+                            if (!detailsResponse.ok) throw new Error('获取贡献者详情失败');
+                            
+                            const details = await detailsResponse.json();
+                            
+                            return {
+                                id: contributor.id,
+                                login: contributor.login,
+                                avatar_url: contributor.avatar_url,
+                                html_url: contributor.html_url,
+                                contributions: contributor.contributions,
+                                updated_at: details.updated_at || new Date().toISOString()
+                            };
+                        } catch (error) {
+                            console.error('获取贡献者详情出错:', error);
+                            return {
+                                id: contributor.id,
+                                login: contributor.login,
+                                avatar_url: contributor.avatar_url,
+                                html_url: contributor.html_url,
+                                contributions: contributor.contributions,
+                                updated_at: new Date().toISOString()
+                            };
+                        }
+                    })
+                );
+                
+                contributors = contributorsWithDetails;
+                
+                // 保存到缓存
+                localStorage.setItem('cfc_contributors', JSON.stringify(contributors));
+                localStorage.setItem('cfc_contributors_timestamp', Date.now().toString());
+                
+                createContributorAvatars();
+            } catch (error) {
+                console.error('获取贡献者数据出错:', error);
+                
+                // 如果API请求失败但缓存存在，使用缓存
+                if (cachedContributors) {
+                    contributors = JSON.parse(cachedContributors);
+                    createContributorAvatars();
+                }
+            }
+        }
+        
+        // 创建贡献者头像
+        function createContributorAvatars() {
+            const container = document.getElementById('contributorsContainer');
+            container.innerHTML = '';
+            
+            contributors.forEach(contributor => {
+                const avatar = document.createElement('div');
+                avatar.className = 'contributor-avatar';
+                avatar.style.backgroundImage = `url(${contributor.avatar_url})`;
+                
+                // 创建信息提示框
+                const tooltip = document.createElement('div');
+                tooltip.className = 'contributor-tooltip';
+                
+                const name = document.createElement('div');
+                name.className = 'contributor-name';
+                name.textContent = contributor.login;
+                
+                const stats = document.createElement('div');
+                stats.className = 'contributor-stats';
+                stats.innerHTML = `贡献次数: ${contributor.contributions}<br>
+                                   最近更新: ${formatDate(contributor.updated_at)}`;
+                
+                tooltip.appendChild(name);
+                tooltip.appendChild(stats);
+                avatar.appendChild(tooltip);
+                
+                // 添加点击事件
+                avatar.addEventListener('click', (e) => {
+                    if (e.button === 0) { // 左键点击
+                        window.open(contributor.html_url, '_blank');
+                    }
+                });
+                
+                container.appendChild(avatar);
+                
+                // 设置初始位置（屏幕顶部随机位置）
+                const startX = Math.random() * (window.innerWidth - 50);
+                avatar.style.left = `${startX}px`;
+                avatar.style.top = '-60px';
+                
+                // 开始掉落动画
+                setTimeout(() => {
+                    dropAvatar(avatar);
+                }, Math.random() * 2000); // 随机延迟开始掉落
+            });
+        }
+        
+        // 头像掉落动画
+        function dropAvatar(avatar) {
+            const gravity = 0.2;
+            const bounceFactor = 0.7;
+            const friction = 0.99;
+            
+            let y = -60;
+            let velocityY = 0;
+            let velocityX = (Math.random() - 0.5) * 2; // 随机水平速度
+            
+            function animate() {
+                velocityY += gravity;
+                y += velocityY;
+                
+                // 水平移动
+                let x = parseFloat(avatar.style.left) + velocityX;
+                
+                // 边界检测（左右边界）
+                if (x < 0) {
+                    x = 0;
+                    velocityX = -velocityX * bounceFactor;
+                } else if (x > window.innerWidth - 50) {
+                    x = window.innerWidth - 50;
+                    velocityX = -velocityX * bounceFactor;
+                }
+                
+                // 底部边界检测
+                if (y > window.innerHeight - 50) {
+                    y = window.innerHeight - 50;
+                    velocityY = -velocityY * bounceFactor;
+                    
+                    // 添加摩擦力
+                    velocityX *= friction;
+                    
+                    // 如果速度很小，停止动画
+                    if (Math.abs(velocityY) < 0.5 && Math.abs(velocityX) < 0.2) {
+                        return;
+                    }
+                }
+                
+                avatar.style.top = `${y}px`;
+                avatar.style.left = `${x}px`;
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', () => {
+            renderWikiLinks();
+            createRainEffect();
+            fetchGitHubStars();
+            fetchContributors(); // 获取贡献者数据
+            
+            // 添加点击事件监听器
+            document.addEventListener('click', createEmojiFeedback);
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault(); // 阻止默认右键菜单
+                createEmojiFeedback(e);
+            });
+            
+            // 禁止文本选择和复制
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
             });
         });
     </script>
