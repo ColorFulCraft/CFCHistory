@@ -1,4 +1,4 @@
-本项目主体内容为MIT协议
+# 本项目主体内容为MIT协议
 
 Copyright (c) 2025 ColorFulCraft
 
@@ -20,12 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-
+`
 其他内容请访问各项目目录
-[文档](https://github.com/ColorFulCraft/CFCHistory/tree/main/docs/LICENSE)
-[音乐](https://github.com/ColorFulCraft/CFCHistory/tree/main/music/LICENSE)
-[旧文件](https://github.com/ColorFulCraft/CFCHistory/tree/main/old%20files/LICENSE)
-[图片](https://github.com/ColorFulCraft/CFCHistory/tree/main/pictures/LICENSE)
-[更新日志](https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log/LICENSE)
-[视频](https://github.com/ColorFulCraft/CFCHistory/tree/main/videos/LICENSE)
-
+- [文档](https://github.com/ColorFulCraft/CFCHistory/tree/main/docs/LICENSE)
+- [音乐](https://github.com/ColorFulCraft/CFCHistory/tree/main/music/LICENSE)
+- [旧文件](https://github.com/ColorFulCraft/CFCHistory/tree/main/old%20files/LICENSE)
+- [图片](https://github.com/ColorFulCraft/CFCHistory/tree/main/pictures/LICENSE)
+- [更新日志](https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log/LICENSE)
+- [视频](https://github.com/ColorFulCraft/CFCHistory/tree/main/videos/LICENSE)
+`
