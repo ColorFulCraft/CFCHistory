@@ -752,6 +752,121 @@
             color: #ccc;
         }
 
+        /* 评论区域样式 */
+        .comments-section {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 400px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(calc(100% + 60px));
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-mode .comments-section {
+            background: rgba(40, 40, 40, 0.95);
+            color: #f0f0f0;
+        }
+
+        .comments-section.active {
+            transform: translateY(0);
+        }
+
+        .comments-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        body.dark-mode .comments-header {
+            background: rgba(60, 60, 60, 0.8);
+            border-bottom: 1px solid #555;
+        }
+
+        .comments-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        body.dark-mode .comments-title {
+            color: #f0f0f0;
+        }
+
+        .comments-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .comments-close:hover {
+            color: #333;
+        }
+
+        body.dark-mode .comments-close {
+            color: #aaa;
+        }
+
+        body.dark-mode .comments-close:hover {
+            color: #fff;
+        }
+
+        .comments-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* 评论切换按钮 */
+        .comments-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: btnPulse 2.5s infinite ease-in-out;
+        }
+
+        body.dark-mode .comments-toggle {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+
+        .comments-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            animation: none;
+        }
+
+        .comments-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
         /* 响应式调整 */
         @media (max-width: 768px) {
             .contributor-avatar {
@@ -813,6 +928,24 @@
         </div>
     </div>
     
+        <!-- 评论区域 -->
+    <div class="comments-section" id="commentsSection">
+        <div class="comments-header">
+            <h3 class="comments-title">评论</h3>
+            <button class="comments-close" id="commentsClose">×</button>
+        </div>
+        <div class="comments-container" id="commentsContainer">
+            <!-- Utterances评论将在这里加载 -->
+        </div>
+    </div>
+    
+    <!-- 评论切换按钮 -->
+    <button class="comments-toggle" id="commentsToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+        </svg>
+    </button>
+    
     <!-- 页脚 -->
     <div class="footer">
         <div class="github-stars" id="githubStars">
@@ -829,7 +962,7 @@
                 <span id="starsCount">加载中...</span>
             </div>
         </div>
-        所有解释权归ColorFulCraft所有！其他请遵循MIT协议，<a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE" target="_blank">许可证文件</a>
+        所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE" target="_blank">许可证文件</a>
     </div>
 
     <script>
@@ -1162,29 +1295,263 @@
             return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
         }
 
-        // 页面加载完成后执行
-        window.addEventListener('DOMContentLoaded', () => {
-            renderWikiLinks();
-            createRainEffect();
-            fetchGitHubStars();
-            fetchContributors(); // 获取贡献者数据
+// 评论功能
+const commentsSection = document.getElementById('commentsSection');
+const commentsToggle = document.getElementById('commentsToggle');
+const commentsClose = document.getElementById('commentsClose');
+const commentsContainer = document.getElementById('commentsContainer');
+
+// 调试函数 - 在控制台输出详细信息
+function debugLog(message, data = null) {
+    console.log(`[评论系统] ${message}`, data || '');
+}
+
+// 检查是否存在评论相关的Issue
+async function checkCommentsIssue() {
+    try {
+        debugLog('开始检查Issue...');
+        const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/issues?labels=comments');
+        
+        if (!response.ok) {
+            throw new Error(`GitHub API返回错误: ${response.status}`);
+        }
+        
+        const issues = await response.json();
+        debugLog('获取到的Issue列表:', issues);
+        
+        const hasIssue = issues.length > 0;
+        debugLog(`检查结果: ${hasIssue ? '找到Issue' : '未找到Issue'}`);
+        return hasIssue;
+        
+    } catch (error) {
+        debugLog('检查Issue时出错:', error);
+        return false;
+    }
+}
+
+// 显示创建Issue的引导界面
+function showIssueCreationGuide() {
+    debugLog('显示创建Issue引导界面');
+    commentsContainer.innerHTML = '';
+    
+    const guideContainer = document.createElement('div');
+    guideContainer.style.padding = '20px';
+    guideContainer.style.textAlign = 'center';
+    guideContainer.style.color = '#666';
+    
+    guideContainer.innerHTML = `
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 1.1rem; color: #ffa500; margin-bottom: 10px;">📝 需要创建评论专用Issue</div>
+            <div style="font-size: 0.9rem; margin-bottom: 15px;">
+                评论系统需要一个专用的GitHub Issue来存储所有评论。
+            </div>
+        </div>
+        <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20ColorFulCraft历史博物馆%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
+                style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 5px;">
+            📋 创建评论Issue
+        </button>
+        <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">
+            创建完成后，点击下方按钮重新加载
+        </div>
+        <button onclick="location.reload()" 
+                style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
+            重新加载页面
+        </button>
+    `;
+    
+    commentsContainer.appendChild(guideContainer);
+}
+
+// 初始化Utterances评论系统
+async function initUtterances() {
+    debugLog('开始初始化Utterances');
+    
+    // 先检查是否存在Issue
+    const hasIssue = await checkCommentsIssue();
+    
+    if (!hasIssue) {
+        debugLog('未找到Issue，显示引导界面');
+        showIssueCreationGuide();
+        return;
+    }
+    
+    debugLog('找到Issue，开始加载Utterances');
+    
+    // 清空容器
+    commentsContainer.innerHTML = '';
+    
+    // 添加加载状态提示
+    const loadingMsg = document.createElement('div');
+    loadingMsg.style.padding = '20px';
+    loadingMsg.style.textAlign = 'center';
+    loadingMsg.style.color = '#666';
+    loadingMsg.innerHTML = `
+        <div style="margin-bottom: 10px;">🔄 正在加载评论系统...</div>
+        <div style="font-size: 0.8rem; color: #999;">
+            这可能需要几秒钟时间
+        </div>
+    `;
+    commentsContainer.appendChild(loadingMsg);
+    
+    // 创建script元素 - 使用更可靠的配置
+    const script = document.createElement('script');
+    script.src = 'https://utteranc.es/client.js';
+    script.setAttribute('repo', 'ColorFulCraft/CFCHistory');
+    script.setAttribute('issue-term', 'pathname'); // 使用pathname而不是title
+    script.setAttribute('label', 'comments');
+    script.setAttribute('theme', body.classList.contains('dark-mode') ? 'github-dark' : 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.async = true;
+    
+    let utterancesLoaded = false;
+    
+    script.onload = function() {
+        debugLog('Utterances脚本加载成功');
+        utterancesLoaded = true;
+        
+        // 等待一段时间后检查是否真的显示了内容
+        setTimeout(() => {
+            checkUtterancesContent();
+        }, 3000);
+    };
+    
+    script.onerror = function(error) {
+        debugLog('Utterances脚本加载失败:', error);
+        showErrorMessage('评论系统加载失败，请检查控制台获取详细信息');
+    };
+    
+    commentsContainer.appendChild(script);
+    
+    // 检查Utterances是否真正显示了内容
+    function checkUtterancesContent() {
+        const iframe = commentsContainer.querySelector('iframe');
+        if (!iframe) {
+            debugLog('未找到Utterances iframe');
+            showErrorMessage('评论系统初始化失败，未加载iframe');
+            return;
+        }
+        
+        debugLog('找到Utterances iframe:', iframe);
+        
+        // 尝试检查iframe内容
+        try {
+            if (iframe.contentDocument && iframe.contentDocument.body) {
+                const bodyContent = iframe.contentDocument.body.innerHTML;
+                debugLog('iframe内容:', bodyContent);
+                
+                if (bodyContent.includes('No issues found') || bodyContent.trim() === '') {
+                    showErrorMessage('未找到对应的评论Issue，请确保Issue存在且标签正确');
+                } else {
+                    // 内容加载成功，移除加载提示
+                    loadingMsg.remove();
+                    debugLog('评论系统加载成功！');
+                }
+            } else {
+                // iframe可能还在加载，稍后再检查
+                setTimeout(checkUtterancesContent, 1000);
+            }
+        } catch (error) {
+            // 跨域限制，无法直接访问iframe内容
+            debugLog('无法访问iframe内容（跨域限制）:', error);
             
-            // 添加点击事件监听器
-            document.addEventListener('click', createEmojiFeedback);
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault(); // 阻止默认右键菜单
-                createEmojiFeedback(e);
-            });
-            
-            // 禁止文本选择和复制
-            document.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-            });
-            
-            document.addEventListener('copy', function(e) {
-                e.preventDefault();
-            });
-        });
+            // 通过观察iframe尺寸来判断是否加载成功
+            if (iframe.offsetHeight > 100) {
+                loadingMsg.remove();
+                debugLog('通过尺寸判断评论系统加载成功');
+            } else {
+                setTimeout(checkUtterancesContent, 1000);
+            }
+        }
+    }
+    
+    // 8秒后如果仍然显示加载中，显示错误信息
+    setTimeout(() => {
+        if (loadingMsg.parentNode) {
+            showErrorMessage('评论系统加载超时，请刷新页面重试');
+        }
+    }, 8000);
+}
+
+// 显示错误信息
+function showErrorMessage(message) {
+    const existingMsg = commentsContainer.querySelector('div');
+    if (existingMsg) {
+        existingMsg.innerHTML = `
+            <div style="color: #ff6b6b; margin-bottom: 10px;">❌ ${message}</div>
+            <div style="font-size: 0.8rem; margin-bottom: 15px;">
+                请检查：<br>
+                1. GitHub仓库是公开的<br>
+                2. Utterances应用已安装<br>
+                3. 存在带有"comments"标签的Issue
+            </div>
+            <button onclick="initUtterances()" 
+                    style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
+                重新加载
+            </button>
+            <button onclick="location.reload()" 
+                    style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
+                刷新页面
+            </button>
+        `;
+    }
+}
+
+// 切换评论区域显示/隐藏
+commentsToggle.addEventListener('click', async () => {
+    commentsSection.classList.toggle('active');
+    if (commentsSection.classList.contains('active') && commentsContainer.children.length === 0) {
+        await initUtterances();
+    }
+});
+
+// 关闭评论区域
+commentsClose.addEventListener('click', () => {
+    commentsSection.classList.remove('active');
+});
+
+// 点击评论区域外部关闭
+document.addEventListener('click', (e) => {
+    if (commentsSection.classList.contains('active') && 
+        !commentsSection.contains(e.target) && 
+        !commentsToggle.contains(e.target)) {
+        commentsSection.classList.remove('active');
+    }
+});
+
+// 暗色模式切换时更新Utterances主题
+themeToggle.addEventListener('click', () => {
+    if (commentsSection.classList.contains('active') && commentsContainer.children.length > 0) {
+        // 重新加载评论系统以应用新主题
+        setTimeout(async () => {
+            await initUtterances();
+        }, 100);
+    }
+});
+
+// 页面加载完成后执行
+window.addEventListener('DOMContentLoaded', () => {
+    renderWikiLinks();
+    createRainEffect();
+    fetchGitHubStars();
+    fetchContributors();
+    
+    // 添加点击事件监听器
+    document.addEventListener('click', createEmojiFeedback);
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        createEmojiFeedback(e);
+    });
+    
+    // 禁止文本选择和复制
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+    });
+});
+        
     </script>
 </body>
 </html>
