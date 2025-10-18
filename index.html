@@ -1346,7 +1346,7 @@ function showIssueCreationGuide() {
                 评论系统需要一个专用的GitHub Issue来存储所有评论。
             </div>
         </div>
-        <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20ColorFulCraft历史博物馆%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
+        <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20CFCHistory%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
                 style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 5px;">
             📋 创建评论Issue
         </button>
@@ -1393,26 +1393,25 @@ async function initUtterances() {
     `;
     commentsContainer.appendChild(loadingMsg);
     
-    // 创建script元素 - 使用更可靠的配置
+    // 创建script元素
     const script = document.createElement('script');
     script.src = 'https://utteranc.es/client.js';
     script.setAttribute('repo', 'ColorFulCraft/CFCHistory');
-    script.setAttribute('issue-term', 'pathname'); // 使用pathname而不是title
+    script.setAttribute('issue-term', 'pathname');
     script.setAttribute('label', 'comments');
     script.setAttribute('theme', body.classList.contains('dark-mode') ? 'github-dark' : 'github-light');
     script.setAttribute('crossorigin', 'anonymous');
     script.async = true;
     
     let utterancesLoaded = false;
-    
+    let successDetected = false;
+
     script.onload = function() {
         debugLog('Utterances脚本加载成功');
         utterancesLoaded = true;
         
-        // 等待一段时间后检查是否真的显示了内容
-        setTimeout(() => {
-            checkUtterancesContent();
-        }, 3000);
+        // 更智能的成功检测
+        checkUtterancesSuccess();
     };
     
     script.onerror = function(error) {
@@ -1422,60 +1421,74 @@ async function initUtterances() {
     
     commentsContainer.appendChild(script);
     
-    // 检查Utterances是否真正显示了内容
-    function checkUtterancesContent() {
+    // 改进的成功检测逻辑
+    function checkUtterancesSuccess() {
         const iframe = commentsContainer.querySelector('iframe');
+        
         if (!iframe) {
-            debugLog('未找到Utterances iframe');
-            showErrorMessage('评论系统初始化失败，未加载iframe');
+            debugLog('未找到Utterances iframe，稍后重试');
+            // 如果iframe还没创建，稍后重试
+            if (!successDetected) {
+                setTimeout(checkUtterancesSuccess, 500);
+            }
             return;
         }
         
-        debugLog('找到Utterances iframe:', iframe);
+        debugLog('找到Utterances iframe');
         
-        // 尝试检查iframe内容
-        try {
-            if (iframe.contentDocument && iframe.contentDocument.body) {
-                const bodyContent = iframe.contentDocument.body.innerHTML;
-                debugLog('iframe内容:', bodyContent);
-                
-                if (bodyContent.includes('No issues found') || bodyContent.trim() === '') {
-                    showErrorMessage('未找到对应的评论Issue，请确保Issue存在且标签正确');
-                } else {
-                    // 内容加载成功，移除加载提示
-                    loadingMsg.remove();
-                    debugLog('评论系统加载成功！');
-                }
-            } else {
-                // iframe可能还在加载，稍后再检查
-                setTimeout(checkUtterancesContent, 1000);
+        // 监听iframe加载完成
+        iframe.addEventListener('load', function() {
+            debugLog('Utterances iframe加载完成');
+            successDetected = true;
+            removeLoadingMessage();
+        });
+        
+        // 备用检测：通过观察iframe尺寸和内容
+        const checkContent = setInterval(() => {
+            if (successDetected) {
+                clearInterval(checkContent);
+                return;
             }
-        } catch (error) {
-            // 跨域限制，无法直接访问iframe内容
-            debugLog('无法访问iframe内容（跨域限制）:', error);
             
-            // 通过观察iframe尺寸来判断是否加载成功
+            // 如果iframe有实际高度，说明内容加载成功
             if (iframe.offsetHeight > 100) {
-                loadingMsg.remove();
                 debugLog('通过尺寸判断评论系统加载成功');
-            } else {
-                setTimeout(checkUtterancesContent, 1000);
+                successDetected = true;
+                removeLoadingMessage();
+                clearInterval(checkContent);
             }
-        }
+        }, 500);
+        
+        // 8秒后超时处理
+        setTimeout(() => {
+            if (!successDetected && !utterancesLoaded) {
+                debugLog('评论系统加载超时');
+                showErrorMessage('评论系统加载超时，请刷新页面重试');
+            } else if (!successDetected && utterancesLoaded) {
+                // 脚本加载成功但内容可能还在加载，给更多时间
+                debugLog('脚本已加载，但内容仍在初始化，延长等待时间');
+                setTimeout(() => {
+                    if (!successDetected) {
+                        showErrorMessage('评论系统初始化较慢，请耐心等待或刷新页面');
+                    }
+                }, 5000);
+            }
+        }, 8000);
     }
     
-    // 8秒后如果仍然显示加载中，显示错误信息
-    setTimeout(() => {
-        if (loadingMsg.parentNode) {
-            showErrorMessage('评论系统加载超时，请刷新页面重试');
+    // 移除加载消息
+    function removeLoadingMessage() {
+        if (loadingMsg && loadingMsg.parentNode) {
+            loadingMsg.remove();
+            debugLog('加载消息已移除，评论系统显示正常');
         }
-    }, 8000);
+    }
 }
 
 // 显示错误信息
 function showErrorMessage(message) {
     const existingMsg = commentsContainer.querySelector('div');
-    if (existingMsg) {
+    if (existingMsg && !existingMsg.querySelector('iframe')) {
         existingMsg.innerHTML = `
             <div style="color: #ff6b6b; margin-bottom: 10px;">❌ ${message}</div>
             <div style="font-size: 0.8rem; margin-bottom: 15px;">
