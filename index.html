@@ -968,10 +968,195 @@
                 <span id="starsCount">加载中...</span>
             </div>
         </div>
-        所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE" target="_blank">许可证文件</a>
+        所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" target="_blank">许可证文件</a>
     </div>
 
     <script>
+    // 免责声明弹窗
+    function showDisclaimer() {
+        // 检查用户是否已经同意过
+        if (localStorage.getItem('disclaimerAccepted') === 'true') {
+            return;
+        }
+
+        // 创建弹窗遮罩
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        `;
+
+        // 创建弹窗内容
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            color: white;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        `;
+
+        modal.innerHTML = `
+            <h2 style="margin-bottom: 20px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏛️ 免责声明</h2>
+            <div style="text-align: left; margin-bottom: 25px; line-height: 1.6; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                <p style="margin-bottom: 15px;">欢迎访问 <strong>ColorFulCraft 历史博物馆</strong>！</p>
+                <p style="margin-bottom: 15px;">本网站仅作为技术 Wiki 和资料存档使用，所有内容仅供学习和参考。</p>
+                <p style="margin-bottom: 15px;"><strong>ColorFulCraft 保留所有权利</strong>，包括但不限于内容修改、更新和删除的权利。</p>
+                <p style="margin-bottom: 15px;">请仔细阅读我们的许可证文件：</p>
+                <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" 
+                   target="_blank" 
+                   style="color: #a0e7ff; text-decoration: none; font-weight: bold; display: inline-block; margin: 10px 0;">
+                   📄 查看完整许可证
+                </a>
+                <p style="margin-top: 15px; font-size: 0.9em; color: #e0e0e0;">
+                    <strong>点击"我同意"即表示您已阅读、理解并同意遵守上述许可证的所有条款和条件。</strong>
+                </p>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="disagreeBtn" style="padding: 12px 30px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">
+                    我不同意
+                </button>
+                <button id="agreeBtn" style="padding: 12px 30px; background: #4CAF50; border: none; color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
+                    我同意
+                </button>
+            </div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // 添加按钮事件
+        document.getElementById('agreeBtn').addEventListener('click', function() {
+            localStorage.setItem('disclaimerAccepted', 'true');
+            localStorage.setItem('agreementVersion', '2025.10.19');
+            localStorage.setItem('agreementDate', new Date().toISOString());
+            document.body.removeChild(overlay);
+            // 显示确认提示
+            showAgreementConfirmation();
+            // 开始正常的页面动画
+            startPageAnimations();
+        });
+
+        document.getElementById('disagreeBtn').addEventListener('click', function() {
+            // 返回上一页
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                // 如果没有上一页，关闭窗口或跳转到其他页面
+                window.close() || (window.location.href = 'about:blank');
+            }
+        });
+
+        // 添加按钮悬停效果
+        const agreeBtn = document.getElementById('agreeBtn');
+        const disagreeBtn = document.getElementById('disagreeBtn');
+
+        agreeBtn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+        });
+
+        agreeBtn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+        });
+
+        disagreeBtn.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.background = 'rgba(255,255,255,0.3)';
+        });
+
+        disagreeBtn.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.background = 'rgba(255,255,255,0.2)';
+        });
+    }
+
+    // 显示同意确认提示
+    function showAgreementConfirmation() {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            z-index: 10001;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            opacity: 0;
+            animation: slideDownFadeIn 0.6s ease-out forwards, slideUpFadeOut 0.6s ease-in 2.5s forwards;
+        `;
+
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">✅</span>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 5px;">确认成功</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">你已阅读并确认免责声明[2025.10.19版]</div>
+                </div>
+            </div>
+        `;
+
+        // 添加动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDownFadeIn {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-40px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @keyframes slideUpFadeOut {
+                0% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-40px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.body.appendChild(notification);
+
+        // 4秒后自动移除
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+            if (style.parentNode) {
+                style.parentNode.removeChild(style);
+            }
+        }, 4000);
+    }
+    
         const wikiLinks = [
             { text: "官网", url: "https://blog.xhil.cn/" },
             { text: "音乐", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/music/readme.md" },
