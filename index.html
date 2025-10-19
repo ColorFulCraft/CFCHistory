@@ -974,8 +974,11 @@
     <script>
     // 免责声明弹窗
     function showDisclaimer() {
+        console.log('showDisclaimer 函数被调用');
+        
         // 检查用户是否已经同意过
         if (localStorage.getItem('disclaimerAccepted') === 'true') {
+            console.log('用户已同意，跳过免责声明');
             return;
         }
 
@@ -1040,6 +1043,7 @@
 
         // 添加按钮事件
         document.getElementById('agreeBtn').addEventListener('click', function() {
+            console.log('用户点击了同意按钮');
             localStorage.setItem('disclaimerAccepted', 'true');
             localStorage.setItem('agreementVersion', '2025.10.19');
             localStorage.setItem('agreementDate', new Date().toISOString());
@@ -1051,6 +1055,7 @@
         });
 
         document.getElementById('disagreeBtn').addEventListener('click', function() {
+            console.log('用户点击了不同意按钮');
             // 返回上一页
             if (document.referrer) {
                 window.history.back();
@@ -1087,6 +1092,7 @@
 
     // 显示同意确认提示
     function showAgreementConfirmation() {
+        console.log('显示同意确认提示');
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -1156,6 +1162,15 @@
             }
         }, 4000);
     }
+        window.addEventListener('DOMContentLoaded', () => {
+        // 先显示免责声明
+        showDisclaimer();
+        
+        // 如果用户已经同意，直接开始动画
+        if (localStorage.getItem('disclaimerAccepted') === 'true') {
+            startPageAnimations();
+        }
+    });
     
         const wikiLinks = [
             { text: "官网", url: "https://blog.xhil.cn/" },
