@@ -1,0 +1,30 @@
+name: Update Visit Statistics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC时间00:00运行
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Update visit statistics
+        run: |
+          python .github/scripts/update_stats.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add stats/visit_stats.json
+          git diff --staged --quiet || git commit -m "Update visit statistics"
+          git push
