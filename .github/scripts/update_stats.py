@@ -1,8 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone, timedelta
-import urllib.request
-import base64
+import requests
 
 def update_stats():
     # 文件路径
@@ -25,7 +24,8 @@ def update_stats():
             "total_visits": 0,
             "daily_visits": {},
             "hourly_visits": {},
-            "last_updated": ""
+            "last_updated": "",
+            "last_updated_date": current_date
         }
     
     # 检查是否需要重置今日访问量（新的一天）
@@ -36,11 +36,15 @@ def update_stats():
         stats['hourly_visits'] = {}
         stats['last_updated_date'] = current_date
     
+    # 估算实时访问量（基于工作流运行间隔）
+    # 假设每次工作流运行代表有新的访问
+    estimated_increment = 3  # 可以根据实际情况调整
+    
     # 更新统计数据
-    stats['total_visits'] += 1
+    stats['total_visits'] += estimated_increment
     
     # 更新今日访问量（当前小时）
-    stats['hourly_visits'][current_hour] = stats['hourly_visits'].get(current_hour, 0) + 1
+    stats['hourly_visits'][current_hour] = stats['hourly_visits'].get(current_hour, 0) + estimated_increment
     
     # 计算今日总访问量（所有小时之和）
     today_total = sum(stats['hourly_visits'].values())
@@ -52,10 +56,7 @@ def update_stats():
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(stats, f, ensure_ascii=False, indent=2)
     
-    print(f"Statistics updated:")
-    print(f"  Total visits: {stats['total_visits']}")
-    print(f"  Today visits: {today_total}")
-    print(f"  Current hour: {current_hour} - {stats['hourly_visits'][current_hour]} visits")
+    print(f"Statistics updated: Total={stats['total_visits']}, Today={today_total}")
 
 if __name__ == '__main__':
     update_stats()
