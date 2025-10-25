@@ -3,7 +3,10 @@ name: Update Visit Statistics
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'  # 每天UTC时间00:00运行
+    # 每小时运行一次（今日访问统计）
+    - cron: '0 * * * *'
+    # 每天UTC时间00:00运行（累计访问统计和重置今日访问）
+    - cron: '0 0 * * *'
 
 jobs:
   update-stats:
