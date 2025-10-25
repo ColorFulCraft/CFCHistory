@@ -1,4 +1,6 @@
 name: Update Visit Statistics
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
