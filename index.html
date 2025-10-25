@@ -1232,6 +1232,79 @@ body.dark-mode .stat-item:hover {
     </div>
 
     <script>
+// 访问统计功能
+async function updateVisitStats() {
+    try {
+        console.log('开始获取统计数据...');
+        
+        const statsResponse = await fetch('https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/stats/visit_stats.json?t=' + Date.now());
+        
+        if (statsResponse.ok) {
+            // 先获取文本内容
+            const textContent = await statsResponse.text();
+            console.log('获取到的原始文本:', textContent);
+            
+            // 然后解析为JSON
+            let content;
+            try {
+                content = JSON.parse(textContent);
+            } catch (parseError) {
+                console.error('JSON解析失败:', parseError);
+                // 设置默认值
+                document.getElementById('todayCount').textContent = '1';
+                document.getElementById('totalCount').textContent = '1';
+                return;
+            }
+            
+            console.log('解析后的统计数据:', content);
+            
+            // 更新统计数据
+            const now = new Date();
+            const beijingOffset = 8 * 60; // UTC+8 时区偏移（分钟）
+            const localTime = new Date(now.getTime() + (beijingOffset - now.getTimezoneOffset()) * 60000);
+            const today = localTime.toISOString().split('T')[0];
+            
+            // 计算今日总访问量（所有小时之和）
+            let todayVisits = 0;
+            if (content.hourly_visits) {
+                for (const [hour, count] of Object.entries(content.hourly_visits)) {
+                    if (hour.startsWith(today)) {
+                        todayVisits += count;
+                    }
+                }
+            }
+            
+            // 更新显示
+            const todayCountElement = document.getElementById('todayCount');
+            const totalCountElement = document.getElementById('totalCount');
+            
+            if (todayCountElement) {
+                todayCountElement.textContent = todayVisits || '1';
+            }
+            if (totalCountElement) {
+                totalCountElement.textContent = content.total_visits || '1';
+            }
+            
+            console.log('统计数据已更新:', { 
+                today: todayVisits, 
+                total: content.total_visits,
+                date: today 
+            });
+            
+        } else {
+            console.error('获取统计数据失败:', statsResponse.status);
+            // 设置默认值
+            document.getElementById('todayCount').textContent = '0';
+            document.getElementById('totalCount').textContent = '0';
+        }
+    } catch (error) {
+        console.error('获取统计数据时出错:', error);
+        // 设置默认值
+        document.getElementById('todayCount').textContent = '0';
+        document.getElementById('totalCount').textContent = '0';
+    }
+}
+
 // 免责声明弹窗
 function showDisclaimer() {
     console.log('showDisclaimer 函数被调用');
