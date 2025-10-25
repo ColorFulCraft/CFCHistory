@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone, timedelta
-import requests
+import urllib.request
 import base64
 
 def update_stats():
