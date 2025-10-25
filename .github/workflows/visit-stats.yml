@@ -5,10 +5,12 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # 每小时运行一次（今日访问统计）
-    - cron: '0 * * * *'
+    # 增加频率：每15分钟运行一次
+    - cron: '*/15 * * * *'
     # 每天UTC时间00:00运行（累计访问统计和重置今日访问）
     - cron: '0 0 * * *'
+  # 添加页面部署触发
+  page_build:
 
 jobs:
   update-stats:
@@ -31,5 +33,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add stats/visit_stats.json
-          git diff --staged --quiet || git commit -m "Update visit statistics"
+          git diff --staged --quiet || git commit -m "Update visit statistics [auto]"
           git push
