@@ -1235,75 +1235,86 @@ body.dark-mode .stat-item:hover {
 // 访问统计功能
 async function updateVisitStats() {
     try {
-        console.log('开始获取统计数据...');
+        console.log('📊 开始更新访问统计');
         
-        const statsResponse = await fetch('https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/stats/visit_stats.json?t=' + Date.now());
-        
-        if (statsResponse.ok) {
-            // 先获取文本内容
-            const textContent = await statsResponse.text();
-            console.log('获取到的原始文本:', textContent);
-            
-            // 然后解析为JSON
-            let content;
-            try {
-                content = JSON.parse(textContent);
-            } catch (parseError) {
-                console.error('JSON解析失败:', parseError);
-                // 设置默认值
-                document.getElementById('todayCount').textContent = '1';
-                document.getElementById('totalCount').textContent = '1';
-                return;
-            }
-            
-            console.log('解析后的统计数据:', content);
-            
-            // 更新统计数据
-            const now = new Date();
-            const beijingOffset = 8 * 60; // UTC+8 时区偏移（分钟）
-            const localTime = new Date(now.getTime() + (beijingOffset - now.getTimezoneOffset()) * 60000);
-            const today = localTime.toISOString().split('T')[0];
-            
-            // 计算今日总访问量（所有小时之和）
-            let todayVisits = 0;
-            if (content.hourly_visits) {
-                for (const [hour, count] of Object.entries(content.hourly_visits)) {
-                    if (hour.startsWith(today)) {
-                        todayVisits += count;
-                    }
-                }
-            }
-            
-            // 更新显示
-            const todayCountElement = document.getElementById('todayCount');
-            const totalCountElement = document.getElementById('totalCount');
-            
-            if (todayCountElement) {
-                todayCountElement.textContent = todayVisits || '1';
-            }
-            if (totalCountElement) {
-                totalCountElement.textContent = content.total_visits || '1';
-            }
-            
-            console.log('统计数据已更新:', { 
-                today: todayVisits, 
-                total: content.total_visits,
-                date: today 
-            });
-            
-        } else {
-            console.error('获取统计数据失败:', statsResponse.status);
-            // 设置默认值
-            document.getElementById('todayCount').textContent = '0';
-            document.getElementById('totalCount').textContent = '0';
+        // 更新问候语
+        const greetingText = document.getElementById('greetingText');
+        if (greetingText) {
+            greetingText.textContent = getGreeting();
         }
+        
+        // 获取统计数据
+        await fetchAndDisplayRealStats();
+        
     } catch (error) {
-        console.error('获取统计数据时出错:', error);
-        // 设置默认值
-        document.getElementById('todayCount').textContent = '0';
-        document.getElementById('totalCount').textContent = '0';
+        console.error('更新访问统计失败:', error);
+    } finally {
+        // 无论成功失败，都显示统计面板
+        console.log('📊 统计更新完成，显示面板');
+        showStatsPanel();
     }
 }
+
+// 获取并显示真实统计数据
+async function fetchAndDisplayRealStats() {
+    try {
+        const url = 'https://colorfulcraft.github.io/CFCHistory/stats/visit_stats.json?t=' + Date.now();
+        const statsResponse = await fetch(url);
+        
+        if (statsResponse.ok) {
+            const content = await statsResponse.json();
+            
+            // 计算今日访问量
+            const today = new Date().toISOString().split('T')[0];
+            let todayVisits = 0;
+            
+            if (content.hourly_visits) {
+                Object.entries(content.hourly_visits).forEach(([hourKey, count]) => {
+                    if (hourKey.startsWith(today)) {
+                        todayVisits += count;
+                    }
+                });
+            }
+            
+            // 更新显示（即使数据为0也更新）
+            updateStatsDisplay(todayVisits, content.total_visits || 0);
+        }
+    } catch (error) {
+        // 静默失败，显示默认值
+        updateStatsDisplay(0, 0);
+    }
+}
+
+// 更新统计显示
+function updateStatsDisplay(todayCount, totalCount) {
+    const todayCountElement = document.getElementById('todayCount');
+    const totalCountElement = document.getElementById('totalCount');
+    
+    if (todayCountElement) {
+        todayCountElement.textContent = todayCount.toString();
+    }
+    if (totalCountElement) {
+        totalCountElement.textContent = totalCount.toString();
+    }
+}
+
+// 获取问候语
+function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+        return '早上好';
+    } else if (hour >= 12 && hour < 14) {
+        return '中午好';
+    } else if (hour >= 14 && hour < 18) {
+        return '下午好';
+    } else if (hour >= 18 && hour < 22) {
+        return '晚上好';
+    } else {
+        return '夜深了';
+    }
+}
+
+
 
 // 免责声明弹窗
 function showDisclaimer() {
@@ -1502,7 +1513,9 @@ function startPageAnimations() {
     // 这里可以添加其他页面初始化动画
 }
 
-// 显示统计面板
+// 统计面板管理
+let statsPanelTimer = null;
+
 function showStatsPanel() {
     // 检查用户是否已经关闭过统计面板
     if (localStorage.getItem('statsPanelClosed') === 'true') {
@@ -1510,58 +1523,88 @@ function showStatsPanel() {
     }
 
     const statsPanel = document.getElementById('statsPanel');
-    const greetingText = document.getElementById('greetingText');
+    if (!statsPanel) return;
     
-    // 设置问候语
-    greetingText.textContent = getGreeting();
+    console.log('🚀 显示统计面板');
     
-    // 显示面板并添加脉冲动画
+    // 清除之前的计时器和类
+    statsPanel.classList.remove('hiding', 'pulse');
+    
+    // 显示面板
     statsPanel.style.display = 'block';
-    statsPanel.classList.add('pulse');
-    
-    // 获取并显示统计数据
-    updateVisitStats();
-    
-    // 5秒后自动隐藏
     setTimeout(() => {
-        hideStatsPanel();
-    }, 5000);
+        statsPanel.classList.add('show');
+    }, 10);
+    
+    // 开始3秒后自动隐藏
+    startAutoHideTimer();
 }
 
-// 隐藏统计面板
 function hideStatsPanel() {
     const statsPanel = document.getElementById('statsPanel');
-    if (statsPanel.style.display !== 'none') {
-        statsPanel.classList.remove('pulse');
-        statsPanel.classList.add('hiding');
-        
-        // 动画完成后完全隐藏
-        setTimeout(() => {
-            statsPanel.style.display = 'none';
-            statsPanel.classList.remove('hiding');
-            // 记录用户已经看到过统计面板
-            localStorage.setItem('statsPanelClosed', 'true');
-        }, 500);
+    if (!statsPanel) return;
+    
+    console.log('🔻 隐藏统计面板');
+    
+    // 清除计时器
+    if (statsPanelTimer) {
+        clearTimeout(statsPanelTimer);
+        statsPanelTimer = null;
     }
+    
+    // 添加隐藏动画
+    statsPanel.classList.remove('show');
+    statsPanel.classList.add('hiding');
+    
+    // 动画完成后完全隐藏
+    setTimeout(() => {
+        statsPanel.style.display = 'none';
+        statsPanel.classList.remove('hiding');
+        // 记录用户已经看到过统计面板
+        localStorage.setItem('statsPanelClosed', 'true');
+    }, 500);
 }
 
-// 关闭统计面板（简化版本，只处理自动隐藏）
+function startAutoHideTimer() {
+    console.log('⏰ 开始3秒自动隐藏计时');
+    
+    // 清除之前的计时器
+    if (statsPanelTimer) {
+        clearTimeout(statsPanelTimer);
+    }
+    
+    // 设置新的3秒计时器
+    statsPanelTimer = setTimeout(() => {
+        console.log('⏰ 3秒计时器触发，隐藏面板');
+        hideStatsPanel();
+    }, 3000);
+}
+
 function setupStatsPanel() {
     const statsPanel = document.getElementById('statsPanel');
+    if (!statsPanel) return;
+    
+    console.log('🔧 设置统计面板事件监听');
     
     // 鼠标悬停时暂停自动隐藏
-    let hideTimeout;
     statsPanel.addEventListener('mouseenter', function() {
-        clearTimeout(hideTimeout);
+        console.log('🖱️ 鼠标进入，暂停自动隐藏');
+        if (statsPanelTimer) {
+            clearTimeout(statsPanelTimer);
+            statsPanelTimer = null;
+        }
     });
     
+    // 鼠标离开时重新开始计时
     statsPanel.addEventListener('mouseleave', function() {
-        // 重新设置自动隐藏
-        hideTimeout = setTimeout(() => {
-            if (statsPanel.style.display !== 'none') {
-                hideStatsPanel();
-            }
-        }, 3000);
+        console.log('🖱️ 鼠标离开，重新开始3秒计时');
+        startAutoHideTimer();
+    });
+    
+    // 点击面板也可以立即隐藏
+    statsPanel.addEventListener('click', function() {
+        console.log('🖱️ 点击面板，立即隐藏');
+        hideStatsPanel();
     });
 }
 
@@ -2131,17 +2174,26 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 页面加载完成后执行
 window.addEventListener('DOMContentLoaded', () => {
+    console.log('🏠 页面加载完成');
+    
     // 先显示免责声明
     showDisclaimer();
+    
+    // 立即更新问候语
+    const greetingText = document.getElementById('greetingText');
+    if (greetingText) {
+        greetingText.textContent = getGreeting();
+    }
+    
+    // 设置统计面板事件监听
+    setupStatsPanel();
     
     // 初始化其他功能
     renderWikiLinks();
     createRainEffect();
     fetchGitHubStars();
     fetchContributors();
-    setupStatsPanel();
     
     // 添加点击事件监听器
     document.addEventListener('click', createEmojiFeedback);
@@ -2159,26 +2211,26 @@ window.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
     });
     
-    // 如果用户已经同意，直接开始动画和显示统计面板
+    // 如果用户已经同意，开始动画和统计
     if (localStorage.getItem('disclaimerAccepted') === 'true') {
+        console.log('✅ 用户已同意免责声明，显示统计面板');
         startPageAnimations();
-        showStatsPanel();
+        updateVisitStats();
     } else {
-        // 等待免责声明处理完成后再显示统计面板
+        console.log('⏳ 等待用户同意免责声明');
+        // 等待免责声明处理完成
         const checkDisclaimer = setInterval(() => {
-            // 检查免责声明是否已经处理完成
             const disclaimerOverlay = document.querySelector('div[style*="z-index: 10000"]');
             if (!disclaimerOverlay || localStorage.getItem('disclaimerAccepted') === 'true') {
                 clearInterval(checkDisclaimer);
-                
-                // 延迟显示统计面板，确保在免责声明之后
-                setTimeout(() => {
-                    showStatsPanel();
-                }, 500);
+                console.log('✅ 用户同意免责声明完成，显示统计面板');
+                startPageAnimations();
+                updateVisitStats();
             }
         }, 100);
     }
 });
+
     </script>
 </body>
 </html>
