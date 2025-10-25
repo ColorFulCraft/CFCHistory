@@ -3,7 +3,7 @@
   
   # ✨ ColorFulCraft｜多彩工艺✨
   ## *[主页](https://colorfulcraft.github.io/CFCHistory/)* | *[官网](https://blog.xhil.cn/)*
-  *默认文档*  |  *[维护文档](readme_admin.md)* | *[图片展示](pictures.md)*
+  *默认文档*  |  *[维护文档](CONTRIBUTING.md)* | *[图片展示](pictures.md)*
 </div>
 
 ---
