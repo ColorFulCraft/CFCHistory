@@ -1,12 +1,9 @@
 <div align="center">
-  <img src="https://github.com/ColorFulCraft/CFCHistory/raw/main/pictures/icon.jpg" alt="ColorFulCraft Icon" width="150">
-
-  # ✨ ColorFulCraft｜多彩工艺✨
+  <img src="https://github.com/ColorFulCraft/CFCHistory/raw/main/pictures/icon.jpg " alt="ColorFulCraft Icon" width="150">
   
-  **<span style="color:red">⚠️ WARNING：服务器维护中！</span>**
-
-  ## *[主页](https://colorfulcraft.github.io/CFCHistory/)* | *[官网](https://blog.xhil.cn/)*
-  *默认文档* | *[维护文档](CONTRIBUTING.md)* | *[图片展示](pictures.md)*
+  # ✨ ColorFulCraft｜多彩工艺✨
+  ## *[主页](https://colorfulcraft.github.io/CFCHistory/ )* | *[官网](https://blog.xhil.cn/ )*
+  *默认文档*  |  *[维护文档](CONTRIBUTING.md)* | *[图片展示](pictures.md)*
 </div>
 
 ---
