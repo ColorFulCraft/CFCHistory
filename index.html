@@ -1,2253 +1,2266 @@
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColorFulCraft | 历史博物馆</title>
-    
-        <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="pictures/apple-touch-icon.png">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        <html lang="zh">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>ColorFulCraft | 历史博物馆</title>
+            
+                <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
+            <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
+            <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
+            <link rel="apple-touch-icon" sizes="180x180" href="pictures/apple-touch-icon.png">
+            
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+        
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    height: 100vh;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
+                    transition: background-color 0.5s ease;
+                    cursor: default;
+                }
+        
+                body.dark-mode {
+                    background-color: rgba(0, 0, 0, 0.7);
+                }
+        
+                /* 流动的渐变色背景 */
+                .gradient-bg {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+                    background-size: 400% 400%;
+                    animation: gradientFlow 15s ease infinite;
+                    z-index: -1;
+                    transition: filter 0.5s ease;
+                }
+        
+                body.dark-mode .gradient-bg {
+                    filter: brightness(0.6) hue-rotate(25deg);
+                }
+        
+                @keyframes gradientFlow {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+                    50% {
+                        background-position: 100% 50%;
+                    }
+                    100% {
+                        background-position: 0% 50%;
+                    }
+                }
+        
+                /* 云朵样式 */
+                .cloud {
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.8);
+                    border-radius: 50%;
+                    filter: blur(5px);
+                    z-index: -1;
+                    transition: background 0.5s ease;
+                }
+        
+                body.dark-mode .cloud {
+                    background: rgba(150, 150, 150, 0.6);
+                }
+        
+                .cloud:nth-child(1) {
+                    width: 150px;
+                    height: 60px;
+                    top: 20%;
+                    left: -150px;
+                    animation: cloudMove 25s linear infinite;
+                }
+        
+                .cloud:nth-child(2) {
+                    width: 200px;
+                    height: 80px;
+                    top: 40%;
+                    right: -200px;
+                    animation: cloudMove 30s linear infinite 5s;
+                }
+        
+                .cloud:nth-child(3) {
+                    width: 180px;
+                    height: 70px;
+                    bottom: 30%;
+                    left: -180px;
+                    animation: cloudMove 35s linear infinite 10s;
+                }
+        
+                .cloud:nth-child(4) {
+                    width: 220px;
+                    height: 90px;
+                    bottom: 20%;
+                    right: -220px;
+                    animation: cloudMove 40s linear infinite 15s;
+                }
+        
+                @keyframes cloudMove {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        transform: translateX(calc(100vw + 200px));
+                    }
+                }
+        
+                /* 内容容器 */
+                .content {
+                    text-align: center;
+                    animation: fadeIn 1s ease-in;
+                }
+        
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+        
+                /* 按钮容器 */
+                .button-container {
+                    display: flex;
+                    gap: 20px;
+                    margin-top: 20px;
+                    flex-wrap: wrap; /* 添加这行，允许换行 */
+                    justify-content: center; /* 保持居中 */
+                }    
+        
+                /* 标题样式 */
+                h1 {
+                    color: white;
+                    font-size: 3.5rem;
+                    margin-bottom: 2rem;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                    letter-spacing: 2px;
+                    animation: textPulse 5s infinite ease-in-out;
+                }
+        
+                @keyframes textPulse {
+                    0% {
+                        opacity: 0.8;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                    }
+                    50% {
+                        opacity: 1;
+                        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.3);
+                    }
+                    100% {
+                        opacity: 0.8;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                    }
+                }
+        
+                /* 按钮基础样式 */
+                .btn {
+                    position: relative;
+                    padding: 15px 40px;
+                    font-size: 1.2rem;
+                    border: none;
+                    border-radius: 50px;
+                    color: white;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                    overflow: hidden;
+                    animation: btnPulse 2.5s infinite ease-in-out;
+                }
+        
+                /* 跳转按钮样式 */
+                .jump-btn {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }
+        
+                body.dark-mode .jump-btn {
+                    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+                }
+        
+                /* 加入我们按钮样式 */
+                .join-btn {
+                    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+                }
+        
+                body.dark-mode .join-btn {
+                    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+                }
+        
+                @keyframes btnPulse {
+                    0%, 100% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(1.05);
+                    }
+                }
+        
+                .btn::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                    transition: left 0.5s;
+                    z-index: 1;
+                }
+        
+                .btn:hover::before {
+                    left: 100%;
+                }
+        
+                .btn:hover {
+                    transform: translateY(-3px) scale(1.05);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                    animation: none;
+                }
+        
+                .btn:active {
+                    transform: translateY(-1px) scale(1.02);
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+                }
+        
+                /* 触摸提示 */
+                .tooltip {
+                    position: absolute;
+                    bottom: -40px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    white-space: nowrap;
+                    z-index: 10;
+                }
+        
+                .btn:hover .tooltip {
+                    opacity: 1;
+                }
+        
+                /* 暗色模式切换按钮 */
+                .theme-toggle {
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.2);
+                    backdrop-filter: blur(10px);
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                }
+        
+                .theme-toggle:hover {
+                    transform: scale(1.1);
+                    background: rgba(255, 255, 255, 0.3);
+                }
+        
+                body.dark-mode .theme-toggle {
+                    background: rgba(255, 165, 0, 0.3);
+                }
+        
+                body.dark-mode .theme-toggle:hover {
+                    background: rgba(255, 165, 0, 0.5);
+                }
+        
+                .theme-toggle svg {
+                    width: 24px;
+                    height: 24px;
+                    fill: white;
+                    transition: all 0.3s ease;
+                }
+        
+                body.dark-mode .theme-toggle svg {
+                    fill: #ffa500;
+                    transform: rotate(180deg);
+                }
+        
+                /* 模式提示 */
+                .theme-tooltip {
+                    position: fixed;
+                    top: 75px;
+                    left: 20px;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    font-size: 0.8rem;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    z-index: 1000;
+                    white-space: nowrap;
+                }
+        
+                .theme-toggle:hover + .theme-tooltip {
+                    opacity: 1;
+                }
+        
+                /* 侧边栏样式 */
+                .wiki-sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: -300px;
+                    width: 300px;
+                    height: 100vh;
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+                    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    z-index: 1001; 
+                    padding: 20px;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                }
+        
+                body.dark-mode .wiki-sidebar {
+                    background: rgba(40, 40, 40, 0.95);
+                    color: #f0f0f0;
+                }
+        
+                .wiki-sidebar.active {
+                    left: 0;
+                    z-index: 1001;
+                }
+        
+                /* 侧边栏开关按钮 */
+                .sidebar-toggle {
+                    position: fixed;
+                    top: 50%;
+                    left: 0;
+                    transform: translateY(-50%);
+                    width: 24px;
+                    height: 60px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: none;
+                    border-radius: 0 8px 8px 0;
+                    cursor: pointer;
+                    z-index: 901;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 0.3s ease;
+                    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                }
+        
+                body.dark-mode .sidebar-toggle {
+                    background: rgba(40, 40, 40, 0.9);
+                }
+        
+                .sidebar-toggle:hover {
+                    width: 28px;
+                    background: rgba(255, 255, 255, 1);
+                }
+        
+                body.dark-mode .sidebar-toggle:hover {
+                    background: rgba(60, 60, 60, 1);
+                }
+        
+                .sidebar-toggle::after {
+                    content: '';
+                    width: 10px;
+                    height: 10px;
+                    border-right: 2px solid #333;
+                    border-bottom: 2px solid #333;
+                    transform: rotate(-45deg);
+                    transition: all 0.3s ease;
+                }
+        
+                body.dark-mode .sidebar-toggle::after {
+                    border-color: #f0f0f0;
+                }
+        
+                .wiki-sidebar.active + .sidebar-toggle::after {
+                    transform: rotate(135deg);
+                }
+        
+                .wiki-sidebar h2 {
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid #eee;
+                    color: #333;
+                }
+        
+                body.dark-mode .wiki-sidebar h2 {
+                    color: #f0f0f0;
+                    border-bottom: 2px solid #555;
+                }
+        
+                .wiki-links {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                }
+        
+                .wiki-link {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 12px 15px;
+                    background: rgba(255, 255, 255, 0.7);
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: #333;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                }
+        
+                body.dark-mode .wiki-link {
+                    background: rgba(60, 60, 60, 0.7);
+                    color: #f0f0f0;
+                }
+        
+                .wiki-link:hover {
+                    transform: translateX(5px);
+                    background: rgba(255, 255, 255, 0.9);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+        
+                body.dark-mode .wiki-link:hover {
+                    background: rgba(80, 80, 80, 0.9);
+                }
+        
+                .wiki-link span {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    transition: all 0.3s ease;
+                }
+        
+                body.dark-mode .wiki-link span {
+                    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+                }
+        
+                .wiki-link:hover span {
+                    transform: scale(1.05);
+                }
+        
+                /* 页脚样式 */
+                .footer {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    padding: 15px;
+                    text-align: center;
+                    background: rgba(0, 0, 0, 0.7);
+                    color: white;
+                    font-size: 0.9rem;
+                    z-index: 800;
+                    backdrop-filter: blur(5px);
+                }
+        
+                .footer a {
+                    color: #a0e7ff;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+        
+                .footer a:hover {
+                    color: #ffffff;
+                    text-decoration: underline;
+                }
+        
+                /* GitHub Stars 样式 */
+                .github-stars {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                    background: #1c1c1c;
+                    padding: 6px 12px;
+                    border-radius: 9999px;
+                    margin: 0 10px;
+                    transition: background-color 0.3s ease;
+                }
+        
+                .github-stars:hover {
+                    background: #2a2a2a;
+                }
+        
+                .github-stars a {
+                    display: flex;
+                    align-items: center;
+                    gap: 2px;
+                    text-decoration: none;
+                    color: inherit;
+                }
+        
+                .github-stars svg {
+                    width: 16px;
+                    height: 16px;
+                    fill: #9ca3af;
+                    transition: fill 0.3s ease;
+                }
+        
+                .github-stars:hover svg {
+                    fill: white;
+                }
+        
+                .github-stars .repo-name {
+                    color: #d1d5db;
+                    transition: color 0.3s ease;
+                }
+        
+                .github-stars:hover .repo-name {
+                    color: white;
+                }
+        
+                .stars-count {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 4px 8px;
+                    background: linear-gradient(to right, #3b82f6, #06b6d4);
+                    border-radius: 9999px;
+                    font-size: 0.75rem;
+                    color: white;
+                }
+        
+                .stars-count svg {
+                    width: 12px;
+                    height: 12px;
+                    fill: white;
+                }
+        
+                /* 下雨效果 */
+                .rain-effect {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    overflow: hidden;
+                }
+        
+                .raindrop {
+                    position: absolute;
+                    width: 2px;
+                    height: 15px;
+                    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.8));
+                    border-radius: 0 0 5px 5px;
+                    opacity: 0.6;
+                    animation: rainFall linear forwards;
+                    top: -20px; /* 从屏幕上方开始 */
+                }
+        
+                @keyframes rainFall {
+                    to {
+                        transform: translateY(calc(100vh + 20px));
+                    }
+                }
+        
+                /* 涟漪效果 */
+                .ripple {
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    border: 2px solid rgba(255, 255, 255, 0.8);
+                    border-radius: 50%;
+                    opacity: 0;
+                    animation: rippleEffect 1.5s ease-out forwards;
+                    z-index: 9998;
+                }
+        
+                @keyframes rippleEffect {
+                    0% {
+                        transform: scale(0.5);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+        
+                /* Emoji反馈效果 */
+                .emoji-feedback {
+                    position: absolute;
+                    font-size: 24px;
+                    pointer-events: none;
+                    z-index: 10000;
+                    animation: emojiRise 1.5s ease-out forwards;
+                    user-select: none;
+                }
+        
+                @keyframes emojiRise {
+                    0% {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                    30% {
+                        transform: translateY(-30px);
+                    }
+                    100% {
+                        transform: translateY(60px);
+                        opacity: 0;
+                    }
+                }
+        
+                        /* 文档按钮样式 */
+.docs-btn {
+    background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+    position: relative;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: btnPulse 2.5s infinite ease-in-out;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transition: background-color 0.5s ease;
-            cursor: default;
-        }
-
-        body.dark-mode {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        /* 流动的渐变色背景 */
-        .gradient-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientFlow 15s ease infinite;
-            z-index: -1;
-            transition: filter 0.5s ease;
-        }
-
-        body.dark-mode .gradient-bg {
-            filter: brightness(0.6) hue-rotate(25deg);
-        }
-
-        @keyframes gradientFlow {
-            0% {
-                background-position: 0% 50%;
+body.dark-mode .docs-btn {
+    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+}
+                
+                /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
             }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        /* 云朵样式 */
-        .cloud {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            filter: blur(5px);
-            z-index: -1;
-            transition: background 0.5s ease;
-        }
-
-        body.dark-mode .cloud {
-            background: rgba(150, 150, 150, 0.6);
-        }
-
-        .cloud:nth-child(1) {
-            width: 150px;
-            height: 60px;
-            top: 20%;
-            left: -150px;
-            animation: cloudMove 25s linear infinite;
-        }
-
-        .cloud:nth-child(2) {
-            width: 200px;
-            height: 80px;
-            top: 40%;
-            right: -200px;
-            animation: cloudMove 30s linear infinite 5s;
-        }
-
-        .cloud:nth-child(3) {
-            width: 180px;
-            height: 70px;
-            bottom: 30%;
-            left: -180px;
-            animation: cloudMove 35s linear infinite 10s;
-        }
-
-        .cloud:nth-child(4) {
-            width: 220px;
-            height: 90px;
-            bottom: 20%;
-            right: -220px;
-            animation: cloudMove 40s linear infinite 15s;
-        }
-
-        @keyframes cloudMove {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(100vw + 200px));
-            }
-        }
-
-        /* 内容容器 */
-        .content {
-            text-align: center;
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 按钮容器 */
-        .button-container {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        /* 标题样式 */
-        h1 {
-            color: white;
-            font-size: 3.5rem;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-            animation: textPulse 5s infinite ease-in-out;
-        }
-
-        @keyframes textPulse {
-            0% {
-                opacity: 0.8;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            }
-            50% {
-                opacity: 1;
-                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.3);
-            }
-            100% {
-                opacity: 0.8;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            }
-        }
-
-        /* 按钮基础样式 */
-        .btn {
-            position: relative;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            animation: btnPulse 2.5s infinite ease-in-out;
-        }
-
-        /* 跳转按钮样式 */
-        .jump-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        body.dark-mode .jump-btn {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-        }
-
-        /* 加入我们按钮样式 */
-        .join-btn {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-        }
-
-        body.dark-mode .join-btn {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-        }
-
-        @keyframes btnPulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-            z-index: 1;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            animation: none;
-        }
-
-        .btn:active {
-            transform: translateY(-1px) scale(1.02);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 触摸提示 */
-        .tooltip {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-            white-space: nowrap;
-            z-index: 10;
-        }
-
-        .btn:hover .tooltip {
-            opacity: 1;
-        }
-
-        /* 暗色模式切换按钮 */
-        .theme-toggle {
+                    
+                    .button-container {
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+                    
+                    .btn {
+                        padding: 12px 30px;
+                        font-size: 1rem;
+                    }
+        
+                    .cloud {
+                        filter: blur(3px);
+                    }
+        
+                    .cloud:nth-child(1) {
+                        width: 100px;
+                        height: 40px;
+                    }
+        
+                    .cloud:nth-child(2) {
+                        width: 130px;
+                        height: 50px;
+                    }
+        
+                    .cloud:nth-child(3) {
+                        width: 120px;
+                        height: 45px;
+                    }
+        
+                    .cloud:nth-child(4) {
+                        width: 150px;
+                        height: 60px;
+                    }
+        
+                    .wiki-sidebar {
+                        width: 250px;
+                        left: -250px;
+                    }
+        
+                    .wiki-sidebar.active {
+                        left: 0;
+                    }
+        
+                    .footer {
+                        font-size: 0.8rem;
+                        padding: 10px;
+                    }
+        
+                    .github-stars {
+                        margin: 5px 0;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                    }
+                }
+                        /* 贡献者容器样式 */
+                .contributors-container {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                    z-index: 900;
+                    overflow: hidden;
+                }
+        
+                .contributor-avatar {
+                    position: absolute;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background-size: cover;
+                    background-position: center;
+                    cursor: pointer;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    pointer-events: auto;
+                    border: 2px solid rgba(255, 255, 255, 0.8);
+                }
+        
+                .contributor-avatar:hover {
+                    transform: scale(1.2);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+                    z-index: 910;
+                }
+        
+                /* 贡献者信息提示框 */
+                .contributor-tooltip {
+                    position: absolute;
+                    background: rgba(0, 0, 0, 0.85);
+                    color: white;
+                    padding: 12px;
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    max-width: 200px;
+                    z-index: 920;
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    transform: translateY(-100%) translateX(-50%);
+                    left: 50%;
+                    top: -10px;
+                    text-align: center;
+                    backdrop-filter: blur(5px);
+                }
+        
+                .contributor-avatar:hover .contributor-tooltip {
+                    opacity: 1;
+                }
+        
+                .contributor-name {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+        
+                .contributor-stats {
+                    font-size: 0.8rem;
+                    color: #ccc;
+                }
+        
+                /* 评论区域样式 */
+                .comments-section {
+                    position: fixed;
+                    bottom: 60px;
+                    right: 20px;
+                    width: 400px;
+                    height: 500px;
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 12px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                    z-index: 1000;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    transform: translateY(calc(100% + 60px));
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+        
+                body.dark-mode .comments-section {
+                    background: rgba(40, 40, 40, 0.95);
+                    color: #f0f0f0;
+                }
+        
+                .comments-section.active {
+                    transform: translateY(0);
+                }
+        
+                .comments-header {
+                    padding: 15px 20px;
+                    border-bottom: 1px solid #eee;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: rgba(255, 255, 255, 0.8);
+                }
+        
+                body.dark-mode .comments-header {
+                    background: rgba(60, 60, 60, 0.8);
+                    border-bottom: 1px solid #555;
+                }
+        
+                .comments-title {
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                    color: #333;
+                }
+        
+                body.dark-mode .comments-title {
+                    color: #f0f0f0;
+                }
+        
+                .comments-close {
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    color: #666;
+                    transition: color 0.3s ease;
+                }
+        
+                .comments-close:hover {
+                    color: #333;
+                }
+        
+                body.dark-mode .comments-close {
+                    color: #aaa;
+                }
+        
+                body.dark-mode .comments-close:hover {
+                    color: #fff;
+                }
+        
+                .comments-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 10px;
+                }
+        
+                /* 评论切换按钮 */
+                .comments-toggle {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                    animation: btnPulse 2.5s infinite ease-in-out;
+                }
+        
+                body.dark-mode .comments-toggle {
+                    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+                }
+        
+                .comments-toggle:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                    animation: none;
+                }
+        
+                .comments-toggle svg {
+                    width: 24px;
+                    height: 24px;
+                    fill: white;
+                }
+        
+                /* 响应式调整 */
+                @media (max-width: 768px) {
+                    .contributor-avatar {
+                        width: 40px;
+                        height: 40px;
+                    }
+                    
+                    .contributor-tooltip {
+                        font-size: 0.8rem;
+                        max-width: 150px;
+                    }
+                }
+              
+        /* 访问统计悬浮窗 - Dock样式 */
+        .stats-dock {
             position: fixed;
             top: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        body.dark-mode .theme-toggle {
-            background: rgba(255, 165, 0, 0.3);
-        }
-
-        body.dark-mode .theme-toggle:hover {
-            background: rgba(255, 165, 0, 0.5);
-        }
-
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode .theme-toggle svg {
-            fill: #ffa500;
-            transform: rotate(180deg);
-        }
-
-        /* 模式提示 */
-        .theme-tooltip {
-            position: fixed;
-            top: 75px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(69, 160, 73, 0.95));
             color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-            white-space: nowrap;
-        }
-
-        .theme-toggle:hover + .theme-tooltip {
-            opacity: 1;
-        }
-
-        /* 侧边栏样式 */
-        .wiki-sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1001; 
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        body.dark-mode .wiki-sidebar {
-            background: rgba(40, 40, 40, 0.95);
-            color: #f0f0f0;
-        }
-
-        .wiki-sidebar.active {
-            left: 0;
-            z-index: 1001;
-        }
-
-        /* 侧边栏开关按钮 */
-        .sidebar-toggle {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            z-index: 901;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-        }
-
-        body.dark-mode .sidebar-toggle {
-            background: rgba(40, 40, 40, 0.9);
-        }
-
-        .sidebar-toggle:hover {
-            width: 28px;
-            background: rgba(255, 255, 255, 1);
-        }
-
-        body.dark-mode .sidebar-toggle:hover {
-            background: rgba(60, 60, 60, 1);
-        }
-
-        .sidebar-toggle::after {
-            content: '';
-            width: 10px;
-            height: 10px;
-            border-right: 2px solid #333;
-            border-bottom: 2px solid #333;
-            transform: rotate(-45deg);
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode .sidebar-toggle::after {
-            border-color: #f0f0f0;
-        }
-
-        .wiki-sidebar.active + .sidebar-toggle::after {
-            transform: rotate(135deg);
-        }
-
-        .wiki-sidebar h2 {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-            color: #333;
-        }
-
-        body.dark-mode .wiki-sidebar h2 {
-            color: #f0f0f0;
-            border-bottom: 2px solid #555;
-        }
-
-        .wiki-links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .wiki-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        body.dark-mode .wiki-link {
-            background: rgba(60, 60, 60, 0.7);
-            color: #f0f0f0;
-        }
-
-        .wiki-link:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        body.dark-mode .wiki-link:hover {
-            background: rgba(80, 80, 80, 0.9);
-        }
-
-        .wiki-link span {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode .wiki-link span {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-        }
-
-        .wiki-link:hover span {
-            transform: scale(1.05);
-        }
-
-        /* 页脚样式 */
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 15px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 0.9rem;
-            z-index: 800;
-            backdrop-filter: blur(5px);
-        }
-
-        .footer a {
-            color: #a0e7ff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-
-        /* GitHub Stars 样式 */
-        .github-stars {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #1c1c1c;
-            padding: 6px 12px;
-            border-radius: 9999px;
-            margin: 0 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .github-stars:hover {
-            background: #2a2a2a;
-        }
-
-        .github-stars a {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .github-stars svg {
-            width: 16px;
-            height: 16px;
-            fill: #9ca3af;
-            transition: fill 0.3s ease;
-        }
-
-        .github-stars:hover svg {
-            fill: white;
-        }
-
-        .github-stars .repo-name {
-            color: #d1d5db;
-            transition: color 0.3s ease;
-        }
-
-        .github-stars:hover .repo-name {
-            color: white;
-        }
-
-        .stars-count {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: linear-gradient(to right, #3b82f6, #06b6d4);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            color: white;
-        }
-
-        .stars-count svg {
-            width: 12px;
-            height: 12px;
-            fill: white;
-        }
-
-        /* 下雨效果 */
-        .rain-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .raindrop {
-            position: absolute;
-            width: 2px;
-            height: 15px;
-            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.8));
-            border-radius: 0 0 5px 5px;
-            opacity: 0.6;
-            animation: rainFall linear forwards;
-            top: -20px; /* 从屏幕上方开始 */
-        }
-
-        @keyframes rainFall {
-            to {
-                transform: translateY(calc(100vh + 20px));
-            }
-        }
-
-        /* 涟漪效果 */
-        .ripple {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            opacity: 0;
-            animation: rippleEffect 1.5s ease-out forwards;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 
+                0 8px 32px rgba(76, 175, 80, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             z-index: 9998;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            max-width: 400px;
+            width: auto;
+            min-width: 300px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
         }
-
-        @keyframes rippleEffect {
+        
+        @keyframes dockSlideIn {
             0% {
-                transform: scale(0.5);
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+            }
+            70% {
+                transform: translateX(-50%) translateY(10px);
                 opacity: 1;
             }
             100% {
-                transform: scale(4);
-                opacity: 0;
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
             }
         }
-
-        /* Emoji反馈效果 */
-        .emoji-feedback {
-            position: absolute;
-            font-size: 24px;
-            pointer-events: none;
-            z-index: 10000;
-            animation: emojiRise 1.5s ease-out forwards;
-            user-select: none;
-        }
-
-        @keyframes emojiRise {
+        
+        @keyframes dockSlideOut {
             0% {
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
             30% {
-                transform: translateY(-30px);
+                transform: translateX(-50%) translateY(10px);
+                opacity: 1;
             }
             100% {
-                transform: translateY(60px);
+                transform: translateX(-50%) translateY(-100px);
                 opacity: 0;
             }
         }
-
-                /* 文档按钮样式 */
-        .docs-btn {
-            background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+        
+        .stats-dock.hiding {
+            animation: dockSlideOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
-        body.dark-mode .docs-btn {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        .dock-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .greeting-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        
+        .greeting-icon {
+            font-size: 1.1rem;
+            animation: iconBounce 2s infinite;
+        }
+        
+        @keyframes iconBounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-3px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        .stats-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 暗色模式适配 */
+        body.dark-mode .stats-dock {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(27, 94, 32, 0.95));
+            box-shadow: 
+                0 8px 32px rgba(46, 125, 50, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        body.dark-mode .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        body.dark-mode .stat-item:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .button-container {
-                flex-direction: column;
+            .stats-dock {
+                top: 15px;
+                max-width: 90%;
+                min-width: 280px;
+                padding: 10px 20px;
             }
-        }
             
-            .button-container {
-                flex-direction: column;
+            .dock-content {
                 gap: 15px;
             }
             
-            .btn {
-                padding: 12px 30px;
+            .greeting-section {
+                font-size: 0.85rem;
+            }
+            
+            .stats-section {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                padding: 3px 10px;
+                gap: 4px;
+            }
+            
+            .stat-label {
+                font-size: 0.7rem;
+            }
+            
+            .stat-value {
+                font-size: 0.75rem;
+            }
+            
+            .greeting-icon {
                 font-size: 1rem;
             }
-
-            .cloud {
-                filter: blur(3px);
+        }
+        
+        @media (max-width: 480px) {
+            .stats-dock {
+                min-width: 250px;
+                padding: 8px 15px;
             }
-
-            .cloud:nth-child(1) {
-                width: 100px;
-                height: 40px;
+            
+            .greeting-section {
+                font-size: 0.8rem;
             }
-
-            .cloud:nth-child(2) {
-                width: 130px;
-                height: 50px;
+            
+            .greeting-icon {
+                display: none;
             }
-
-            .cloud:nth-child(3) {
-                width: 120px;
-                height: 45px;
+            
+            .stat-label {
+                font-size: 0.65rem;
             }
-
-            .cloud:nth-child(4) {
-                width: 150px;
-                height: 60px;
+            
+            .stat-value {
+                font-size: 0.7rem;
             }
-
-            .wiki-sidebar {
-                width: 250px;
-                left: -250px;
+        }
+        
+        /* 悬浮窗出现时的背景闪烁效果 */
+        @keyframes dockBackgroundPulse {
+            0% {
+                box-shadow: 
+                    0 8px 32px rgba(76, 175, 80, 0.3),
+                    0 2px 8px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
-
-            .wiki-sidebar.active {
+            50% {
+                box-shadow: 
+                    0 8px 32px rgba(76, 175, 80, 0.5),
+                    0 2px 12px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    0 0 20px rgba(76, 175, 80, 0.4);
+            }
+            100% {
+                box-shadow: 
+                    0 8px 32px rgba(76, 175, 80, 0.3),
+                    0 2px 8px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .stats-dock.pulse {
+            animation: 
+                dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                dockBackgroundPulse 2s ease-in-out 0.6s;
+        }
+            </style>
+        </head>
+        <body>
+            <div class="gradient-bg"></div>
+            
+            <!-- 贡献者头像容器 -->
+            <div class="contributors-container" id="contributorsContainer"></div>    
+            <!-- 下雨效果容器 -->
+            <div class="rain-effect" id="rainEffect"></div>
+            
+            <!-- 云朵元素 -->
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            
+        <!-- 访问统计悬浮窗 -->
+        <div class="stats-dock" id="statsPanel">
+            <div class="dock-content">
+                <div class="greeting-section">
+                    <span class="greeting-icon">👋</span>
+                    <span class="greeting-text" id="greetingText">早上好</span>
+                </div>
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">今日访问:</span>
+                        <span class="stat-value" id="todayCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">累计访问:</span>
+                        <span class="stat-value" id="totalCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <!-- 暗色模式切换按钮 -->
+            <button class="theme-toggle" id="themeToggle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 18c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6zm0-10c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm-9-2h2v-2h-2v2zm0 12h2v-2h-2v2zm12 0h2v-2h-2v2zm0-12h2v-2h-2v2z"/>
+                </svg>
+            </button>
+            <div class="theme-tooltip">切换浅色/暗色模式</div>
+            
+            <!-- 技术Wiki侧边栏 -->
+            <div class="wiki-sidebar" id="wikiSidebar">
+                <h2>技术Wiki</h2>
+                <div class="wiki-links" id="wikiLinks">
+                    <!-- 内容将通过JS排序 -->
+                </div>
+            </div>
+            
+            <!-- 侧边栏开关按钮 -->
+            <button class="sidebar-toggle" id="sidebarToggle"></button>
+            
+            <div class="content">
+                <h1>ColorFulCraft | 历史博物馆</h1>
+                <div class="button-container">
+                    <button class="btn jump-btn" onclick="window.location.href='https://github.com/ColorFulCraft/CFCHistory'">
+                        点我跳转
+                        <span class="tooltip">前往 GitHub 仓库</span>
+                    </button>
+                    <button class="btn join-btn" onclick="window.location.href='https://qm.qq.com/q/L8kNa8IJqu'">
+                        加入我们
+                        <span class="tooltip">加入QQ群</span>
+                    </button>
+                        <button class="btn docs-btn" onclick="window.location.href='documentation.html'" 
+                    style="background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);">
+                查看文档
+                <span class="tooltip">技术文档中心（带搜索）</span>
+            </button>
+                </div>
+            </div>
+            
+                <!-- 评论区域 -->
+            <div class="comments-section" id="commentsSection">
+                <div class="comments-header">
+                    <h3 class="comments-title">评论</h3>
+                    <button class="comments-close" id="commentsClose">×</button>
+                </div>
+                <div class="comments-container" id="commentsContainer">
+                    <!-- Utterances评论将在这里加载 -->
+                </div>
+            </div>
+            
+            <!-- 评论切换按钮 -->
+            <button class="comments-toggle" id="commentsToggle">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+                </svg>
+            </button>
+            
+            <!-- 页脚 -->
+            <div class="footer">
+                <div class="github-stars" id="githubStars">
+                    <a href="https://github.com/ColorFulCraft/CFCHistory" target="_blank" rel="noopener noreferrer">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="repo-name">ColorFulCraft/CFCHistory</span>
+                    </a>
+                    <div class="stars-count">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                        </svg>
+                        <span id="starsCount">加载中...</span>
+                    </div>
+                </div>
+                所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" target="_blank">许可证文件</a>
+            </div>
+        
+            <script>
+        // 访问统计功能
+        async function updateVisitStats() {
+            try {
+                console.log('📊 开始更新访问统计');
+                
+                // 更新问候语
+                const greetingText = document.getElementById('greetingText');
+                if (greetingText) {
+                    greetingText.textContent = getGreeting();
+                }
+                
+                // 获取统计数据
+                await fetchAndDisplayRealStats();
+                
+            } catch (error) {
+                console.error('更新访问统计失败:', error);
+            } finally {
+                // 无论成功失败，都显示统计面板
+                console.log('📊 统计更新完成，显示面板');
+                showStatsPanel();
+            }
+        }
+        
+        // 获取并显示真实统计数据
+        async function fetchAndDisplayRealStats() {
+            try {
+                const url = 'https://colorfulcraft.github.io/CFCHistory/stats/visit_stats.json?t=' + Date.now();
+                const statsResponse = await fetch(url);
+                
+                if (statsResponse.ok) {
+                    const content = await statsResponse.json();
+                    
+                    // 计算今日访问量
+                    const today = new Date().toISOString().split('T')[0];
+                    let todayVisits = 0;
+                    
+                    if (content.hourly_visits) {
+                        Object.entries(content.hourly_visits).forEach(([hourKey, count]) => {
+                            if (hourKey.startsWith(today)) {
+                                todayVisits += count;
+                            }
+                        });
+                    }
+                    
+                    // 更新显示（即使数据为0也更新）
+                    updateStatsDisplay(todayVisits, content.total_visits || 0);
+                }
+            } catch (error) {
+                // 静默失败，显示默认值
+                updateStatsDisplay(0, 0);
+            }
+        }
+        
+        // 更新统计显示
+        function updateStatsDisplay(todayCount, totalCount) {
+            const todayCountElement = document.getElementById('todayCount');
+            const totalCountElement = document.getElementById('totalCount');
+            
+            if (todayCountElement) {
+                todayCountElement.textContent = todayCount.toString();
+            }
+            if (totalCountElement) {
+                totalCountElement.textContent = totalCount.toString();
+            }
+        }
+        
+        // 获取问候语
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) {
+                return '早上好';
+            } else if (hour >= 12 && hour < 14) {
+                return '中午好';
+            } else if (hour >= 14 && hour < 18) {
+                return '下午好';
+            } else if (hour >= 18 && hour < 22) {
+                return '晚上好';
+            } else {
+                return '夜深了';
+            }
+        }
+        
+        
+        
+        // 免责声明弹窗
+        function showDisclaimer() {
+            console.log('showDisclaimer 函数被调用');
+            
+            // 检查用户是否已经同意过
+            if (localStorage.getItem('disclaimerAccepted') === 'true') {
+                console.log('用户已同意，跳过免责声明');
+                return;
+            }
+        
+            // 创建弹窗遮罩
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
                 left: 0;
-            }
-
-            .footer {
-                font-size: 0.8rem;
-                padding: 10px;
-            }
-
-            .github-stars {
-                margin: 5px 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
                 display: flex;
-                flex-direction: column;
-                gap: 5px;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                backdrop-filter: blur(5px);
+            `;
+        
+            // 创建弹窗内容
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 30px;
+                border-radius: 15px;
+                max-width: 500px;
+                width: 90%;
+                color: white;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: fadeIn 0.5s ease-in;
+            `;
+        
+            modal.innerHTML = `
+                <h2 style="margin-bottom: 20px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏛️ 免责声明</h2>
+                <div style="text-align: left; margin-bottom: 25px; line-height: 1.6; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <p style="margin-bottom: 15px;">欢迎访问 <strong>ColorFulCraft 历史博物馆</strong>！</p>
+                    <p style="margin-bottom: 15px;">本网站仅作为技术 Wiki 和资料存档使用，所有内容仅供学习和参考。</p>
+                    <p style="margin-bottom: 15px;"><strong>ColorFulCraft 保留解释权利</strong></p>
+                    <p style="margin-bottom: 15px;">请仔细阅读我们的许可证文件：</p>
+                    <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" 
+                       target="_blank" 
+                       style="color: #a0e7ff; text-decoration: none; font-weight: bold; display: inline-block; margin: 10px 0;">
+                       📄 查看完整许可证
+                    </a>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #e0e0e0;">
+                        <strong>点击"我同意"即表示您已阅读、理解并同意遵守上述许可证的所有条款和条件。</strong>
+                    </p>
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button id="disagreeBtn" style="padding: 12px 30px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">
+                        我不同意
+                    </button>
+                    <button id="agreeBtn" style="padding: 12px 30px; background: #4CAF50; border: none; color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
+                        我同意
+                    </button>
+                </div>
+            `;
+        
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+        
+            // 添加按钮事件
+            document.getElementById('agreeBtn').addEventListener('click', function() {
+                console.log('用户点击了同意按钮');
+                localStorage.setItem('disclaimerAccepted', 'true');
+                localStorage.setItem('agreementVersion', '2025.10.19');
+                localStorage.setItem('agreementDate', new Date().toISOString());
+                document.body.removeChild(overlay);
+                // 显示确认提示
+                showAgreementConfirmation();
+                // 开始正常的页面动画
+                startPageAnimations();
+            });
+        
+            document.getElementById('disagreeBtn').addEventListener('click', function() {
+                console.log('用户点击了不同意按钮');
+                // 返回上一页
+                if (document.referrer) {
+                    window.history.back();
+                } else {
+                    // 如果没有上一页，关闭窗口或跳转到其他页面
+                    window.close() || (window.location.href = 'about:blank');
+                }
+            });
+        
+            // 添加按钮悬停效果
+            const agreeBtn = document.getElementById('agreeBtn');
+            const disagreeBtn = document.getElementById('disagreeBtn');
+        
+            agreeBtn.addEventListener('mouseover', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+            });
+        
+            agreeBtn.addEventListener('mouseout', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+            });
+        
+            disagreeBtn.addEventListener('mouseover', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.background = 'rgba(255,255,255,0.3)';
+            });
+        
+            disagreeBtn.addEventListener('mouseout', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.background = 'rgba(255,255,255,0.2)';
+            });
+        }
+        
+        // 显示同意确认提示
+        function showAgreementConfirmation() {
+            console.log('显示同意确认提示');
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px);
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 12px;
+                box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+                z-index: 10001;
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                opacity: 0;
+                animation: slideDownFadeIn 0.6s ease-out forwards, slideUpFadeOut 0.6s ease-in 2.5s forwards;
+            `;
+        
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">✅</span>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">确认成功</div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">你已阅读并确认免责声明[2025.10.19版]</div>
+                    </div>
+                </div>
+            `;
+        
+            // 添加动画样式
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDownFadeIn {
+                    0% {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(-40px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                }
+                @keyframes slideUpFadeOut {
+                    0% {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(-40px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        
+            document.body.appendChild(notification);
+        
+            // 4秒后自动移除
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+                if (style.parentNode) {
+                    style.parentNode.removeChild(style);
+                }
+            }, 4000);
+        }
+        
+        // 开始页面动画
+        function startPageAnimations() {
+            console.log('开始页面动画');
+            // 这里可以添加其他页面初始化动画
+        }
+        
+        // 统计面板管理
+        let statsPanelTimer = null;
+        
+        function showStatsPanel() {
+            // 检查用户是否已经关闭过统计面板
+            if (localStorage.getItem('statsPanelClosed') === 'true') {
+                return;
             }
+        
+            const statsPanel = document.getElementById('statsPanel');
+            if (!statsPanel) return;
+            
+            console.log('🚀 显示统计面板');
+            
+            // 清除之前的计时器和类
+            statsPanel.classList.remove('hiding', 'pulse');
+            
+            // 显示面板
+            statsPanel.style.display = 'block';
+            setTimeout(() => {
+                statsPanel.classList.add('show');
+            }, 10);
+            
+            // 开始3秒后自动隐藏
+            startAutoHideTimer();
         }
-                /* 贡献者容器样式 */
-        .contributors-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 900;
-            overflow: hidden;
-        }
-
-        .contributor-avatar {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            pointer-events: auto;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .contributor-avatar:hover {
-            transform: scale(1.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            z-index: 910;
-        }
-
-        /* 贡献者信息提示框 */
-        .contributor-tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-width: 200px;
-            z-index: 920;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            transform: translateY(-100%) translateX(-50%);
-            left: 50%;
-            top: -10px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .contributor-avatar:hover .contributor-tooltip {
-            opacity: 1;
-        }
-
-        .contributor-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .contributor-stats {
-            font-size: 0.8rem;
-            color: #ccc;
-        }
-
-        /* 评论区域样式 */
-        .comments-section {
-            position: fixed;
-            bottom: 60px;
-            right: 20px;
-            width: 400px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: translateY(calc(100% + 60px));
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.dark-mode .comments-section {
-            background: rgba(40, 40, 40, 0.95);
-            color: #f0f0f0;
-        }
-
-        .comments-section.active {
-            transform: translateY(0);
-        }
-
-        .comments-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        body.dark-mode .comments-header {
-            background: rgba(60, 60, 60, 0.8);
-            border-bottom: 1px solid #555;
-        }
-
-        .comments-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        body.dark-mode .comments-title {
-            color: #f0f0f0;
-        }
-
-        .comments-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
-            transition: color 0.3s ease;
-        }
-
-        .comments-close:hover {
-            color: #333;
-        }
-
-        body.dark-mode .comments-close {
-            color: #aaa;
-        }
-
-        body.dark-mode .comments-close:hover {
-            color: #fff;
-        }
-
-        .comments-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        /* 评论切换按钮 */
-        .comments-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            animation: btnPulse 2.5s infinite ease-in-out;
-        }
-
-        body.dark-mode .comments-toggle {
-            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-        }
-
-        .comments-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            animation: none;
-        }
-
-        .comments-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-        }
-
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .contributor-avatar {
-                width: 40px;
-                height: 40px;
+        
+        function hideStatsPanel() {
+            const statsPanel = document.getElementById('statsPanel');
+            if (!statsPanel) return;
+            
+            console.log('🔻 隐藏统计面板');
+            
+            // 清除计时器
+            if (statsPanelTimer) {
+                clearTimeout(statsPanelTimer);
+                statsPanelTimer = null;
             }
             
-            .contributor-tooltip {
-                font-size: 0.8rem;
-                max-width: 150px;
+            // 添加隐藏动画
+            statsPanel.classList.remove('show');
+            statsPanel.classList.add('hiding');
+            
+            // 动画完成后完全隐藏
+            setTimeout(() => {
+                statsPanel.style.display = 'none';
+                statsPanel.classList.remove('hiding');
+                // 记录用户已经看到过统计面板
+                localStorage.setItem('statsPanelClosed', 'true');
+            }, 500);
+        }
+        
+        function startAutoHideTimer() {
+            console.log('⏰ 开始3秒自动隐藏计时');
+            
+            // 清除之前的计时器
+            if (statsPanelTimer) {
+                clearTimeout(statsPanelTimer);
+            }
+            
+            // 设置新的3秒计时器
+            statsPanelTimer = setTimeout(() => {
+                console.log('⏰ 3秒计时器触发，隐藏面板');
+                hideStatsPanel();
+            }, 3000);
+        }
+        
+        function setupStatsPanel() {
+            const statsPanel = document.getElementById('statsPanel');
+            if (!statsPanel) return;
+            
+            console.log('🔧 设置统计面板事件监听');
+            
+            // 鼠标悬停时暂停自动隐藏
+            statsPanel.addEventListener('mouseenter', function() {
+                console.log('🖱️ 鼠标进入，暂停自动隐藏');
+                if (statsPanelTimer) {
+                    clearTimeout(statsPanelTimer);
+                    statsPanelTimer = null;
+                }
+            });
+            
+            // 鼠标离开时重新开始计时
+            statsPanel.addEventListener('mouseleave', function() {
+                console.log('🖱️ 鼠标离开，重新开始3秒计时');
+                startAutoHideTimer();
+            });
+            
+            // 点击面板也可以立即隐藏
+            statsPanel.addEventListener('click', function() {
+                console.log('🖱️ 点击面板，立即隐藏');
+                hideStatsPanel();
+            });
+        }
+        
+        // Wiki链接数据
+        const wikiLinks = [
+            { text: "官网", url: "https://blog.xhil.cn/" },
+            { text: "音乐", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/music/readme.md" },
+            { text: "图片", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/readme.md" },
+            { text: "视频", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/videos/README.md" },
+            { text: "旧文件", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/README.md" },
+            { text: "更新日志", url: "https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log" },
+            { text: "查看服务器团队及其现状", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/about.md" },
+            { text: "服务器历史大事记目录", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/Directory.md" }
+        ];
+        
+        // 渲染Wiki链接（按字数排序）
+        function renderWikiLinks() {
+            const container = document.getElementById('wikiLinks');
+            container.innerHTML = '';
+            
+            // 按字数排序
+            const sortedLinks = [...wikiLinks].sort((a, b) => a.text.length - b.text.length);
+            
+            sortedLinks.forEach(link => {
+                const linkElement = document.createElement('a');
+                linkElement.href = link.url;
+                linkElement.className = 'wiki-link';
+                linkElement.target = '_blank';
+                linkElement.innerHTML = `
+                    ${link.text}
+                `;
+                container.appendChild(linkElement);
+            });
+        }
+        
+        // 暗色模式切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            // 保存用户偏好
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // 更新评论系统主题（如果已加载）
+            updateUtterancesTheme();
+        });
+        
+        // 侧边栏切换功能
+        const sidebar = document.getElementById('wikiSidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // 点击侧边栏外部关闭侧边栏
+        document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('active') && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // 下雨效果
+        function createRainEffect() {
+            const rainContainer = document.getElementById('rainEffect');
+            const dropsCount = 100;
+            
+            for (let i = 0; i < dropsCount; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'raindrop';
+                
+                // 随机位置和动画延迟
+                const left = Math.random() * 100;
+                const delay = Math.random() * 2;
+                const duration = 1 + Math.random() * 1; // 1-2秒
+                
+                drop.style.left = `${left}%`;
+                drop.style.animationDelay = `${delay}s`;
+                drop.style.animationDuration = `${duration}s`;
+                
+                // 创建涟漪效果
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = `${left}%`;
+                ripple.style.bottom = '0';
+                ripple.style.animationDelay = `${delay + duration - 0.2}s`;
+                
+                rainContainer.appendChild(drop);
+                rainContainer.appendChild(ripple);
+            }
+            
+            // 3秒后移除下雨效果
+            setTimeout(() => {
+                rainContainer.remove();
+            }, 3000);
+        }
+        
+        // 获取GitHub Stars数量
+        async function fetchGitHubStars() {
+            try {
+                const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory');
+                const data = await response.json();
+                
+                if (data.stargazers_count !== undefined) {
+                    document.getElementById('starsCount').textContent = `${data.stargazers_count} Stars`;
+                } else {
+                    document.getElementById('starsCount').textContent = 'N/A Stars';
+                }
+            } catch (error) {
+                console.error('获取GitHub Stars失败:', error);
+                document.getElementById('starsCount').textContent = '获取失败';
             }
         }
-      
-/* 访问统计悬浮窗 - Dock样式 */
-.stats-dock {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100px);
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(69, 160, 73, 0.95));
-    color: white;
-    padding: 12px 25px;
-    border-radius: 25px;
-    box-shadow: 
-        0 8px 32px rgba(76, 175, 80, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    z-index: 9998;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    max-width: 400px;
-    width: auto;
-    min-width: 300px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: default;
-}
-
-@keyframes dockSlideIn {
-    0% {
-        transform: translateX(-50%) translateY(-100px);
-        opacity: 0;
-    }
-    70% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes dockSlideOut {
-    0% {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-    30% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-50%) translateY(-100px);
-        opacity: 0;
-    }
-}
-
-.stats-dock.hiding {
-    animation: dockSlideOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.dock-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    position: relative;
-}
-
-.greeting-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-.greeting-icon {
-    font-size: 1.1rem;
-    animation: iconBounce 2s infinite;
-}
-
-@keyframes iconBounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-3px);
-    }
-    60% {
-        transform: translateY(-2px);
-    }
-}
-
-.stats-section {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex: 1;
-    justify-content: center;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.stat-item:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-1px);
-}
-
-.stat-label {
-    font-size: 0.75rem;
-    opacity: 0.9;
-    font-weight: 500;
-}
-
-.stat-value {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #ffeb3b;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* 暗色模式适配 */
-body.dark-mode .stats-dock {
-    background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(27, 94, 32, 0.95));
-    box-shadow: 
-        0 8px 32px rgba(46, 125, 50, 0.4),
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .stat-item {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-body.dark-mode .stat-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .stats-dock {
-        top: 15px;
-        max-width: 90%;
-        min-width: 280px;
-        padding: 10px 20px;
-    }
-    
-    .dock-content {
-        gap: 15px;
-    }
-    
-    .greeting-section {
-        font-size: 0.85rem;
-    }
-    
-    .stats-section {
-        gap: 15px;
-    }
-    
-    .stat-item {
-        padding: 3px 10px;
-        gap: 4px;
-    }
-    
-    .stat-label {
-        font-size: 0.7rem;
-    }
-    
-    .stat-value {
-        font-size: 0.75rem;
-    }
-    
-    .greeting-icon {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-dock {
-        min-width: 250px;
-        padding: 8px 15px;
-    }
-    
-    .greeting-section {
-        font-size: 0.8rem;
-    }
-    
-    .greeting-icon {
-        display: none;
-    }
-    
-    .stat-label {
-        font-size: 0.65rem;
-    }
-    
-    .stat-value {
-        font-size: 0.7rem;
-    }
-}
-
-/* 悬浮窗出现时的背景闪烁效果 */
-@keyframes dockBackgroundPulse {
-    0% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-    50% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.5),
-            0 2px 12px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3),
-            0 0 20px rgba(76, 175, 80, 0.4);
-    }
-    100% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-}
-
-.stats-dock.pulse {
-    animation: 
-        dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-        dockBackgroundPulse 2s ease-in-out 0.6s;
-}
-    </style>
-</head>
-<body>
-    <div class="gradient-bg"></div>
-    
-    <!-- 贡献者头像容器 -->
-    <div class="contributors-container" id="contributorsContainer"></div>    
-    <!-- 下雨效果容器 -->
-    <div class="rain-effect" id="rainEffect"></div>
-    
-    <!-- 云朵元素 -->
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    
-<!-- 访问统计悬浮窗 -->
-<div class="stats-dock" id="statsPanel">
-    <div class="dock-content">
-        <div class="greeting-section">
-            <span class="greeting-icon">👋</span>
-            <span class="greeting-text" id="greetingText">早上好</span>
-        </div>
-        <div class="stats-section">
-            <div class="stat-item">
-                <span class="stat-label">今日访问:</span>
-                <span class="stat-value" id="todayCount">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">累计访问:</span>
-                <span class="stat-value" id="totalCount">0</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <!-- 暗色模式切换按钮 -->
-    <button class="theme-toggle" id="themeToggle">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12 18c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6zm0-10c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm-9-2h2v-2h-2v2zm0 12h2v-2h-2v2zm12 0h2v-2h-2v2zm0-12h2v-2h-2v2z"/>
-        </svg>
-    </button>
-    <div class="theme-tooltip">切换浅色/暗色模式</div>
-    
-    <!-- 技术Wiki侧边栏 -->
-    <div class="wiki-sidebar" id="wikiSidebar">
-        <h2>技术Wiki</h2>
-        <div class="wiki-links" id="wikiLinks">
-            <!-- 内容将通过JS排序 -->
-        </div>
-    </div>
-    
-    <!-- 侧边栏开关按钮 -->
-    <button class="sidebar-toggle" id="sidebarToggle"></button>
-    
-    <div class="content">
-        <h1>ColorFulCraft | 历史博物馆</h1>
-        <div class="button-container">
-            <button class="btn jump-btn" onclick="window.location.href='https://github.com/ColorFulCraft/CFCHistory'">
-                点我跳转
-                <span class="tooltip">前往 GitHub 仓库</span>
-            </button>
-            <button class="btn join-btn" onclick="window.location.href='https://qm.qq.com/q/L8kNa8IJqu'">
-                加入我们
-                <span class="tooltip">加入QQ群</span>
-            </button>
-                <button class="btn docs-btn" onclick="window.location.href='documentation.html'" 
-            style="background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);">
-        查看文档
-        <span class="tooltip">技术文档中心（带搜索）</span>
-    </button>
-        </div>
-    </div>
-    
-        <!-- 评论区域 -->
-    <div class="comments-section" id="commentsSection">
-        <div class="comments-header">
-            <h3 class="comments-title">评论</h3>
-            <button class="comments-close" id="commentsClose">×</button>
-        </div>
-        <div class="comments-container" id="commentsContainer">
-            <!-- Utterances评论将在这里加载 -->
-        </div>
-    </div>
-    
-    <!-- 评论切换按钮 -->
-    <button class="comments-toggle" id="commentsToggle">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
-        </svg>
-    </button>
-    
-    <!-- 页脚 -->
-    <div class="footer">
-        <div class="github-stars" id="githubStars">
-            <a href="https://github.com/ColorFulCraft/CFCHistory" target="_blank" rel="noopener noreferrer">
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="repo-name">ColorFulCraft/CFCHistory</span>
-            </a>
-            <div class="stars-count">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
-                </svg>
-                <span id="starsCount">加载中...</span>
-            </div>
-        </div>
-        所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" target="_blank">许可证文件</a>
-    </div>
-
-    <script>
-// 访问统计功能
-async function updateVisitStats() {
-    try {
-        console.log('📊 开始更新访问统计');
         
-        // 更新问候语
-        const greetingText = document.getElementById('greetingText');
-        if (greetingText) {
-            greetingText.textContent = getGreeting();
+        // Emoji点击反馈
+        function createEmojiFeedback(e) {
+            // 排除按钮点击，避免干扰正常交互
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+            
+            const emojis = ['✨', '⭐', '🌟', '💫', '🔥', '💖', '💎', '🎉', '😊', '🤩', '😍', '🎊', '❤️', '💯'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const emojiElement = document.createElement('div');
+            emojiElement.className = 'emoji-feedback';
+            emojiElement.textContent = randomEmoji;
+            emojiElement.style.left = `${e.clientX - 12}px`;
+            emojiElement.style.top = `${e.clientY - 12}px`;
+            
+            document.body.appendChild(emojiElement);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                emojiElement.remove();
+            }, 1500);
         }
         
-        // 获取统计数据
-        await fetchAndDisplayRealStats();
+        // 贡献者数据结构
+        let contributors = [];
         
-    } catch (error) {
-        console.error('更新访问统计失败:', error);
-    } finally {
-        // 无论成功失败，都显示统计面板
-        console.log('📊 统计更新完成，显示面板');
-        showStatsPanel();
-    }
-}
-
-// 获取并显示真实统计数据
-async function fetchAndDisplayRealStats() {
-    try {
-        const url = 'https://colorfulcraft.github.io/CFCHistory/stats/visit_stats.json?t=' + Date.now();
-        const statsResponse = await fetch(url);
+        // 获取贡献者数据
+        async function fetchContributors() {
+            // 检查缓存
+            const cachedContributors = localStorage.getItem('cfc_contributors');
+            const cacheTimestamp = localStorage.getItem('cfc_contributors_timestamp');
+            
+            // 如果缓存存在且未过期（1小时）
+            if (cachedContributors && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < 3600000) {
+                contributors = JSON.parse(cachedContributors);
+                createContributorAvatars();
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/contributors');
+                if (!response.ok) throw new Error('获取贡献者数据失败');
+                
+                const data = await response.json();
+                
+                // 获取额外信息（贡献次数和最近贡献时间）
+                const contributorsWithDetails = await Promise.all(
+                    data.map(async contributor => {
+                        try {
+                            const detailsResponse = await fetch(contributor.url);
+                            if (!detailsResponse.ok) throw new Error('获取贡献者详情失败');
+                            
+                            const details = await detailsResponse.json();
+                            
+                            return {
+                                id: contributor.id,
+                                login: contributor.login,
+                                avatar_url: contributor.avatar_url,
+                                html_url: contributor.html_url,
+                                contributions: contributor.contributions,
+                                updated_at: details.updated_at || new Date().toISOString()
+                            };
+                        } catch (error) {
+                            console.error('获取贡献者详情出错:', error);
+                            return {
+                                id: contributor.id,
+                                login: contributor.login,
+                                avatar_url: contributor.avatar_url,
+                                html_url: contributor.html_url,
+                                contributions: contributor.contributions,
+                                updated_at: new Date().toISOString()
+                            };
+                        }
+                    })
+                );
+                
+                contributors = contributorsWithDetails;
+                
+                // 保存到缓存
+                localStorage.setItem('cfc_contributors', JSON.stringify(contributors));
+                localStorage.setItem('cfc_contributors_timestamp', Date.now().toString());
+                
+                createContributorAvatars();
+            } catch (error) {
+                console.error('获取贡献者数据出错:', error);
+                
+                // 如果API请求失败但缓存存在，使用缓存
+                if (cachedContributors) {
+                    contributors = JSON.parse(cachedContributors);
+                    createContributorAvatars();
+                }
+            }
+        }
         
-        if (statsResponse.ok) {
-            const content = await statsResponse.json();
+        // 创建贡献者头像
+        function createContributorAvatars() {
+            const container = document.getElementById('contributorsContainer');
+            container.innerHTML = '';
             
-            // 计算今日访问量
-            const today = new Date().toISOString().split('T')[0];
-            let todayVisits = 0;
-            
-            if (content.hourly_visits) {
-                Object.entries(content.hourly_visits).forEach(([hourKey, count]) => {
-                    if (hourKey.startsWith(today)) {
-                        todayVisits += count;
+            contributors.forEach(contributor => {
+                const avatar = document.createElement('div');
+                avatar.className = 'contributor-avatar';
+                avatar.style.backgroundImage = `url(${contributor.avatar_url})`;
+                
+                // 创建信息提示框
+                const tooltip = document.createElement('div');
+                tooltip.className = 'contributor-tooltip';
+                
+                const name = document.createElement('div');
+                name.className = 'contributor-name';
+                name.textContent = contributor.login;
+                
+                const stats = document.createElement('div');
+                stats.className = 'contributor-stats';
+                stats.innerHTML = `贡献次数: ${contributor.contributions}<br>
+                                   最近更新: ${formatDate(contributor.updated_at)}`;
+                
+                tooltip.appendChild(name);
+                tooltip.appendChild(stats);
+                avatar.appendChild(tooltip);
+                
+                // 添加点击事件
+                avatar.addEventListener('click', (e) => {
+                    if (e.button === 0) { // 左键点击
+                        window.open(contributor.html_url, '_blank');
                     }
                 });
-            }
-            
-            // 更新显示（即使数据为0也更新）
-            updateStatsDisplay(todayVisits, content.total_visits || 0);
-        }
-    } catch (error) {
-        // 静默失败，显示默认值
-        updateStatsDisplay(0, 0);
-    }
-}
-
-// 更新统计显示
-function updateStatsDisplay(todayCount, totalCount) {
-    const todayCountElement = document.getElementById('todayCount');
-    const totalCountElement = document.getElementById('totalCount');
-    
-    if (todayCountElement) {
-        todayCountElement.textContent = todayCount.toString();
-    }
-    if (totalCountElement) {
-        totalCountElement.textContent = totalCount.toString();
-    }
-}
-
-// 获取问候语
-function getGreeting() {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-        return '早上好';
-    } else if (hour >= 12 && hour < 14) {
-        return '中午好';
-    } else if (hour >= 14 && hour < 18) {
-        return '下午好';
-    } else if (hour >= 18 && hour < 22) {
-        return '晚上好';
-    } else {
-        return '夜深了';
-    }
-}
-
-
-
-// 免责声明弹窗
-function showDisclaimer() {
-    console.log('showDisclaimer 函数被调用');
-    
-    // 检查用户是否已经同意过
-    if (localStorage.getItem('disclaimerAccepted') === 'true') {
-        console.log('用户已同意，跳过免责声明');
-        return;
-    }
-
-    // 创建弹窗遮罩
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-        backdrop-filter: blur(5px);
-    `;
-
-    // 创建弹窗内容
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 30px;
-        border-radius: 15px;
-        max-width: 500px;
-        width: 90%;
-        color: white;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        animation: fadeIn 0.5s ease-in;
-    `;
-
-    modal.innerHTML = `
-        <h2 style="margin-bottom: 20px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏛️ 免责声明</h2>
-        <div style="text-align: left; margin-bottom: 25px; line-height: 1.6; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
-            <p style="margin-bottom: 15px;">欢迎访问 <strong>ColorFulCraft 历史博物馆</strong>！</p>
-            <p style="margin-bottom: 15px;">本网站仅作为技术 Wiki 和资料存档使用，所有内容仅供学习和参考。</p>
-            <p style="margin-bottom: 15px;"><strong>ColorFulCraft 保留解释权利</strong></p>
-            <p style="margin-bottom: 15px;">请仔细阅读我们的许可证文件：</p>
-            <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" 
-               target="_blank" 
-               style="color: #a0e7ff; text-decoration: none; font-weight: bold; display: inline-block; margin: 10px 0;">
-               📄 查看完整许可证
-            </a>
-            <p style="margin-top: 15px; font-size: 0.9em; color: #e0e0e0;">
-                <strong>点击"我同意"即表示您已阅读、理解并同意遵守上述许可证的所有条款和条件。</strong>
-            </p>
-        </div>
-        <div style="display: flex; gap: 15px; justify-content: center;">
-            <button id="disagreeBtn" style="padding: 12px 30px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">
-                我不同意
-            </button>
-            <button id="agreeBtn" style="padding: 12px 30px; background: #4CAF50; border: none; color: white; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">
-                我同意
-            </button>
-        </div>
-    `;
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    // 添加按钮事件
-    document.getElementById('agreeBtn').addEventListener('click', function() {
-        console.log('用户点击了同意按钮');
-        localStorage.setItem('disclaimerAccepted', 'true');
-        localStorage.setItem('agreementVersion', '2025.10.19');
-        localStorage.setItem('agreementDate', new Date().toISOString());
-        document.body.removeChild(overlay);
-        // 显示确认提示
-        showAgreementConfirmation();
-        // 开始正常的页面动画
-        startPageAnimations();
-    });
-
-    document.getElementById('disagreeBtn').addEventListener('click', function() {
-        console.log('用户点击了不同意按钮');
-        // 返回上一页
-        if (document.referrer) {
-            window.history.back();
-        } else {
-            // 如果没有上一页，关闭窗口或跳转到其他页面
-            window.close() || (window.location.href = 'about:blank');
-        }
-    });
-
-    // 添加按钮悬停效果
-    const agreeBtn = document.getElementById('agreeBtn');
-    const disagreeBtn = document.getElementById('disagreeBtn');
-
-    agreeBtn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateY(-2px)';
-        this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
-    });
-
-    agreeBtn.addEventListener('mouseout', function() {
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
-    });
-
-    disagreeBtn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateY(-2px)';
-        this.style.background = 'rgba(255,255,255,0.3)';
-    });
-
-    disagreeBtn.addEventListener('mouseout', function() {
-        this.style.transform = 'translateY(0)';
-        this.style.background = 'rgba(255,255,255,0.2)';
-    });
-}
-
-// 显示同意确认提示
-function showAgreementConfirmation() {
-    console.log('显示同意确认提示');
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-20px);
-        background: linear-gradient(135deg, #4CAF50, #45a049);
-        color: white;
-        padding: 20px 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-        z-index: 10001;
-        text-align: center;
-        font-size: 1.1rem;
-        font-weight: 500;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-        opacity: 0;
-        animation: slideDownFadeIn 0.6s ease-out forwards, slideUpFadeOut 0.6s ease-in 2.5s forwards;
-    `;
-
-    notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.5rem;">✅</span>
-            <div>
-                <div style="font-weight: 600; margin-bottom: 5px;">确认成功</div>
-                <div style="font-size: 0.9rem; opacity: 0.9;">你已阅读并确认免责声明[2025.10.19版]</div>
-            </div>
-        </div>
-    `;
-
-    // 添加动画样式
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideDownFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-40px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-        @keyframes slideUpFadeOut {
-            0% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-40px);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(notification);
-
-    // 4秒后自动移除
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-        if (style.parentNode) {
-            style.parentNode.removeChild(style);
-        }
-    }, 4000);
-}
-
-// 开始页面动画
-function startPageAnimations() {
-    console.log('开始页面动画');
-    // 这里可以添加其他页面初始化动画
-}
-
-// 统计面板管理
-let statsPanelTimer = null;
-
-function showStatsPanel() {
-    // 检查用户是否已经关闭过统计面板
-    if (localStorage.getItem('statsPanelClosed') === 'true') {
-        return;
-    }
-
-    const statsPanel = document.getElementById('statsPanel');
-    if (!statsPanel) return;
-    
-    console.log('🚀 显示统计面板');
-    
-    // 清除之前的计时器和类
-    statsPanel.classList.remove('hiding', 'pulse');
-    
-    // 显示面板
-    statsPanel.style.display = 'block';
-    setTimeout(() => {
-        statsPanel.classList.add('show');
-    }, 10);
-    
-    // 开始3秒后自动隐藏
-    startAutoHideTimer();
-}
-
-function hideStatsPanel() {
-    const statsPanel = document.getElementById('statsPanel');
-    if (!statsPanel) return;
-    
-    console.log('🔻 隐藏统计面板');
-    
-    // 清除计时器
-    if (statsPanelTimer) {
-        clearTimeout(statsPanelTimer);
-        statsPanelTimer = null;
-    }
-    
-    // 添加隐藏动画
-    statsPanel.classList.remove('show');
-    statsPanel.classList.add('hiding');
-    
-    // 动画完成后完全隐藏
-    setTimeout(() => {
-        statsPanel.style.display = 'none';
-        statsPanel.classList.remove('hiding');
-        // 记录用户已经看到过统计面板
-        localStorage.setItem('statsPanelClosed', 'true');
-    }, 500);
-}
-
-function startAutoHideTimer() {
-    console.log('⏰ 开始3秒自动隐藏计时');
-    
-    // 清除之前的计时器
-    if (statsPanelTimer) {
-        clearTimeout(statsPanelTimer);
-    }
-    
-    // 设置新的3秒计时器
-    statsPanelTimer = setTimeout(() => {
-        console.log('⏰ 3秒计时器触发，隐藏面板');
-        hideStatsPanel();
-    }, 3000);
-}
-
-function setupStatsPanel() {
-    const statsPanel = document.getElementById('statsPanel');
-    if (!statsPanel) return;
-    
-    console.log('🔧 设置统计面板事件监听');
-    
-    // 鼠标悬停时暂停自动隐藏
-    statsPanel.addEventListener('mouseenter', function() {
-        console.log('🖱️ 鼠标进入，暂停自动隐藏');
-        if (statsPanelTimer) {
-            clearTimeout(statsPanelTimer);
-            statsPanelTimer = null;
-        }
-    });
-    
-    // 鼠标离开时重新开始计时
-    statsPanel.addEventListener('mouseleave', function() {
-        console.log('🖱️ 鼠标离开，重新开始3秒计时');
-        startAutoHideTimer();
-    });
-    
-    // 点击面板也可以立即隐藏
-    statsPanel.addEventListener('click', function() {
-        console.log('🖱️ 点击面板，立即隐藏');
-        hideStatsPanel();
-    });
-}
-
-// Wiki链接数据
-const wikiLinks = [
-    { text: "官网", url: "https://blog.xhil.cn/" },
-    { text: "音乐", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/music/readme.md" },
-    { text: "图片", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/readme.md" },
-    { text: "视频", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/videos/README.md" },
-    { text: "旧文件", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/old%20files/README.md" },
-    { text: "更新日志", url: "https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log" },
-    { text: "查看服务器团队及其现状", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/about.md" },
-    { text: "服务器历史大事记目录", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/Directory.md" }
-];
-
-// 渲染Wiki链接（按字数排序）
-function renderWikiLinks() {
-    const container = document.getElementById('wikiLinks');
-    container.innerHTML = '';
-    
-    // 按字数排序
-    const sortedLinks = [...wikiLinks].sort((a, b) => a.text.length - b.text.length);
-    
-    sortedLinks.forEach(link => {
-        const linkElement = document.createElement('a');
-        linkElement.href = link.url;
-        linkElement.className = 'wiki-link';
-        linkElement.target = '_blank';
-        linkElement.innerHTML = `
-            ${link.text}
-        `;
-        container.appendChild(linkElement);
-    });
-}
-
-// 暗色模式切换功能
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-
-// 检查本地存储的主题偏好
-if (localStorage.getItem('theme') === 'dark') {
-    body.classList.add('dark-mode');
-}
-
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    
-    // 保存用户偏好
-    if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
-    }
-    
-    // 更新评论系统主题（如果已加载）
-    updateUtterancesTheme();
-});
-
-// 侧边栏切换功能
-const sidebar = document.getElementById('wikiSidebar');
-const sidebarToggle = document.getElementById('sidebarToggle');
-
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
-
-// 点击侧边栏外部关闭侧边栏
-document.addEventListener('click', (e) => {
-    if (sidebar.classList.contains('active') && 
-        !sidebar.contains(e.target) && 
-        !sidebarToggle.contains(e.target)) {
-        sidebar.classList.remove('active');
-    }
-});
-
-// 下雨效果
-function createRainEffect() {
-    const rainContainer = document.getElementById('rainEffect');
-    const dropsCount = 100;
-    
-    for (let i = 0; i < dropsCount; i++) {
-        const drop = document.createElement('div');
-        drop.className = 'raindrop';
-        
-        // 随机位置和动画延迟
-        const left = Math.random() * 100;
-        const delay = Math.random() * 2;
-        const duration = 1 + Math.random() * 1; // 1-2秒
-        
-        drop.style.left = `${left}%`;
-        drop.style.animationDelay = `${delay}s`;
-        drop.style.animationDuration = `${duration}s`;
-        
-        // 创建涟漪效果
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple';
-        ripple.style.left = `${left}%`;
-        ripple.style.bottom = '0';
-        ripple.style.animationDelay = `${delay + duration - 0.2}s`;
-        
-        rainContainer.appendChild(drop);
-        rainContainer.appendChild(ripple);
-    }
-    
-    // 3秒后移除下雨效果
-    setTimeout(() => {
-        rainContainer.remove();
-    }, 3000);
-}
-
-// 获取GitHub Stars数量
-async function fetchGitHubStars() {
-    try {
-        const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory');
-        const data = await response.json();
-        
-        if (data.stargazers_count !== undefined) {
-            document.getElementById('starsCount').textContent = `${data.stargazers_count} Stars`;
-        } else {
-            document.getElementById('starsCount').textContent = 'N/A Stars';
-        }
-    } catch (error) {
-        console.error('获取GitHub Stars失败:', error);
-        document.getElementById('starsCount').textContent = '获取失败';
-    }
-}
-
-// Emoji点击反馈
-function createEmojiFeedback(e) {
-    // 排除按钮点击，避免干扰正常交互
-    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-    
-    const emojis = ['✨', '⭐', '🌟', '💫', '🔥', '💖', '💎', '🎉', '😊', '🤩', '😍', '🎊', '❤️', '💯'];
-    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    
-    const emojiElement = document.createElement('div');
-    emojiElement.className = 'emoji-feedback';
-    emojiElement.textContent = randomEmoji;
-    emojiElement.style.left = `${e.clientX - 12}px`;
-    emojiElement.style.top = `${e.clientY - 12}px`;
-    
-    document.body.appendChild(emojiElement);
-    
-    // 动画结束后移除元素
-    setTimeout(() => {
-        emojiElement.remove();
-    }, 1500);
-}
-
-// 贡献者数据结构
-let contributors = [];
-
-// 获取贡献者数据
-async function fetchContributors() {
-    // 检查缓存
-    const cachedContributors = localStorage.getItem('cfc_contributors');
-    const cacheTimestamp = localStorage.getItem('cfc_contributors_timestamp');
-    
-    // 如果缓存存在且未过期（1小时）
-    if (cachedContributors && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < 3600000) {
-        contributors = JSON.parse(cachedContributors);
-        createContributorAvatars();
-        return;
-    }
-    
-    try {
-        const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/contributors');
-        if (!response.ok) throw new Error('获取贡献者数据失败');
-        
-        const data = await response.json();
-        
-        // 获取额外信息（贡献次数和最近贡献时间）
-        const contributorsWithDetails = await Promise.all(
-            data.map(async contributor => {
-                try {
-                    const detailsResponse = await fetch(contributor.url);
-                    if (!detailsResponse.ok) throw new Error('获取贡献者详情失败');
-                    
-                    const details = await detailsResponse.json();
-                    
-                    return {
-                        id: contributor.id,
-                        login: contributor.login,
-                        avatar_url: contributor.avatar_url,
-                        html_url: contributor.html_url,
-                        contributions: contributor.contributions,
-                        updated_at: details.updated_at || new Date().toISOString()
-                    };
-                } catch (error) {
-                    console.error('获取贡献者详情出错:', error);
-                    return {
-                        id: contributor.id,
-                        login: contributor.login,
-                        avatar_url: contributor.avatar_url,
-                        html_url: contributor.html_url,
-                        contributions: contributor.contributions,
-                        updated_at: new Date().toISOString()
-                    };
-                }
-            })
-        );
-        
-        contributors = contributorsWithDetails;
-        
-        // 保存到缓存
-        localStorage.setItem('cfc_contributors', JSON.stringify(contributors));
-        localStorage.setItem('cfc_contributors_timestamp', Date.now().toString());
-        
-        createContributorAvatars();
-    } catch (error) {
-        console.error('获取贡献者数据出错:', error);
-        
-        // 如果API请求失败但缓存存在，使用缓存
-        if (cachedContributors) {
-            contributors = JSON.parse(cachedContributors);
-            createContributorAvatars();
-        }
-    }
-}
-
-// 创建贡献者头像
-function createContributorAvatars() {
-    const container = document.getElementById('contributorsContainer');
-    container.innerHTML = '';
-    
-    contributors.forEach(contributor => {
-        const avatar = document.createElement('div');
-        avatar.className = 'contributor-avatar';
-        avatar.style.backgroundImage = `url(${contributor.avatar_url})`;
-        
-        // 创建信息提示框
-        const tooltip = document.createElement('div');
-        tooltip.className = 'contributor-tooltip';
-        
-        const name = document.createElement('div');
-        name.className = 'contributor-name';
-        name.textContent = contributor.login;
-        
-        const stats = document.createElement('div');
-        stats.className = 'contributor-stats';
-        stats.innerHTML = `贡献次数: ${contributor.contributions}<br>
-                           最近更新: ${formatDate(contributor.updated_at)}`;
-        
-        tooltip.appendChild(name);
-        tooltip.appendChild(stats);
-        avatar.appendChild(tooltip);
-        
-        // 添加点击事件
-        avatar.addEventListener('click', (e) => {
-            if (e.button === 0) { // 左键点击
-                window.open(contributor.html_url, '_blank');
-            }
-        });
-        
-        container.appendChild(avatar);
-        
-        // 设置初始位置（屏幕顶部随机位置）
-        const startX = Math.random() * (window.innerWidth - 50);
-        avatar.style.left = `${startX}px`;
-        avatar.style.top = '-60px';
-        
-        // 开始掉落动画
-        setTimeout(() => {
-            dropAvatar(avatar);
-        }, Math.random() * 2000); // 随机延迟开始掉落
-    });
-}
-
-// 头像掉落动画
-function dropAvatar(avatar) {
-    const gravity = 0.2;
-    const bounceFactor = 0.7;
-    const friction = 0.99;
-    
-    let y = -60;
-    let velocityY = 0;
-    let velocityX = (Math.random() - 0.5) * 2; // 随机水平速度
-    
-    function animate() {
-        velocityY += gravity;
-        y += velocityY;
-        
-        // 水平移动
-        let x = parseFloat(avatar.style.left) + velocityX;
-        
-        // 边界检测（左右边界）
-        if (x < 0) {
-            x = 0;
-            velocityX = -velocityX * bounceFactor;
-        } else if (x > window.innerWidth - 50) {
-            x = window.innerWidth - 50;
-            velocityX = -velocityX * bounceFactor;
-        }
-        
-        // 底部边界检测
-        if (y > window.innerHeight - 50) {
-            y = window.innerHeight - 50;
-            velocityY = -velocityY * bounceFactor;
-            
-            // 添加摩擦力
-            velocityX *= friction;
-            
-            // 如果速度很小，停止动画
-            if (Math.abs(velocityY) < 0.5 && Math.abs(velocityX) < 0.2) {
-                return;
-            }
-        }
-        
-        avatar.style.top = `${y}px`;
-        avatar.style.left = `${x}px`;
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-}
-
-// 格式化日期
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-}
-
-// 评论功能
-const commentsSection = document.getElementById('commentsSection');
-const commentsToggle = document.getElementById('commentsToggle');
-const commentsClose = document.getElementById('commentsClose');
-const commentsContainer = document.getElementById('commentsContainer');
-
-// 调试函数 - 在控制台输出详细信息
-function debugLog(message, data = null) {
-    console.log(`[评论系统] ${message}`, data || '');
-}
-
-// 检查是否存在评论相关的Issue
-async function checkCommentsIssue() {
-    try {
-        debugLog('开始检查Issue...');
-        const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/issues?labels=comments');
-        
-        if (!response.ok) {
-            throw new Error(`GitHub API返回错误: ${response.status}`);
-        }
-        
-        const issues = await response.json();
-        debugLog('获取到的Issue列表:', issues);
-        
-        const hasIssue = issues.length > 0;
-        debugLog(`检查结果: ${hasIssue ? '找到Issue' : '未找到Issue'}`);
-        return hasIssue;
-        
-    } catch (error) {
-        debugLog('检查Issue时出错:', error);
-        return false;
-    }
-}
-
-// 显示创建Issue的引导界面
-function showIssueCreationGuide() {
-    debugLog('显示创建Issue引导界面');
-    commentsContainer.innerHTML = '';
-    
-    const guideContainer = document.createElement('div');
-    guideContainer.style.padding = '20px';
-    guideContainer.style.textAlign = 'center';
-    guideContainer.style.color = '#666';
-    
-    guideContainer.innerHTML = `
-        <div style="margin-bottom: 15px;">
-            <div style="font-size: 1.1rem; color: #ffa500; margin-bottom: 10px;">📝 需要创建评论专用Issue</div>
-            <div style="font-size: 0.9rem; margin-bottom: 15px;">
-                评论系统需要一个专用的GitHub Issue来存储所有评论。
-            </div>
-        </div>
-        <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20CFCHistory%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
-                style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 5px;">
-            📋 创建评论Issue
-        </button>
-        <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">
-            创建完成后，点击下方按钮重新加载
-        </div>
-        <button onclick="location.reload()" 
-                style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
-            重新加载页面
-        </button>
-    `;
-    
-    commentsContainer.appendChild(guideContainer);
-}
-
-// 更新Utterances主题
-function updateUtterancesTheme() {
-    const iframe = commentsContainer.querySelector('iframe');
-    if (iframe) {
-        // 重新加载评论系统以应用新主题
-        commentsContainer.innerHTML = '';
-        initUtterances();
-    }
-}
-
-// 初始化Utterances评论系统
-async function initUtterances() {
-    debugLog('开始初始化Utterances');
-    
-    // 先检查是否存在Issue
-    const hasIssue = await checkCommentsIssue();
-    
-    if (!hasIssue) {
-        debugLog('未找到Issue，显示引导界面');
-        showIssueCreationGuide();
-        return;
-    }
-    
-    debugLog('找到Issue，开始加载Utterances');
-    
-    // 清空容器
-    commentsContainer.innerHTML = '';
-    
-    // 添加加载状态提示
-    const loadingMsg = document.createElement('div');
-    loadingMsg.style.padding = '20px';
-    loadingMsg.style.textAlign = 'center';
-    loadingMsg.style.color = '#666';
-    loadingMsg.innerHTML = `
-        <div style="margin-bottom: 10px;">🔄 正在加载评论系统...</div>
-        <div style="font-size: 0.8rem; color: #999;">
-            这可能需要几秒钟时间
-        </div>
-    `;
-    commentsContainer.appendChild(loadingMsg);
-    
-    // 创建script元素
-    const script = document.createElement('script');
-    script.src = 'https://utteranc.es/client.js';
-    script.setAttribute('repo', 'ColorFulCraft/CFCHistory');
-    script.setAttribute('issue-term', '💬 CFCHistory - 评论专区');
-    script.setAttribute('label', 'comments');
-    script.setAttribute('theme', body.classList.contains('dark-mode') ? 'github-dark' : 'github-light');
-    script.setAttribute('crossorigin', 'anonymous');
-    script.async = true;
-    
-    let utterancesLoaded = false;
-    let successDetected = false;
-
-    script.onload = function() {
-        debugLog('Utterances脚本加载成功');
-        utterancesLoaded = true;
-        
-        // 更智能的成功检测
-        checkUtterancesSuccess();
-    };
-    
-    script.onerror = function(error) {
-        debugLog('Utterances脚本加载失败:', error);
-        showErrorMessage('评论系统加载失败，请检查控制台获取详细信息');
-    };
-    
-    commentsContainer.appendChild(script);
-    
-    // 改进的成功检测逻辑
-    function checkUtterancesSuccess() {
-        const iframe = commentsContainer.querySelector('iframe');
-        
-        if (!iframe) {
-            debugLog('未找到Utterances iframe，稍后重试');
-            // 如果iframe还没创建，稍后重试
-            if (!successDetected) {
-                setTimeout(checkUtterancesSuccess, 500);
-            }
-            return;
-        }
-        
-        debugLog('找到Utterances iframe');
-        
-        // 监听iframe加载完成
-        iframe.addEventListener('load', function() {
-            debugLog('Utterances iframe加载完成');
-            successDetected = true;
-            removeLoadingMessage();
-        });
-        
-        // 备用检测：通过观察iframe尺寸和内容
-        const checkContent = setInterval(() => {
-            if (successDetected) {
-                clearInterval(checkContent);
-                return;
-            }
-            
-            // 如果iframe有实际高度，说明内容加载成功
-            if (iframe.offsetHeight > 100) {
-                debugLog('通过尺寸判断评论系统加载成功');
-                successDetected = true;
-                removeLoadingMessage();
-                clearInterval(checkContent);
-            }
-        }, 500);
-        
-        // 8秒后超时处理
-        setTimeout(() => {
-            if (!successDetected && !utterancesLoaded) {
-                debugLog('评论系统加载超时');
-                showErrorMessage('评论系统加载超时，请刷新页面重试');
-            } else if (!successDetected && utterancesLoaded) {
-                // 脚本加载成功但内容可能还在加载，给更多时间
-                debugLog('脚本已加载，但内容仍在初始化，延长等待时间');
+                
+                container.appendChild(avatar);
+                
+                // 设置初始位置（屏幕顶部随机位置）
+                const startX = Math.random() * (window.innerWidth - 50);
+                avatar.style.left = `${startX}px`;
+                avatar.style.top = '-60px';
+                
+                // 开始掉落动画
                 setTimeout(() => {
-                    if (!successDetected) {
-                        showErrorMessage('评论系统初始化较慢，请耐心等待或刷新页面');
-                    }
-                }, 5000);
-            }
-        }, 8000);
-    }
-    
-    // 移除加载消息
-    function removeLoadingMessage() {
-        if (loadingMsg && loadingMsg.parentNode) {
-            loadingMsg.remove();
-            debugLog('加载消息已移除，评论系统显示正常');
+                    dropAvatar(avatar);
+                }, Math.random() * 2000); // 随机延迟开始掉落
+            });
         }
-    }
-}
-
-// 显示错误信息
-function showErrorMessage(message) {
-    const existingMsg = commentsContainer.querySelector('div');
-    if (existingMsg && !existingMsg.querySelector('iframe')) {
-        existingMsg.innerHTML = `
-            <div style="color: #ff6b6b; margin-bottom: 10px;">❌ ${message}</div>
-            <div style="font-size: 0.8rem; margin-bottom: 15px;">
-                请检查：<br>
-                1. GitHub仓库是公开的<br>
-                2. Utterances应用已安装<br>
-                3. 存在带有"comments"标签的Issue
-            </div>
-            <button onclick="initUtterances()" 
-                    style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
-                重新加载
-            </button>
-            <button onclick="location.reload()" 
-                    style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
-                刷新页面
-            </button>
-        `;
-    }
-}
-
-// 切换评论区域显示/隐藏
-commentsToggle.addEventListener('click', async () => {
-    commentsSection.classList.toggle('active');
-    if (commentsSection.classList.contains('active') && commentsContainer.children.length === 0) {
-        await initUtterances();
-    }
-});
-
-// 关闭评论区域
-commentsClose.addEventListener('click', () => {
-    commentsSection.classList.remove('active');
-});
-
-// 点击评论区域外部关闭
-document.addEventListener('click', (e) => {
-    if (commentsSection.classList.contains('active') && 
-        !commentsSection.contains(e.target) && 
-        !commentsToggle.contains(e.target)) {
-        commentsSection.classList.remove('active');
-    }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('🏠 页面加载完成');
-    
-    // 先显示免责声明
-    showDisclaimer();
-    
-    // 立即更新问候语
-    const greetingText = document.getElementById('greetingText');
-    if (greetingText) {
-        greetingText.textContent = getGreeting();
-    }
-    
-    // 设置统计面板事件监听
-    setupStatsPanel();
-    
-    // 初始化其他功能
-    renderWikiLinks();
-    createRainEffect();
-    fetchGitHubStars();
-    fetchContributors();
-    
-    // 添加点击事件监听器
-    document.addEventListener('click', createEmojiFeedback);
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        createEmojiFeedback(e);
-    });
-    
-    // 禁止文本选择和复制
-    document.addEventListener('selectstart', function(e) {
-        e.preventDefault();
-    });
-    
-    document.addEventListener('copy', function(e) {
-        e.preventDefault();
-    });
-    
-    // 如果用户已经同意，开始动画和统计
-    if (localStorage.getItem('disclaimerAccepted') === 'true') {
-        console.log('✅ 用户已同意免责声明，显示统计面板');
-        startPageAnimations();
-        updateVisitStats();
-    } else {
-        console.log('⏳ 等待用户同意免责声明');
-        // 等待免责声明处理完成
-        const checkDisclaimer = setInterval(() => {
-            const disclaimerOverlay = document.querySelector('div[style*="z-index: 10000"]');
-            if (!disclaimerOverlay || localStorage.getItem('disclaimerAccepted') === 'true') {
-                clearInterval(checkDisclaimer);
-                console.log('✅ 用户同意免责声明完成，显示统计面板');
+        
+        // 头像掉落动画
+        function dropAvatar(avatar) {
+            const gravity = 0.2;
+            const bounceFactor = 0.7;
+            const friction = 0.99;
+            
+            let y = -60;
+            let velocityY = 0;
+            let velocityX = (Math.random() - 0.5) * 2; // 随机水平速度
+            
+            function animate() {
+                velocityY += gravity;
+                y += velocityY;
+                
+                // 水平移动
+                let x = parseFloat(avatar.style.left) + velocityX;
+                
+                // 边界检测（左右边界）
+                if (x < 0) {
+                    x = 0;
+                    velocityX = -velocityX * bounceFactor;
+                } else if (x > window.innerWidth - 50) {
+                    x = window.innerWidth - 50;
+                    velocityX = -velocityX * bounceFactor;
+                }
+                
+                // 底部边界检测
+                if (y > window.innerHeight - 50) {
+                    y = window.innerHeight - 50;
+                    velocityY = -velocityY * bounceFactor;
+                    
+                    // 添加摩擦力
+                    velocityX *= friction;
+                    
+                    // 如果速度很小，停止动画
+                    if (Math.abs(velocityY) < 0.5 && Math.abs(velocityX) < 0.2) {
+                        return;
+                    }
+                }
+                
+                avatar.style.top = `${y}px`;
+                avatar.style.left = `${x}px`;
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        }
+        
+        // 评论功能
+        const commentsSection = document.getElementById('commentsSection');
+        const commentsToggle = document.getElementById('commentsToggle');
+        const commentsClose = document.getElementById('commentsClose');
+        const commentsContainer = document.getElementById('commentsContainer');
+        
+        // 调试函数 - 在控制台输出详细信息
+        function debugLog(message, data = null) {
+            console.log(`[评论系统] ${message}`, data || '');
+        }
+        
+        // 检查是否存在评论相关的Issue
+        async function checkCommentsIssue() {
+            try {
+                debugLog('开始检查Issue...');
+                const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/issues?labels=comments');
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API返回错误: ${response.status}`);
+                }
+                
+                const issues = await response.json();
+                debugLog('获取到的Issue列表:', issues);
+                
+                const hasIssue = issues.length > 0;
+                debugLog(`检查结果: ${hasIssue ? '找到Issue' : '未找到Issue'}`);
+                return hasIssue;
+                
+            } catch (error) {
+                debugLog('检查Issue时出错:', error);
+                return false;
+            }
+        }
+        
+        // 显示创建Issue的引导界面
+        function showIssueCreationGuide() {
+            debugLog('显示创建Issue引导界面');
+            commentsContainer.innerHTML = '';
+            
+            const guideContainer = document.createElement('div');
+            guideContainer.style.padding = '20px';
+            guideContainer.style.textAlign = 'center';
+            guideContainer.style.color = '#666';
+            
+            guideContainer.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 1.1rem; color: #ffa500; margin-bottom: 10px;">📝 需要创建评论专用Issue</div>
+                    <div style="font-size: 0.9rem; margin-bottom: 15px;">
+                        评论系统需要一个专用的GitHub Issue来存储所有评论。
+                    </div>
+                </div>
+                <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20CFCHistory%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
+                        style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 5px;">
+                    📋 创建评论Issue
+                </button>
+                <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">
+                    创建完成后，点击下方按钮重新加载
+                </div>
+                <button onclick="location.reload()" 
+                        style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
+                    重新加载页面
+                </button>
+            `;
+            
+            commentsContainer.appendChild(guideContainer);
+        }
+        
+        // 更新Utterances主题
+        function updateUtterancesTheme() {
+            const iframe = commentsContainer.querySelector('iframe');
+            if (iframe) {
+                // 重新加载评论系统以应用新主题
+                commentsContainer.innerHTML = '';
+                initUtterances();
+            }
+        }
+        
+        // 初始化Utterances评论系统
+        async function initUtterances() {
+            debugLog('开始初始化Utterances');
+            
+            // 先检查是否存在Issue
+            const hasIssue = await checkCommentsIssue();
+            
+            if (!hasIssue) {
+                debugLog('未找到Issue，显示引导界面');
+                showIssueCreationGuide();
+                return;
+            }
+            
+            debugLog('找到Issue，开始加载Utterances');
+            
+            // 清空容器
+            commentsContainer.innerHTML = '';
+            
+            // 添加加载状态提示
+            const loadingMsg = document.createElement('div');
+            loadingMsg.style.padding = '20px';
+            loadingMsg.style.textAlign = 'center';
+            loadingMsg.style.color = '#666';
+            loadingMsg.innerHTML = `
+                <div style="margin-bottom: 10px;">🔄 正在加载评论系统...</div>
+                <div style="font-size: 0.8rem; color: #999;">
+                    这可能需要几秒钟时间
+                </div>
+            `;
+            commentsContainer.appendChild(loadingMsg);
+            
+            // 创建script元素
+            const script = document.createElement('script');
+            script.src = 'https://utteranc.es/client.js';
+            script.setAttribute('repo', 'ColorFulCraft/CFCHistory');
+            script.setAttribute('issue-term', '💬 CFCHistory - 评论专区');
+            script.setAttribute('label', 'comments');
+            script.setAttribute('theme', body.classList.contains('dark-mode') ? 'github-dark' : 'github-light');
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+            
+            let utterancesLoaded = false;
+            let successDetected = false;
+        
+            script.onload = function() {
+                debugLog('Utterances脚本加载成功');
+                utterancesLoaded = true;
+                
+                // 更智能的成功检测
+                checkUtterancesSuccess();
+            };
+            
+            script.onerror = function(error) {
+                debugLog('Utterances脚本加载失败:', error);
+                showErrorMessage('评论系统加载失败，请检查控制台获取详细信息');
+            };
+            
+            commentsContainer.appendChild(script);
+            
+            // 改进的成功检测逻辑
+            function checkUtterancesSuccess() {
+                const iframe = commentsContainer.querySelector('iframe');
+                
+                if (!iframe) {
+                    debugLog('未找到Utterances iframe，稍后重试');
+                    // 如果iframe还没创建，稍后重试
+                    if (!successDetected) {
+                        setTimeout(checkUtterancesSuccess, 500);
+                    }
+                    return;
+                }
+                
+                debugLog('找到Utterances iframe');
+                
+                // 监听iframe加载完成
+                iframe.addEventListener('load', function() {
+                    debugLog('Utterances iframe加载完成');
+                    successDetected = true;
+                    removeLoadingMessage();
+                });
+                
+                // 备用检测：通过观察iframe尺寸和内容
+                const checkContent = setInterval(() => {
+                    if (successDetected) {
+                        clearInterval(checkContent);
+                        return;
+                    }
+                    
+                    // 如果iframe有实际高度，说明内容加载成功
+                    if (iframe.offsetHeight > 100) {
+                        debugLog('通过尺寸判断评论系统加载成功');
+                        successDetected = true;
+                        removeLoadingMessage();
+                        clearInterval(checkContent);
+                    }
+                }, 500);
+                
+                // 8秒后超时处理
+                setTimeout(() => {
+                    if (!successDetected && !utterancesLoaded) {
+                        debugLog('评论系统加载超时');
+                        showErrorMessage('评论系统加载超时，请刷新页面重试');
+                    } else if (!successDetected && utterancesLoaded) {
+                        // 脚本加载成功但内容可能还在加载，给更多时间
+                        debugLog('脚本已加载，但内容仍在初始化，延长等待时间');
+                        setTimeout(() => {
+                            if (!successDetected) {
+                                showErrorMessage('评论系统初始化较慢，请耐心等待或刷新页面');
+                            }
+                        }, 5000);
+                    }
+                }, 8000);
+            }
+            
+            // 移除加载消息
+            function removeLoadingMessage() {
+                if (loadingMsg && loadingMsg.parentNode) {
+                    loadingMsg.remove();
+                    debugLog('加载消息已移除，评论系统显示正常');
+                }
+            }
+        }
+        
+        // 显示错误信息
+        function showErrorMessage(message) {
+            const existingMsg = commentsContainer.querySelector('div');
+            if (existingMsg && !existingMsg.querySelector('iframe')) {
+                existingMsg.innerHTML = `
+                    <div style="color: #ff6b6b; margin-bottom: 10px;">❌ ${message}</div>
+                    <div style="font-size: 0.8rem; margin-bottom: 15px;">
+                        请检查：<br>
+                        1. GitHub仓库是公开的<br>
+                        2. Utterances应用已安装<br>
+                        3. 存在带有"comments"标签的Issue
+                    </div>
+                    <button onclick="initUtterances()" 
+                            style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
+                        重新加载
+                    </button>
+                    <button onclick="location.reload()" 
+                            style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
+                        刷新页面
+                    </button>
+                `;
+            }
+        }
+        
+        // 切换评论区域显示/隐藏
+        commentsToggle.addEventListener('click', async () => {
+            commentsSection.classList.toggle('active');
+            if (commentsSection.classList.contains('active') && commentsContainer.children.length === 0) {
+                await initUtterances();
+            }
+        });
+        
+        // 关闭评论区域
+        commentsClose.addEventListener('click', () => {
+            commentsSection.classList.remove('active');
+        });
+        
+        // 点击评论区域外部关闭
+        document.addEventListener('click', (e) => {
+            if (commentsSection.classList.contains('active') && 
+                !commentsSection.contains(e.target) && 
+                !commentsToggle.contains(e.target)) {
+                commentsSection.classList.remove('active');
+            }
+        });
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🏠 页面加载完成');
+            
+            // 先显示免责声明
+            showDisclaimer();
+            
+            // 立即更新问候语
+            const greetingText = document.getElementById('greetingText');
+            if (greetingText) {
+                greetingText.textContent = getGreeting();
+            }
+            
+            // 设置统计面板事件监听
+            setupStatsPanel();
+            
+            // 初始化其他功能
+            renderWikiLinks();
+            createRainEffect();
+            fetchGitHubStars();
+            fetchContributors();
+            
+            // 添加点击事件监听器
+            document.addEventListener('click', createEmojiFeedback);
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                createEmojiFeedback(e);
+            });
+            
+            // 禁止文本选择和复制
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+            });
+            
+            // 如果用户已经同意，开始动画和统计
+            if (localStorage.getItem('disclaimerAccepted') === 'true') {
+                console.log('✅ 用户已同意免责声明，显示统计面板');
                 startPageAnimations();
                 updateVisitStats();
+            } else {
+                console.log('⏳ 等待用户同意免责声明');
+                // 等待免责声明处理完成
+                const checkDisclaimer = setInterval(() => {
+                    const disclaimerOverlay = document.querySelector('div[style*="z-index: 10000"]');
+                    if (!disclaimerOverlay || localStorage.getItem('disclaimerAccepted') === 'true') {
+                        clearInterval(checkDisclaimer);
+                        console.log('✅ 用户同意免责声明完成，显示统计面板');
+                        startPageAnimations();
+                        updateVisitStats();
+                    }
+                }, 100);
             }
-        }, 100);
-    }
-});
-
-    </script>
-</body>
-
-</html>
-
+        });
+        
+            </script>
+        </body>
+        
+        </html>
+        
+        
