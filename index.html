@@ -628,11 +628,21 @@
             }
         }
 
+                /* 文档按钮样式 */
+        .docs-btn {
+            background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+        }
+        
+        body.dark-mode .docs-btn {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+        
         /* 响应式设计 */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
+            .button-container {
+                flex-direction: column;
             }
+        }
             
             .button-container {
                 flex-direction: column;
@@ -2240,3 +2250,4 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
