@@ -201,6 +201,17 @@
                 body.dark-mode .join-btn {
                     background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
                 }
+
+                .docs-btn {
+    background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+}
+
+                    body.dark-mode .docs-btn {
+    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+}
+                    body.dark-mode .docs-btn::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.2), transparent);
+}
         
                 @keyframes btnPulse {
                     0%, 100% {
@@ -1667,28 +1678,98 @@ body.dark-mode .docs-btn {
             });
         }
         
-        // 暗色模式切换功能
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
+// 暗色模式切换功能
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+
+// 检查本地存储的主题偏好
+if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    // 保存用户偏好
+    if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
+    }
+    
+    // 更新评论系统主题（如果已加载）
+    updateUtterancesTheme();
+    
+    // 🔥 新增：同步主题到文档页面
+    syncThemeToDocumentationPage();
+});
+
+// 🔥 新增函数：同步主题到文档页面
+function syncThemeToDocumentationPage() {
+    // 创建主题同步事件
+    const themeEvent = {
+        type: 'theme-change',
+        theme: body.classList.contains('dark-mode') ? 'dark' : 'light',
+        timestamp: Date.now()
+    };
+    
+    // 通过 localStorage 传递主题状态（文档页面会监听）
+    localStorage.setItem('cfc-theme-sync', JSON.stringify(themeEvent));
+    
+    // 设置3秒后清理，避免存储空间占用
+    setTimeout(() => {
+        localStorage.removeItem('cfc-theme-sync');
+    }, 3000);
+    
+    console.log(`🎨 主题已同步: ${themeEvent.theme} 模式`);
+}
+
+// 🔥 新增：页面加载时检查并同步主题状态
+window.addEventListener('load', () => {
+    // 如果用户从文档页面返回，检查是否需要同步
+    const lastThemeSync = localStorage.getItem('last-docs-theme');
+    if (lastThemeSync) {
+        const themeData = JSON.parse(lastThemeSync);
+        const currentTheme = localStorage.getItem('theme');
         
-        // 检查本地存储的主题偏好
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark-mode');
-        }
-        
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            // 保存用户偏好
-            if (body.classList.contains('dark-mode')) {
+        // 如果主题不一致，同步
+        if (themeData.theme !== currentTheme) {
+            if (themeData.theme === 'dark') {
+                body.classList.add('dark-mode');
                 localStorage.setItem('theme', 'dark');
             } else {
+                body.classList.remove('dark-mode');
                 localStorage.setItem('theme', 'light');
             }
-            
-            // 更新评论系统主题（如果已加载）
-            updateUtterancesTheme();
-        });
+            console.log('🔄 从文档页面同步主题:', themeData.theme);
+        }
+        
+        // 清理临时存储
+        localStorage.removeItem('last-docs-theme');
+    }
+});
+
+// 🔥 新增：监听来自文档页面的主题变化
+window.addEventListener('storage', (e) => {
+    if (e.key === 'docs-theme-update') {
+        try {
+            const themeData = JSON.parse(e.newValue);
+            if (themeData && themeData.theme) {
+                if (themeData.theme === 'dark' && !body.classList.contains('dark-mode')) {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                    console.log('📱 收到文档页面主题更新: 暗色模式');
+                } else if (themeData.theme === 'light' && body.classList.contains('dark-mode')) {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                    console.log('📱 收到文档页面主题更新: 亮色模式');
+                }
+            }
+        } catch (error) {
+            console.warn('主题同步解析错误:', error);
+        }
+    }
+});
         
         // 侧边栏切换功能
         const sidebar = document.getElementById('wikiSidebar');
@@ -2264,3 +2345,4 @@ body.dark-mode .docs-btn {
         </html>
         
         
+
