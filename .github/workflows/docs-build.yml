@@ -1,317 +1,160 @@
-// 放置在项目根目录：generate-docs.js
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+name: Auto Build Docs
 
-class DocsGenerator {
-  constructor() {
-    this.docsDir = path.join(__dirname, 'docs');
-    this.sidebarPath = path.join(this.docsDir, '_sidebar.md');
-    this.configPath = path.join(this.docsDir, '_config.json');
-  }
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs-auto.yml'
+  schedule:
+    - cron: '0 2 * * *'  # 每天凌晨2点
+  workflow_dispatch:
 
-  // 从GitHub API获取文件列表
-  async fetchDocsFromGitHub() {
-    return new Promise((resolve, reject) => {
-      const options = {
-        hostname: 'api.github.com',
-        path: '/repos/ColorFulCraft/CFCHistory/contents/docs',
-        headers: {
-          'User-Agent': 'Docs-Generator',
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      };
+permissions:
+  contents: write
 
-      https.get(options, (res) => {
-        let data = '';
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => {
-          try {
-            const files = JSON.parse(data);
-            resolve(files);
-          } catch (e) {
-            reject(e);
-          }
-        });
-      }).on('error', reject);
-    });
-  }
-
-  // 分类文档文件
-  categorizeFiles(files) {
-    const categories = {
-      '首页': [],
-      '目录': [],
-      '团队': [],
-      '历史': [],
-      '其他': []
-    };
-
-    files.forEach(file => {
-      if (file.type === 'file' && file.name.endsWith('.md')) {
-        const fileName = file.name;
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Generate Sidebar
+      run: |
+        # 创建自动生成脚本
+        cat > gen-sidebar.py << 'EOF'
+        import os
+        import json
+        from datetime import datetime
         
-        if (fileName === 'README.md') {
-          categories['首页'].push({
-            name: '🏠 文档首页',
-            file: fileName,
-            size: file.size
-          });
-        } else if (fileName === 'Directory.md') {
-          categories['目录'].push({
-            name: '📖 目录总览',
-            file: fileName,
-            size: file.size
-          });
-        } else if (fileName === 'about.md') {
-          categories['团队'].push({
-            name: '🎨 管理团队介绍',
-            file: fileName,
-            size: file.size
-          });
-        } else if (fileName.startsWith('history')) {
-          const pageNum = this.extractPageNumber(fileName);
-          let displayName = '📜 历史记载';
-          
-          if (fileName === 'history.md') {
-            displayName = '📜 历史记载（第一页）';
-          } else if (pageNum) {
-            displayName = `📜 历史记载（第${pageNum}页）`;
-          }
-          
-          categories['历史'].push({
-            name: displayName,
-            file: fileName,
-            pageNum: pageNum,
-            size: file.size
-          });
-        } else {
-          // 其他文档
-          const displayName = this.formatDisplayName(fileName);
-          categories['其他'].push({
-            name: `📄 ${displayName}`,
-            file: fileName,
-            size: file.size
-          });
+        docs_dir = 'docs'
+        sidebar_file = os.path.join(docs_dir, '_sidebar.md')
+        
+        # 获取所有.md文件
+        md_files = []
+        for file in os.listdir(docs_dir):
+            if file.endswith('.md') and not file.startswith('_'):
+                md_files.append(file)
+        
+        # 分类文件
+        categories = {
+            '首页': [],
+            '目录': [],
+            '团队': [],
+            '历史': [],
+            '其他': []
         }
-      }
-    });
-
-    // 对历史文档按页码排序
-    categories['历史'].sort((a, b) => {
-      if (a.pageNum === undefined) return -1;
-      if (b.pageNum === undefined) return 1;
-      return a.pageNum - b.pageNum;
-    });
-
-    return categories;
-  }
-
-  // 提取页码
-  extractPageNumber(fileName) {
-    const match = fileName.match(/history[_-]?(\d+)\.md$/i);
-    return match ? parseInt(match[1]) : null;
-  }
-
-  // 格式化显示名称
-  formatDisplayName(fileName) {
-    return fileName
-      .replace('.md', '')
-      .replace(/[_-]/g, ' ')
-      .replace(/^\w/, c => c.toUpperCase())
-      .replace(/\b\w/g, c => c.toUpperCase());
-  }
-
-  // 生成侧边栏Markdown
-  generateSidebar(categories) {
-    let content = `<!-- 
+        
+        for file in sorted(md_files):
+            if file == 'README.md':
+                categories['首页'].append({'name': '🏠 文档首页', 'file': file})
+            elif file == 'Directory.md':
+                categories['目录'].append({'name': '📖 目录总览', 'file': file})
+            elif file == 'about.md':
+                categories['团队'].append({'name': '🎨 管理团队介绍', 'file': file})
+            elif file.startswith('history'):
+                # 提取页码
+                if file == 'history.md':
+                    page_num = 1
+                    name = '历史记载 第1页'
+                else:
+                    # 提取 history_2.md 中的数字
+                    try:
+                        page_num = int(file.replace('history_', '').replace('.md', ''))
+                        name = f'历史记载 第{page_num}页'
+                    except:
+                        page_num = 999
+                        name = file.replace('.md', '')
+                
+                categories['历史'].append({
+                    'name': name,
+                    'file': file,
+                    'page_num': page_num
+                })
+            else:
+                categories['其他'].append({'name': f'📄 {file.replace(".md", "")}', 'file': file})
+        
+        # 对历史文档按页码排序
+        categories['历史'].sort(key=lambda x: x['page_num'])
+        
+        # 生成侧边栏内容
+        content = f"""<!-- 
   自动生成的侧边栏
-  生成时间: ${new Date().toLocaleString('zh-CN')}
+  生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
   不要手动修改此文件，修改会被覆盖
--->\n\n`;
+-->
 
-    // 首页
-    if (categories['首页'].length > 0) {
-      const home = categories['首页'][0];
-      content += `- [${home.name}](${home.file})\n\n`;
-    }
-
-    // 其他分类
-    const categoryOrder = ['目录', '团队', '历史', '其他'];
-    
-    categoryOrder.forEach(category => {
-      const items = categories[category];
-      if (items.length > 0) {
-        const icon = this.getCategoryIcon(category);
-        content += `## ${icon} ${category}\n\n`;
+"""
         
-        items.forEach(item => {
-          const sizeInfo = item.size > 1024 ? ` (${Math.round(item.size/1024)}KB)` : '';
-          content += `- [${item.name}](${item.file})${sizeInfo}\n`;
-        });
+        # 首页
+        for item in categories['首页']:
+            content += f"- [{item['name']}]({item['file']})\n\n"
         
-        content += '\n';
-      }
-    });
-
-    // 外部链接
-    content += `## 🔗 快速链接\n\n`;
-    content += `- [首页](../index.html)\n`;
-    content += `- [GitHub仓库](https://github.com/ColorFulCraft/CFCHistory)\n`;
-    content += `- [加入QQ群](https://qm.qq.com/q/L8kNa8IJqu)\n`;
-    content += `- [查看工作流](../.github/workflows/docs-build.yml)\n`;
-
-    return content;
-  }
-
-  getCategoryIcon(category) {
-    const icons = {
-      '首页': '🏠',
-      '目录': '📖',
-      '团队': '🎨',
-      '历史': '📜',
-      '其他': '📄'
-    };
-    return icons[category] || '📄';
-  }
-
-  // 生成配置文件
-  generateConfig(categories) {
-    const config = {
-      generated_at: new Date().toISOString(),
-      total_docs: Object.values(categories).reduce((sum, items) => sum + items.length, 0),
-      categories: {},
-      stats: {
-        last_updated: new Date().toISOString(),
-        version: '1.0.0'
-      }
-    };
-
-    Object.keys(categories).forEach(category => {
-      config.categories[category] = categories[category].map(item => ({
-        file: item.file,
-        display_name: item.name,
-        page_num: item.pageNum,
-        size: item.size
-      }));
-    });
-
-    return JSON.stringify(config, null, 2);
-  }
-
-  // 生成文档索引
-  generateIndex(categories) {
-    const totalDocs = Object.values(categories).reduce((sum, items) => sum + items.length, 0);
-    
-    let index = `# 📚 文档索引\n\n`;
-    index += `> 最后更新: ${new Date().toLocaleString('zh-CN')} | 共 ${totalDocs} 篇文档\n\n`;
-    
-    Object.entries(categories).forEach(([category, items]) => {
-      if (items.length > 0) {
-        const icon = this.getCategoryIcon(category);
-        index += `## ${icon} ${category} (${items.length}篇)\n\n`;
+        # 目录
+        if categories['目录']:
+            content += "## 📖 目录\n"
+            for item in categories['目录']:
+                content += f"- [{item['name']}]({item['file']})\n"
+            content += "\n"
         
-        items.forEach(item => {
-          const size = item.size > 1024 ? `${Math.round(item.size/1024)}KB` : `${item.size}B`;
-          index += `- [${item.name.replace(/^[^\s]+\s/, '')}](${item.file}) - ${size}\n`;
-        });
+        # 团队
+        if categories['团队']:
+            content += "## 🎨 管理团队\n"
+            for item in categories['团队']:
+                content += f"- [{item['name']}]({item['file']})\n"
+            content += "\n"
         
-        index += '\n';
-      }
-    });
-
-    return index;
-  }
-
-  // 主生成函数
-  async generate() {
-    try {
-      console.log('🚀 开始生成文档系统...');
-      
-      // 从GitHub获取文件（或本地扫描）
-      let files;
-      try {
-        files = await this.fetchDocsFromGitHub();
-        console.log('✅ 从GitHub API获取文件成功');
-      } catch (error) {
-        console.log('⚠️  GitHub API请求失败，使用本地文件');
-        files = this.scanLocalFiles();
-      }
-      
-      // 分类文件
-      const categories = this.categorizeFiles(files);
-      
-      // 生成侧边栏
-      const sidebarContent = this.generateSidebar(categories);
-      fs.writeFileSync(this.sidebarPath, sidebarContent);
-      console.log('✅ 侧边栏生成完成');
-      
-      // 生成配置文件
-      const configContent = this.generateConfig(categories);
-      fs.writeFileSync(this.configPath, configContent);
-      console.log('✅ 配置文件生成完成');
-      
-      // 生成索引页面
-      const indexPath = path.join(this.docsDir, 'INDEX.md');
-      const indexContent = this.generateIndex(categories);
-      fs.writeFileSync(indexPath, indexContent);
-      console.log('✅ 索引页面生成完成');
-      
-      // 输出统计信息
-      this.printStats(categories);
-      
-      console.log('🎉 文档系统生成完成！');
-      
-    } catch (error) {
-      console.error('❌ 生成失败:', error);
-      process.exit(1);
-    }
-  }
-
-  // 本地文件扫描（备用）
-  scanLocalFiles() {
-    const files = [];
-    
-    if (fs.existsSync(this.docsDir)) {
-      const items = fs.readdirSync(this.docsDir);
-      
-      items.forEach(item => {
-        const itemPath = path.join(this.docsDir, item);
-        const stats = fs.statSync(itemPath);
+        # 历史
+        if categories['历史']:
+            content += "## 📜 历史记载\n\n"
+            for item in categories['历史']:
+                content += f"- [{item['name']}]({item['file']})\n"
+            content += "\n"
         
-        files.push({
-          name: item,
-          type: stats.isDirectory() ? 'dir' : 'file',
-          size: stats.size,
-          path: itemPath
-        });
-      });
-    }
-    
-    return files;
-  }
-
-  // 打印统计信息
-  printStats(categories) {
-    console.log('\n📊 文档统计信息:');
-    console.log('═'.repeat(50));
-    
-    const total = Object.values(categories).reduce((sum, items) => sum + items.length, 0);
-    console.log(`📚 总文档数: ${total}`);
-    
-    Object.entries(categories).forEach(([category, items]) => {
-      if (items.length > 0) {
-        const icon = this.getCategoryIcon(category);
-        console.log(`${icon} ${category}: ${items.length}篇`);
-      }
-    });
-    
-    console.log('═'.repeat(50));
-    console.log(`🕒 生成时间: ${new Date().toLocaleString('zh-CN')}`);
-    console.log(`📁 侧边栏文件: ${this.sidebarPath}`);
-  }
-}
-
-// 运行生成器
-const generator = new DocsGenerator();
-generator.generate().catch(console.error);
+        # 其他
+        if categories['其他']:
+            content += "## 📄 其他文档\n"
+            for item in categories['其他']:
+                content += f"- [{item['name']}]({item['file']})\n"
+            content += "\n"
+        
+        # 外部链接
+        content += """## 🔗 快速链接
+- [返回主页](../index.html)
+- [GitHub仓库](https://github.com/ColorFulCraft/CFCHistory)
+- [加入QQ群](https://qm.qq.com/q/L8kNa8IJqu)
+"""
+        
+        # 写入文件
+        with open(sidebar_file, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        print(f"✅ 生成侧边栏完成，共 {len(md_files)} 个文档")
+        print(f"📁 历史文档: {len(categories['历史'])} 页")
+        
+        # 生成统计数据
+        stats = {
+            'generated_at': datetime.now().isoformat(),
+            'total_files': len(md_files),
+            'history_pages': len(categories['历史']),
+            'categories': {k: len(v) for k, v in categories.items()}
+        }
+        
+        with open(os.path.join(docs_dir, '_stats.json'), 'w', encoding='utf-8') as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+        
+        EOF
+        
+        python gen-sidebar.py
+        
+    - name: Create .nojekyll
+      run: touch .nojekyll
+      
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/_sidebar.md docs/_stats.json .nojekyll
+        git diff --cached --quiet || git commit -m "🤖 自动更新文档侧边栏 [skip ci]"
+        git push
