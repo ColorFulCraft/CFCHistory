@@ -1,11 +1,9 @@
-<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ColorFulCraft | 技术文档中心</title>
     
-    <!-- 复用您的 favicon -->
     <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
@@ -15,7 +13,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
     
     <style>
-        /* 复用您的背景动画 */
         * {
             margin: 0;
             padding: 0;
@@ -23,14 +20,14 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             height: 100vh;
             overflow-x: hidden;
             position: relative;
             cursor: default;
         }
 
-        /* 您的渐变色背景 */
+        /* 复用您的渐流动画背景 */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -68,63 +65,13 @@
             min-height: 100vh;
         }
 
-        /* 自定义侧边栏样式 */
-        .sidebar {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* 导航栏样式 */
-        .app-nav {
-            background: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* 搜索框样式 */
-        .search input {
-            background: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        }
-
-        /* 主内容区域 */
-        .markdown-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px !important;
-            margin: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* 暗色模式适配 */
+        /* 暗色模式支持 */
         body.dark-mode .gradient-bg {
             filter: brightness(0.6) hue-rotate(25deg);
         }
 
         body.dark-mode .content-overlay {
             background: rgba(0, 0, 0, 0.85);
-        }
-
-        body.dark-mode .sidebar {
-            background: rgba(40, 40, 40, 0.95) !important;
-        }
-
-        body.dark-mode .app-nav {
-            background: rgba(40, 40, 40, 0.9) !important;
-        }
-
-        body.dark-mode .markdown-section {
-            background: rgba(40, 40, 40, 0.95);
-            color: #f0f0f0;
-        }
-
-        body.dark-mode .search input {
-            background: rgba(60, 60, 60, 0.9) !important;
-            color: #f0f0f0;
         }
 
         /* 返回按钮 */
@@ -157,10 +104,111 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
+        /* Docsify 内容区域修复 */
+        .markdown-section {
+            max-width: 900px !important;
+            margin: 0 auto !important;
+            padding: 40px !important;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 侧边栏修复 */
+        .sidebar {
+            width: 260px !important;
+            padding: 20px !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 确保侧边栏链接可见 */
+        .sidebar-nav {
+            padding-left: 0 !important;
+        }
+
+        .sidebar-nav li {
+            list-style: none !important;
+            margin: 10px 0 !important;
+        }
+
+        .sidebar-nav a {
+            color: #333 !important;
+            text-decoration: none !important;
+            padding: 8px 15px !important;
+            border-radius: 5px !important;
+            display: block !important;
+            transition: all 0.3s ease !important;
+        }
+
+        /* 暗色模式适配 */
+        body.dark-mode .markdown-section {
+            background: rgba(40, 40, 40, 0.95);
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .sidebar {
+            background: rgba(40, 40, 40, 0.95) !important;
+        }
+
+        body.dark-mode .sidebar-nav a {
+            color: #f0f0f0 !important;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1) !important;
+            color: #667eea !important;
+        }
+
+        body.dark-mode .sidebar-nav a:hover {
+            background: rgba(255, 165, 0, 0.1) !important;
+            color: #ffa500 !important;
+        }
+
+        /* 标题样式修复 */
+        .markdown-section h1 {
+            font-size: 2.5rem !important;
+            margin-bottom: 1.5rem !important;
+            border-bottom: 2px solid #667eea !important;
+            padding-bottom: 0.5rem !important;
+            color: #333 !important;
+        }
+
+        body.dark-mode .markdown-section h1 {
+            border-bottom-color: #ffa500 !important;
+            color: #f0f0f0 !important;
+        }
+
+        /* 导航栏样式 */
+        .app-nav {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .app-nav {
+            background: rgba(40, 40, 40, 0.9) !important;
+        }
+
+        /* 搜索框样式 */
+        .search input {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        body.dark-mode .search input {
+            background: rgba(60, 60, 60, 0.9) !important;
+            color: #f0f0f0;
+        }
+
         /* 响应式调整 */
         @media (max-width: 768px) {
             .markdown-section {
-                margin: 10px;
+                margin: 10px !important;
                 padding: 20px !important;
             }
             
@@ -173,11 +221,15 @@
                 padding: 10px 16px;
                 font-size: 0.9rem;
             }
+            
+            .sidebar {
+                width: 200px !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 您的动态背景 -->
+    <!-- 动态背景 -->
     <div class="gradient-bg"></div>
     <div class="content-overlay"></div>
     
@@ -195,12 +247,19 @@
         window.$docsify = {
             name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
+            
+            // 🔥 关键配置：指定文档根目录
+            basePath: '/CFCHistory/docs/',
             loadSidebar: true,
+            alias: {
+                // 将根路径映射到 docs/README.md
+                '/.*/_sidebar.md': '/_sidebar.md',
+                '/': '/README.md'
+            },
             subMaxLevel: 3,
             auto2top: true,
-            coverpage: false,
             
-            // 🔍 搜索配置（核心功能）
+            // 🔍 搜索配置
             search: {
                 paths: 'auto',
                 placeholder: '🔍 搜索文档...',
@@ -218,10 +277,10 @@
                 function(hook, vm) {
                     hook.beforeEach(function(content) {
                         // 在每篇文章前添加编辑链接
+                        const editUrl = 'https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/' + vm.route.file;
                         return content + '\n\n---\n\n' +
                             '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
-                            ' | [在GitHub上编辑此页](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/' + 
-                            vm.route.file + ')\n';
+                            ' | [在GitHub上编辑此页](' + editUrl + ')\n';
                     });
                     
                     hook.doneEach(function() {
@@ -240,7 +299,6 @@
     <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
     
     <script>
         // 初始化暗色模式
@@ -248,25 +306,6 @@
             if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-mode');
             }
-            
-            // 同步暗色模式切换
-            const syncTheme = () => {
-                const isDark = localStorage.getItem('theme') === 'dark';
-                document.body.classList.toggle('dark-mode', isDark);
-                
-                // 更新 Docsify 搜索框主题
-                const searchInput = document.querySelector('.search input');
-                if (searchInput) {
-                    searchInput.style.backgroundColor = isDark ? 'rgba(60,60,60,0.9)' : 'rgba(255,255,255,0.9)';
-                    searchInput.style.color = isDark ? '#f0f0f0' : '#333';
-                }
-            };
-            
-            // 监听主题变化
-            window.addEventListener('storage', syncTheme);
-            
-            // 每5秒检查一次主题变化
-            setInterval(syncTheme, 5000);
         });
     </script>
 </body>
