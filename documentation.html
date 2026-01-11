@@ -1,0 +1,218 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ColorFulCraft | 技术文档中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="pictures/apple-touch-icon.png">
+    
+    <!-- Docsify 主题 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.5s ease;
+        }
+        
+        /* 文档头部 - 保留您的设计风格 */
+        .docs-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .docs-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .docs-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .docs-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 导航按钮组 */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.home {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+        
+        .nav-btn.github {
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+        }
+        
+        /* Docsify 容器调整 */
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .docs-header {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .docs-title {
+                font-size: 2rem;
+            }
+            
+            .docs-subtitle {
+                font-size: 1rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 80%;
+                text-align: center;
+            }
+            
+            #app {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 文档头部 -->
+    <header class="docs-header">
+        <div class="header-content">
+            <h1 class="docs-title">🏛️ ColorFulCraft 技术文档中心</h1>
+            <p class="docs-subtitle">完整的技术文档、API参考和使用指南 | 支持全文搜索</p>
+            
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-btn home">🏠 返回炫酷首页</a>
+                <a href="https://github.com/ColorFulCraft/CFCHistory" target="_blank" class="nav-btn github">⭐ GitHub 仓库</a>
+                <a href="https://qm.qq.com/q/L8kNa8IJqu" target="_blank" class="nav-btn">👥 加入QQ群</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Docsify 内容容器 -->
+    <div id="app"></div>
+    
+    <script>
+        window.$docsify = {
+            name: '🏛️ ColorFulCraft 文档中心',
+            repo: 'ColorFulCraft/CFCHistory',
+            loadSidebar: true,
+            subMaxLevel: 3,
+            auto2top: true,
+            
+            // 🔍 搜索配置（核心功能）
+            search: {
+                paths: 'auto',
+                placeholder: '🔍 搜索文档内容...',
+                noData: '😅 没有找到相关结果',
+                depth: 4,
+                hideOtherSidebarContent: false,
+                namespace: 'cfc-docs'
+            },
+            
+            // 主题颜色
+            themeColor: '#667eea',
+            
+            // 插件配置
+            plugins: [
+                function(hook, vm) {
+                    hook.beforeEach(function(content) {
+                        // 在每篇文章前添加编辑链接
+                        return content + '\n\n---\n\n' +
+                            '> 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
+                            ' | [📝 在GitHub上编辑此页](' + 
+                            'https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/' + 
+                            vm.route.file + ')\n';
+                    });
+                }
+            ]
+        };
+    </script>
+    
+    <!-- Docsify 核心库 -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 等待文档加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏛️ ColorFulCraft 文档中心已加载');
+            
+            // 自动检测暗色模式
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+</body>
+</html>
