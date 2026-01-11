@@ -1,9 +1,11 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>ColorFulCraft | 技术文档中心</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorFulCraft | 技术文档中心</title>
     
+    <!-- 复用您的 favicon -->
     <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
@@ -13,164 +15,195 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
     
     <style>
+        /* 复用您的背景动画 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            transition: background-color 0.5s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            cursor: default;
         }
-        
-        /* 文档头部 - 保留您的设计风格 */
-        .docs-header {
+
+        /* 您的渐变色背景 */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 半透明遮罩层，让文字可读 */
+        .content-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(3px);
+            z-index: -1;
+        }
+
+        /* Docsify 容器调整 */
+        #app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        /* 自定义侧边栏样式 */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 导航栏样式 */
+        .app-nav {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 搜索框样式 */
+        .search input {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* 主内容区域 */
+        .markdown-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px !important;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 暗色模式适配 */
+        body.dark-mode .gradient-bg {
+            filter: brightness(0.6) hue-rotate(25deg);
+        }
+
+        body.dark-mode .content-overlay {
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        body.dark-mode .sidebar {
+            background: rgba(40, 40, 40, 0.95) !important;
+        }
+
+        body.dark-mode .app-nav {
+            background: rgba(40, 40, 40, 0.9) !important;
+        }
+
+        body.dark-mode .markdown-section {
+            background: rgba(40, 40, 40, 0.95);
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .search input {
+            background: rgba(60, 60, 60, 0.9) !important;
+            color: #f0f0f0;
+        }
+
+        /* 返回按钮 */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .docs-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            animation: shine 3s infinite linear;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .docs-title {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .docs-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* 导航按钮组 */
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-btn {
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.15);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 30px;
+            border: none;
+            border-radius: 25px;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.25);
+
+        .back-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
-        
-        .nav-btn.home {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-        }
-        
-        .nav-btn.github {
-            background: linear-gradient(135deg, #333 0%, #555 100%);
-        }
-        
-        /* Docsify 容器调整 */
-        #app {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* 暗色模式支持 */
-        @media (prefers-color-scheme: dark) {
-            .docs-header {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            }
-        }
-        
-        /* 响应式设计 */
+
+        /* 响应式调整 */
         @media (max-width: 768px) {
-            .docs-title {
-                font-size: 2rem;
+            .markdown-section {
+                margin: 10px;
+                padding: 20px !important;
             }
             
-            .docs-subtitle {
-                font-size: 1rem;
+            .back-button {
+                top: 10px;
+                left: 10px;
             }
             
-            .nav-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .nav-btn {
-                width: 80%;
-                text-align: center;
-            }
-            
-            #app {
-                padding: 1rem;
+            .back-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 文档头部 -->
-    <header class="docs-header">
-        <div class="header-content">
-            <h1 class="docs-title">🏛️ ColorFulCraft 技术文档中心</h1>
-            <p class="docs-subtitle">完整的技术文档、API参考和使用指南 | 支持全文搜索</p>
-            
-            <div class="nav-buttons">
-                <a href="index.html" class="nav-btn home">🏠 返回炫酷首页</a>
-                <a href="https://github.com/ColorFulCraft/CFCHistory" target="_blank" class="nav-btn github">⭐ GitHub 仓库</a>
-                <a href="https://qm.qq.com/q/L8kNa8IJqu" target="_blank" class="nav-btn">👥 加入QQ群</a>
-            </div>
-        </div>
-    </header>
+    <!-- 您的动态背景 -->
+    <div class="gradient-bg"></div>
+    <div class="content-overlay"></div>
     
-    <!-- Docsify 内容容器 -->
+    <!-- 返回按钮 -->
+    <div class="back-button">
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <span>←</span> 返回首页
+        </button>
+    </div>
+    
+    <!-- Docsify 容器 -->
     <div id="app"></div>
     
     <script>
         window.$docsify = {
-            name: '🏛️ ColorFulCraft 文档中心',
+            name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
             loadSidebar: true,
             subMaxLevel: 3,
             auto2top: true,
+            coverpage: false,
             
             // 🔍 搜索配置（核心功能）
             search: {
                 paths: 'auto',
-                placeholder: '🔍 搜索文档内容...',
+                placeholder: '🔍 搜索文档...',
                 noData: '😅 没有找到相关结果',
                 depth: 4,
                 hideOtherSidebarContent: false,
@@ -186,10 +219,16 @@
                     hook.beforeEach(function(content) {
                         // 在每篇文章前添加编辑链接
                         return content + '\n\n---\n\n' +
-                            '> 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
-                            ' | [📝 在GitHub上编辑此页](' + 
-                            'https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/' + 
+                            '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
+                            ' | [在GitHub上编辑此页](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/' + 
                             vm.route.file + ')\n';
+                    });
+                    
+                    hook.doneEach(function() {
+                        // 添加暗色模式类
+                        if (localStorage.getItem('theme') === 'dark') {
+                            document.body.classList.add('dark-mode');
+                        }
                     });
                 }
             ]
@@ -201,17 +240,33 @@
     <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
     
-    <!-- 初始化脚本 -->
     <script>
-        // 等待文档加载完成
+        // 初始化暗色模式
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏛️ ColorFulCraft 文档中心已加载');
-            
-            // 自动检测暗色模式
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-mode');
             }
+            
+            // 同步暗色模式切换
+            const syncTheme = () => {
+                const isDark = localStorage.getItem('theme') === 'dark';
+                document.body.classList.toggle('dark-mode', isDark);
+                
+                // 更新 Docsify 搜索框主题
+                const searchInput = document.querySelector('.search input');
+                if (searchInput) {
+                    searchInput.style.backgroundColor = isDark ? 'rgba(60,60,60,0.9)' : 'rgba(255,255,255,0.9)';
+                    searchInput.style.color = isDark ? '#f0f0f0' : '#333';
+                }
+            };
+            
+            // 监听主题变化
+            window.addEventListener('storage', syncTheme);
+            
+            // 每5秒检查一次主题变化
+            setInterval(syncTheme, 5000);
         });
     </script>
 </body>
