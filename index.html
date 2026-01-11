@@ -628,11 +628,21 @@
             }
         }
 
+                /* 文档按钮样式 */
+        .docs-btn {
+            background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
+        }
+        
+        body.dark-mode .docs-btn {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+        
         /* 响应式设计 */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
+            .button-container {
+                flex-direction: column;
             }
+        }
             
             .button-container {
                 flex-direction: column;
@@ -1191,6 +1201,11 @@ body.dark-mode .stat-item:hover {
                 加入我们
                 <span class="tooltip">加入QQ群</span>
             </button>
+                <button class="btn docs-btn" onclick="window.location.href='documentation.html'" 
+            style="background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);">
+        查看文档
+        <span class="tooltip">技术文档中心（带搜索）</span>
+    </button>
         </div>
     </div>
     
