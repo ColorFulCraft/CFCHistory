@@ -202,15 +202,31 @@
                     background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
                 }
 
-                .docs-btn {
+/* 在现有的 dark-mode 样式附近添加 */
+
+/* 文档按钮基础样式 - 添加到现有 .btn 样式之后 */
+.docs-btn {
     background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);
 }
 
-                    body.dark-mode .docs-btn {
+/* 暗色模式适配 - 添加到 body.dark-mode 相关样式中 */
+body.dark-mode .docs-btn {
     background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
 }
-                    body.dark-mode .docs-btn::before {
+
+body.dark-mode .docs-btn::before {
     background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.2), transparent);
+}
+
+/* 确保文档按钮有完整的悬停效果 */
+.docs-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    animation: none;
+}
+
+body.dark-mode .docs-btn:hover {
+    box-shadow: 0 6px 20px rgba(255, 165, 0, 0.2);
 }
         
                 @keyframes btnPulse {
@@ -2345,4 +2361,5 @@ window.addEventListener('storage', (e) => {
         </html>
         
         
+
 
