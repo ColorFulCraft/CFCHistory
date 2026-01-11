@@ -156,7 +156,7 @@ class DocsGenerator {
 
     // 外部链接
     content += `## 🔗 快速链接\n\n`;
-    content += `- [返回炫酷首页](../index.html)\n`;
+    content += `- [首页](../index.html)\n`;
     content += `- [GitHub仓库](https://github.com/ColorFulCraft/CFCHistory)\n`;
     content += `- [加入QQ群](https://qm.qq.com/q/L8kNa8IJqu)\n`;
     content += `- [查看工作流](../.github/workflows/docs-build.yml)\n`;
