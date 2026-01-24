@@ -1,0 +1,50 @@
+name: Update Images Timestamp
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"  # 每2小时运行一次
+  workflow_dispatch:        # 手动触发
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update README with timestamp
+        run: |
+          # 生成时间戳
+          TIMESTAMP=$(date +%s)
+          
+          # 创建临时文件
+          cp README.md README.md.tmp
+          
+          # 1. 更新Star历史图片时间戳
+          sed -i "s|star-history\.svg[^\"]*|star-history.svg?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 2. 更新代码活动图片时间戳
+          sed -i "s|repobeats\.svg[^\"]*|repobeats.svg?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 检查是否有更改
+          if ! cmp -s README.md README.md.tmp; then
+            mv README.md.tmp README.md
+            echo "README images updated with new timestamp: $TIMESTAMP"
+          else
+            echo "No changes needed"
+            rm README.md.tmp
+          fi
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🔄 Update images cache buster [skip ci]" && git push)
