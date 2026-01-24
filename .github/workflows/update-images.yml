@@ -27,10 +27,17 @@ jobs:
           cp README.md README.md.tmp
           
           # 1. 更新Star历史图片时间戳
-          sed -i "s|star-history\.svg[^\"]*|star-history.svg?v=$TIMESTAMP|g" README.md.tmp
+          # 使用不同的正则表达式匹配
+          sed -i "s|star-history\.svg\(?v=[0-9]*\)\?|star-history.svg?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|star-history\.svg\(\?\|\?[^v][^\"]*\)\?|star-history.svg?v=$TIMESTAMP|g" README.md.tmp
           
           # 2. 更新代码活动图片时间戳
-          sed -i "s|repobeats\.svg[^\"]*|repobeats.svg?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|repobeats\.svg\(?v=[0-9]*\)\?|repobeats.svg?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|repobeats\.svg\(\?\|\?[^v][^\"]*\)\?|repobeats.svg?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 如果图片URL有其他参数，确保时间戳在最后
+          sed -i "s|\(star-history\.svg\)[^\"]*|\1?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|\(repobeats\.svg\)[^\"]*|\1?v=$TIMESTAMP|g" README.md.tmp
           
           # 检查是否有更改
           if ! cmp -s README.md README.md.tmp; then
