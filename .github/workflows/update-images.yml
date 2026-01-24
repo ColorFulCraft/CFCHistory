@@ -20,20 +20,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check last commit time (skip if within 30 minutes)
+      - name: Check last commit time (skip if within 10 minutes)
         id: check-time
         run: |
-          # 获取上一次commit的时间
-          LAST_COMMIT_TIME=$(git log -1 --format=%ct 2>/dev/null || echo "0")
-          CURRENT_TIME=$(date +%s)
-          TIME_DIFF=$((CURRENT_TIME - LAST_COMMIT_TIME))
+          # 获取最近一次不是由本工作流创建的commit
+          # 过滤掉 [skip ci] 和 AUTO 相关的commit
+          LAST_REAL_COMMIT_TIME=$(git log --oneline --grep="AUTO\|skip ci" --invert-grep -1 --format=%ct 2>/dev/null || echo "0")
           
-          # 如果30分钟内有commit，则跳过
-          if [ $TIME_DIFF -lt 1800 ]; then
-            echo "Last commit was ${TIME_DIFF} seconds ago, skipping..."
+          # 如果没找到其他commit，则获取最新的commit
+          if [ "$LAST_REAL_COMMIT_TIME" = "0" ]; then
+            LAST_REAL_COMMIT_TIME=$(git log -1 --format=%ct 2>/dev/null || echo "0")
+          fi
+          
+          CURRENT_TIME=$(date +%s)
+          TIME_DIFF=$((CURRENT_TIME - LAST_REAL_COMMIT_TIME))
+          
+          echo "Last real commit time: $(date -d @$LAST_REAL_COMMIT_TIME '+%Y-%m-%d %H:%M:%S')"
+          echo "Current time: $(date -d @$CURRENT_TIME '+%Y-%m-%d %H:%M:%S')"
+          echo "Time difference: ${TIME_DIFF} seconds"
+          
+          if [ $TIME_DIFF -lt 600 ]; then
+            echo "Last commit was ${TIME_DIFF} seconds ago (less than 10 minutes), skipping..."
             echo "skip=true" >> $GITHUB_OUTPUT
           else
-            echo "Proceeding with update..."
+            echo "Last commit was more than 10 minutes ago, proceeding with update..."
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
