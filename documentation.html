@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
@@ -10,9 +11,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
 
     <style>
-        /* -------------------------
-           Theme variables (light/dark)
-           ------------------------- */
         :root{
             --page-bg: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             --overlay-bg: rgba(255,255,255,0.6);
@@ -40,14 +38,10 @@
             --link-color: #71b7ff;
         }
 
-        /* -------------------------
-           General reset and layout
-           ------------------------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html,body,#app { height: 100%; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; color: var(--text-color); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; background: #fff; }
 
-        /* Animated gradient background */
         .gradient-bg {
             position: fixed; inset: 0;
             background: var(--page-bg);
@@ -62,7 +56,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* overlay to soften gradient and improve contrast */
         .content-overlay {
             position: fixed; inset: 0;
             background: var(--overlay-bg);
@@ -70,14 +63,14 @@
             z-index: -2;
         }
 
-        /* Back button */
         .back-button {
             position: fixed;
             top: 18px;
-            left: 20px; /* JS may adjust this if Docsify search exists */
+            left: 20px;
             z-index: 1200;
             transition: left 220ms ease, transform 160ms ease;
         }
+        /* 改成 button 的样式（与之前 a 一致） */
         .back-btn {
             display: inline-flex;
             align-items: center;
@@ -100,7 +93,6 @@
 
         #app { position: relative; z-index: 10; min-height: 100vh; padding: 48px 16px; }
 
-        /* Docsify's markdown container override */
         .markdown-section {
             max-width: 980px !important;
             margin: 0 auto !important;
@@ -112,7 +104,6 @@
             color: var(--text-color);
         }
 
-        /* Improve contrast for code blocks, tables, links in dark mode */
         .markdown-section pre {
             background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02));
             border-radius: 8px;
@@ -141,15 +132,11 @@
         }
         .muted { color: var(--muted-color); }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .markdown-section { margin: 12px !important; padding: 18px !important; }
             .back-button { top: 12px; left: 10px; }
             .back-btn { padding: 8px 12px; font-size: 0.9rem; gap: 8px; }
         }
-
-        /* Slight nudge so Docsify's internal header (search/repo) doesn't overlap */
-        /* We'll also adjust via JS if needed */
     </style>
 </head>
 <body>
@@ -157,47 +144,31 @@
     <div class="content-overlay" aria-hidden="true"></div>
 
     <div class="back-button" id="backButton">
-        <a class="back-btn" id="backAnchor" href="index.html" title="返回主页">
-            <!-- simple inline arrow icon for consistent coloring -->
+        <!-- 改为 button，避免浏览器在 base 修改/解析时进行自动导航 -->
+        <button class="back-btn" id="backBtn" type="button" aria-label="返回主页">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
                 <path d="M12 16L6 10l6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <span>返回主页</span>
-        </a>
+        </button>
     </div>
 
     <div id="app">正在加载文档系统...</div>
 
     <script>
-        /**
-         * Robust base href and edit-link setup:
-         * - When docs are referenced by relative URLs (images/links) they can 404 if the page is viewed
-         *   directly from the GitHub "blob" view instead of from GitHub Pages.
-         * - To reduce 404s we set a dynamic <base> when possible to point at the "docs" folder on
-         *   raw.githubusercontent.com (serves raw files).
-         *
-         * This ensures images and other relative assets referenced from markdown will resolve both
-         * when served via GitHub Pages and when previewed from the repository's blob/raw pages.
-         *
-         * Note: if you prefer not to use raw.githubusercontent for assets, you can remove the base element.
-         */
         (function setDocsBaseHref(){
             try {
-                // Where your docs live in the repo:
                 const owner = 'ColorFulCraft';
                 const repo = 'CFCHistory';
                 const branch = 'main';
                 const docsFolder = 'docs/';
-
                 const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docsFolder}`;
-                // Create or update <base> so relative URLs in markdown (images etc.) resolve to raw content.
                 let base = document.querySelector('base#docs-base');
                 if (!base) {
                     base = document.createElement('base');
                     base.id = 'docs-base';
                     document.head.appendChild(base);
                 }
-                // Only set raw base when we detect we're not on GitHub Pages domain for this repo.
                 const path = window.location.pathname;
                 const servedOnPages = path.includes(`/${repo}/`) || location.hostname.endsWith('.github.io');
                 base.href = servedOnPages ? `${path.replace(/\/[^/]*$/, '/')}` : rawBase;
@@ -206,35 +177,21 @@
             }
         })();
 
-        // Compute a safe edit URL for the current page. Hook will use vm.route to produce a per-page link.
         function makeEditUrl(routeFile) {
             const owner = 'ColorFulCraft';
             const repo = 'CFCHistory';
             const branch = 'main';
             const docsFolder = 'docs';
-            // Normalize routeFile. If the routeFile is empty or not a markdown page, default to README.md
             const file = routeFile && routeFile.trim() ? routeFile.replace(/^\/+/, '') : 'README.md';
-            // Ensure extension
             const safeFile = (/\.(md|markdown)$/i).test(file) ? file : (file + (file.endsWith('/') ? 'README.md' : '.md'));
-            // Build the GitHub edit/blob link so users can click "在GitHub上编辑此页"
             return `https://github.com/${owner}/${repo}/blob/${branch}/${docsFolder}/${safeFile}`;
         }
-
-        // Expose makeEditUrl to the plugin hook via window so hook function can use it.
         window.__MAKE_DOCS_EDIT_URL = makeEditUrl;
 
-        // Intelligent placement for the back button:
-        // If Docsify renders its search control or a repo link at top-left, nudge the back button to avoid overlap.
         function adjustBackButtonPlacement() {
             const back = document.getElementById('backButton');
             if (!back) return;
-            // Search for common Docsify header elements that appear top-left:
-            const leftSelectors = [
-                '.sidebar-toggle',
-                '.search',
-                'a.repo',
-                '.app-name'
-            ];
+            const leftSelectors = ['.sidebar-toggle', '.search', 'a.repo', '.app-name'];
             let shift = 0;
             for (const sel of leftSelectors) {
                 const el = document.querySelector(sel);
@@ -247,22 +204,32 @@
             back.style.left = Math.max(12, shift) + 'px';
         }
 
-        // Run early so it can reposition before docsify draws header
+        // 点击时才跳转，避免自动导航问题
         document.addEventListener('DOMContentLoaded', function(){
-            // Apply theme if previously selected by user
             if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-mode');
             }
             adjustBackButtonPlacement();
-            // Also reposition on resize (throttled)
             let t;
             window.addEventListener('resize', function(){
                 clearTimeout(t);
                 t = setTimeout(adjustBackButtonPlacement, 120);
             }, { passive: true });
+
+            // 绑定点击事件，使用相对路径 './index.html' 以提高兼容性
+            const backBtn = document.getElementById('backBtn');
+            if (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    try {
+                        window.location.href = './index.html';
+                    } catch (e) {
+                        // 回退方案：相对根路径
+                        window.location.href = '/';
+                    }
+                });
+            }
         });
 
-        // Small helper to toggle theme (optional, you can wire this to a button later)
         window.toggleDocsTheme = function (mode) {
             if (mode === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -271,13 +238,11 @@
                 document.body.classList.remove('dark-mode');
                 localStorage.setItem('theme', 'light');
             }
-            // reposition because visual changes might alter header size
             setTimeout(adjustBackButtonPlacement, 100);
         };
     </script>
 
     <script>
-        // Docsify configuration
         window.$docsify = {
             name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
@@ -321,15 +286,12 @@
         };
     </script>
 
-    <!-- Docsify core + plugins (specific URLs so they load consistently) -->
     <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
-    <!-- Copy-code plugin -->
     <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@1"></script>
 
     <script>
-        // Expose adjustBackButtonPlacement globally so plugin can call it (older browsers)
         window.adjustBackButtonPlacement = function(){ 
             try {
                 const back = document.getElementById('backButton');
