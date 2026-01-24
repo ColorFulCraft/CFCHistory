@@ -2,7 +2,7 @@ name: Update Images Timestamp
 
 on:
   schedule:
-    - cron: "0 */2 * * *"  # 每2小时运行一次
+    - cron: "0 */2 * * *"  # UTC时间的每2小时
   workflow_dispatch:        # 手动触发
 
 permissions:
@@ -10,12 +10,54 @@ permissions:
 
 jobs:
   update-images:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check last commit time (skip if within 30 minutes)
+        id: check-time
+        run: |
+          # 获取上一次commit的时间
+          LAST_COMMIT_TIME=$(git log -1 --format=%ct 2>/dev/null || echo "0")
+          CURRENT_TIME=$(date +%s)
+          TIME_DIFF=$((CURRENT_TIME - LAST_COMMIT_TIME))
+          
+          # 如果30分钟内有commit，则跳过
+          if [ $TIME_DIFF -lt 1800 ]; then
+            echo "Last commit was ${TIME_DIFF} seconds ago, skipping..."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Proceeding with update..."
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get quote from hitokoto API
+        if: steps.check-time.outputs.skip == 'false'
+        id: hitokoto
+        run: |
+          # 从一言API获取句子
+          RESPONSE=$(curl -s "https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=g&c=h&c=i&c=j&c=k&c=l")
+          
+          # 提取句子和作者
+          QUOTE=$(echo $RESPONSE | jq -r '.hitokoto // "更新图片时间戳"')
+          AUTHOR=$(echo $RESPONSE | jq -r '.from // "一言"')
+          
+          # 如果获取失败，使用默认值
+          if [ "$QUOTE" = "null" ] || [ -z "$QUOTE" ]; then
+            QUOTE="更新图片时间戳"
+            AUTHOR="AUTO"
+          fi
+          
+          # 输出到环境变量
+          echo "QUOTE=$QUOTE" >> $GITHUB_ENV
+          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
+          echo "Commit message: $QUOTE —— $AUTHOR"
 
       - name: Update README with timestamp
+        if: steps.check-time.outputs.skip == 'false'
         run: |
           # 生成时间戳
           TIMESTAMP=$(date +%s)
@@ -23,21 +65,9 @@ jobs:
           # 创建临时文件
           cp README.md README.md.tmp
           
-          # 修复已有的链接（先去掉可能不完整的部分）
-          sed -i 's|star-history.svg?v=[0-9]*$|star-history.svg|g' README.md.tmp
-          sed -i 's|repobeats.svg?v=[0-9]*$|repobeats.svg|g' README.md.tmp
-          
-          # 使用更精确的匹配方式
-          # 匹配星历史图片：![Star历史](URL)
-          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 匹配代码活动图片：![代码活动](URL)
-          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 另一种方法：直接替换整个图片标记
-          sed -i "s|!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg[^)]*)|![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=$TIMESTAMP)|g" README.md.tmp
-          
-          sed -i "s|!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg[^)]*)|![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=$TIMESTAMP)|g" README.md.tmp
+          # 使用sed更新图片链接，添加时间戳
+          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
           
           # 检查是否有更改
           if ! cmp -s README.md README.md.tmp; then
@@ -46,12 +76,19 @@ jobs:
           else
             echo "No changes needed"
             rm README.md.tmp
+            echo "NO_CHANGE=true" >> $GITHUB_ENV
           fi
 
       - name: Commit and push changes
-        if: success()
+        if: steps.check-time.outputs.skip == 'false' && env.NO_CHANGE != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🔄 更新图片时间戳qwq~ [skip ci]" && git push)
+          
+          # 使用从API获取的句子作为commit消息
+          COMMIT_MSG="🔄 $QUOTE —— $AUTHOR [skip ci]"
+          echo "Committing with message: $COMMIT_MSG"
+          
+          git commit -m "$COMMIT_MSG"
+          git push
