@@ -2,8 +2,11 @@ name: Update Images Timestamp
 
 on:
   schedule:
-    - cron: "0 */2 * * *"  # UTC时间的每2小时
+    - cron: "0 */2 * * *"  # 每2小时运行一次（在0分钟）
   workflow_dispatch:        # 手动触发
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
