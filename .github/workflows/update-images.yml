@@ -4,9 +4,7 @@ on:
   schedule:
     - cron: "0 */2 * * *"  # 每2小时运行一次
   workflow_dispatch:        # 手动触发
-  push:
-    branches:
-      - main
+
 
 permissions:
   contents: write
@@ -57,4 +55,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "😊我来更新图片的时间戳啦qwq~~~" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "😊我来更新图片的时间戳啦qwq~~怎么？看见我很神奇的样纸🤔" && git push)
