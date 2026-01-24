@@ -156,26 +156,6 @@
     <div id="app">正在加载文档系统...</div>
 
     <script>
-        (function setDocsBaseHref(){
-            try {
-                const owner = 'ColorFulCraft';
-                const repo = 'CFCHistory';
-                const branch = 'main';
-                const docsFolder = 'docs/';
-                const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docsFolder}`;
-                let base = document.querySelector('base#docs-base');
-                if (!base) {
-                    base = document.createElement('base');
-                    base.id = 'docs-base';
-                    document.head.appendChild(base);
-                }
-                const path = window.location.pathname;
-                const servedOnPages = path.includes(`/${repo}/`) || location.hostname.endsWith('.github.io');
-                base.href = servedOnPages ? `${path.replace(/\/[^/]*$/, '/')}` : rawBase;
-            } catch (e) {
-                console.warn('Could not set docs base href:', e);
-            }
-        })();
 
         function makeEditUrl(routeFile) {
             const owner = 'ColorFulCraft';
