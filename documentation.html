@@ -1,94 +1,290 @@
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ColorFulCraft | 技术文档中心</title>
-    
-    <link rel="icon" href="pictures/favicon.ico">
+
+    <link rel="icon" href="pictures/favicon.ico" />
+
+    <!-- Theme (kept) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+
     <style>
+        /* -------------------------
+           Theme variables (light/dark)
+           ------------------------- */
+        :root{
+            --page-bg: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            --overlay-bg: rgba(255,255,255,0.6);
+            --panel-bg: rgba(255,255,255,0.95);
+            --text-color: #111;
+            --muted-color: #555;
+            --accent-start: #667eea;
+            --accent-end: #764ba2;
+            --back-btn-border: rgba(255,255,255,0.3);
+            --shadow: 0 8px 32px rgba(0,0,0,0.08);
+            --code-bg: #f6f8fa;
+            --link-color: #0066cc;
+        }
+
+        body.dark-mode{
+            --overlay-bg: rgba(0,0,0,0.75);
+            --panel-bg: rgba(20,20,20,0.95);
+            --text-color: #e9eef8;
+            --muted-color: #c5cbd5;
+            --accent-start: #5b8def;
+            --accent-end: #6a4bd1;
+            --back-btn-border: rgba(255,255,255,0.06);
+            --shadow: 0 10px 40px rgba(0,0,0,0.6);
+            --code-bg: #0f1720;
+            --link-color: #71b7ff;
+        }
+
+        /* -------------------------
+           General reset and layout
+           ------------------------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        
+        html,body,#app { height: 100%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; color: var(--text-color); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; background: #fff; }
+
+        /* Animated gradient background */
         .gradient-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%; animation: gradientFlow 15s ease infinite; z-index: -2;
+            position: fixed; inset: 0;
+            background: var(--page-bg);
+            background-size: 400% 400%;
+            animation: gradientFlow 18s ease infinite;
+            z-index: -3;
+            filter: saturate(1.05);
         }
         @keyframes gradientFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
+
+        /* overlay to soften gradient and improve contrast */
         .content-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: -1;
+            position: fixed; inset: 0;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(6px);
+            z-index: -2;
         }
-        
+
+        /* Back button */
         .back-button {
-            position: fixed; top: 20px; left: 20px; z-index: 1000;
+            position: fixed;
+            top: 18px;
+            left: 20px; /* JS may adjust this if Docsify search exists */
+            z-index: 1200;
+            transition: left 220ms ease, transform 160ms ease;
         }
         .back-btn {
-            padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 25px; transition: all 0.3s ease;
-            backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 22px;
+            border: 1.5px solid var(--back-btn-border);
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent-start) 0%, var(--accent-end) 100%);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            text-decoration: none;
+            font-size: 0.95rem;
         }
-        .back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
-        
-        #app { position: relative; z-index: 1; min-height: 100vh; }
-        
-        body.dark-mode .gradient-bg { filter: brightness(0.6) hue-rotate(25deg); }
-        body.dark-mode .content-overlay { background: rgba(0, 0, 0, 0.85); }
-        
+        .back-btn svg { width: 16px; height: 16px; }
+        .back-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.25); }
+
+        #app { position: relative; z-index: 10; min-height: 100vh; padding: 48px 16px; }
+
+        /* Docsify's markdown container override */
         .markdown-section {
-            max-width: 900px !important; margin: 0 auto !important; padding: 40px !important;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 980px !important;
+            margin: 0 auto !important;
+            padding: 36px !important;
+            background: var(--panel-bg);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.04);
+            color: var(--text-color);
         }
-        body.dark-mode .markdown-section {
-            background: rgba(40, 40, 40, 0.95); color: #f0f0f0;
+
+        /* Improve contrast for code blocks, tables, links in dark mode */
+        .markdown-section pre {
+            background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02));
+            border-radius: 8px;
+            padding: 12px;
+            overflow: auto;
+            background: var(--code-bg);
+            color: inherit;
         }
-        
+        .markdown-section code {
+            background: rgba(0,0,0,0.04);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+        body.dark-mode .markdown-section code {
+            background: rgba(255,255,255,0.03);
+        }
+        .markdown-section a { color: var(--link-color); text-decoration: underline; }
+        .markdown-section table { border-collapse: collapse; width: 100%; }
+        .markdown-section table th, .markdown-section table td {
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 8px 10px;
+        }
+        body.dark-mode .markdown-section table th, body.dark-mode .markdown-section table td {
+            border-color: rgba(255,255,255,0.06);
+        }
+        .muted { color: var(--muted-color); }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .markdown-section { margin: 10px !important; padding: 20px !important; }
-            .back-button { top: 10px; left: 10px; }
-            .back-btn { padding: 10px 16px; font-size: 0.9rem; }
+            .markdown-section { margin: 12px !important; padding: 18px !important; }
+            .back-button { top: 12px; left: 10px; }
+            .back-btn { padding: 8px 12px; font-size: 0.9rem; gap: 8px; }
         }
+
+        /* Slight nudge so Docsify's internal header (search/repo) doesn't overlap */
+        /* We'll also adjust via JS if needed */
     </style>
 </head>
 <body>
-    <div class="gradient-bg"></div>
-    <div class="content-overlay"></div>
-    
-    <div class="back-button">
-        <button class="back-btn" onclick="window.location.href='index.html'">
-            <span>←</span> 返回主页
-        </button>
+    <div class="gradient-bg" aria-hidden="true"></div>
+    <div class="content-overlay" aria-hidden="true"></div>
+
+    <div class="back-button" id="backButton">
+        <a class="back-btn" id="backAnchor" href="index.html" title="返回主页">
+            <!-- simple inline arrow icon for consistent coloring -->
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+                <path d="M12 16L6 10l6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>返回主页</span>
+        </a>
     </div>
-    
+
     <div id="app">正在加载文档系统...</div>
-    
+
     <script>
-        // 🔧 核心配置 - 修正路径问题
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const basePath = isLocal ? '/docs/' : '/CFCHistory/docs/';
-        
+        /**
+         * Robust base href and edit-link setup:
+         * - When docs are referenced by relative URLs (images/links) they can 404 if the page is viewed
+         *   directly from the GitHub "blob" view instead of from GitHub Pages.
+         * - To reduce 404s we set a dynamic <base> when possible to point at the "docs" folder on
+         *   raw.githubusercontent.com (serves raw files).
+         *
+         * This ensures images and other relative assets referenced from markdown will resolve both
+         * when served via GitHub Pages and when previewed from the repository's blob/raw pages.
+         *
+         * Note: if you prefer not to use raw.githubusercontent for assets, you can remove the base element.
+         */
+        (function setDocsBaseHref(){
+            try {
+                // Where your docs live in the repo:
+                const owner = 'ColorFulCraft';
+                const repo = 'CFCHistory';
+                const branch = 'main';
+                const docsFolder = 'docs/';
+
+                const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${docsFolder}`;
+                // Create or update <base> so relative URLs in markdown (images etc.) resolve to raw content.
+                let base = document.querySelector('base#docs-base');
+                if (!base) {
+                    base = document.createElement('base');
+                    base.id = 'docs-base';
+                    document.head.appendChild(base);
+                }
+                // Only set raw base when we detect we're not on GitHub Pages domain for this repo.
+                const path = window.location.pathname;
+                const servedOnPages = path.includes(`/${repo}/`) || location.hostname.endsWith('.github.io');
+                base.href = servedOnPages ? `${path.replace(/\/[^/]*$/, '/')}` : rawBase;
+            } catch (e) {
+                console.warn('Could not set docs base href:', e);
+            }
+        })();
+
+        // Compute a safe edit URL for the current page. Hook will use vm.route to produce a per-page link.
+        function makeEditUrl(routeFile) {
+            const owner = 'ColorFulCraft';
+            const repo = 'CFCHistory';
+            const branch = 'main';
+            const docsFolder = 'docs';
+            // Normalize routeFile. If the routeFile is empty or not a markdown page, default to README.md
+            const file = routeFile && routeFile.trim() ? routeFile.replace(/^\/+/, '') : 'README.md';
+            // Ensure extension
+            const safeFile = (/\.(md|markdown)$/i).test(file) ? file : (file + (file.endsWith('/') ? 'README.md' : '.md'));
+            // Build the GitHub edit/blob link so users can click "在GitHub上编辑此页"
+            return `https://github.com/${owner}/${repo}/blob/${branch}/${docsFolder}/${safeFile}`;
+        }
+
+        // Expose makeEditUrl to the plugin hook via window so hook function can use it.
+        window.__MAKE_DOCS_EDIT_URL = makeEditUrl;
+
+        // Intelligent placement for the back button:
+        // If Docsify renders its search control or a repo link at top-left, nudge the back button to avoid overlap.
+        function adjustBackButtonPlacement() {
+            const back = document.getElementById('backButton');
+            if (!back) return;
+            // Search for common Docsify header elements that appear top-left:
+            const leftSelectors = [
+                '.sidebar-toggle',
+                '.search',
+                'a.repo',
+                '.app-name'
+            ];
+            let shift = 0;
+            for (const sel of leftSelectors) {
+                const el = document.querySelector(sel);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width > 0) shift = Math.max(shift, rect.right + 12);
+                }
+            }
+            if (shift === 0 && window.innerWidth > 920) shift = 20;
+            back.style.left = Math.max(12, shift) + 'px';
+        }
+
+        // Run early so it can reposition before docsify draws header
+        document.addEventListener('DOMContentLoaded', function(){
+            // Apply theme if previously selected by user
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            adjustBackButtonPlacement();
+            // Also reposition on resize (throttled)
+            let t;
+            window.addEventListener('resize', function(){
+                clearTimeout(t);
+                t = setTimeout(adjustBackButtonPlacement, 120);
+            }, { passive: true });
+        });
+
+        // Small helper to toggle theme (optional, you can wire this to a button later)
+        window.toggleDocsTheme = function (mode) {
+            if (mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+            // reposition because visual changes might alter header size
+            setTimeout(adjustBackButtonPlacement, 100);
+        };
+    </script>
+
+    <script>
+        // Docsify configuration
         window.$docsify = {
             name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
-            
-            // 🔥 关键配置：指定文档根目录
-            basePath: basePath,
-            
-            // 使用自动生成的侧边栏
             loadSidebar: true,
             subMaxLevel: 3,
             auto2top: true,
             homepage: 'README.md',
-            
-            // 搜索配置
             search: {
                 paths: 'auto',
                 placeholder: '🔍 搜索文档...',
@@ -96,39 +292,63 @@
                 depth: 3,
                 namespace: 'cfc-docs'
             },
-            
-            // 插件
             plugins: [
                 function(hook, vm) {
                     hook.beforeEach(function(content) {
-                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${vm.route.file}`;
-                        return content + '\n\n---\n\n' +
-                            '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
-                            ' | [在GitHub上编辑此页](' + editUrl + ')\n';
+                        const file = (vm && vm.route && (vm.route.file || vm.route.path)) || 'README.md';
+                        const editUrl = window.__MAKE_DOCS_EDIT_URL ? window.__MAKE_DOCS_EDIT_URL(file) : ('https://github.com/ColorFulCraft/CFCHistory');
+                        const meta = '\n\n---\n\n' +
+                            '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') +
+                            ' | [在 GitHub 上查看或编辑此页](' + editUrl + ')\n';
+                        return content + meta;
                     });
-                    
+
                     hook.doneEach(function() {
-                        // 同步主题
                         if (localStorage.getItem('theme') === 'dark') {
                             document.body.classList.add('dark-mode');
+                        } else {
+                            document.body.classList.remove('dark-mode');
                         }
+                        setTimeout(function(){
+                            try {
+                                if (window.adjustBackButtonPlacement) window.adjustBackButtonPlacement();
+                                const evt = new Event('resize'); window.dispatchEvent(evt);
+                            } catch(e){}
+                        }, 80);
                     });
                 }
             ]
         };
-        
-        // 自动检测并应用暗色模式
-        document.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-        });
     </script>
-    
-    <!-- Docsify 核心库 -->
-    <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+
+    <!-- Docsify core + plugins (specific URLs so they load consistently) -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+    <!-- Copy-code plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@1"></script>
+
+    <script>
+        // Expose adjustBackButtonPlacement globally so plugin can call it (older browsers)
+        window.adjustBackButtonPlacement = function(){ 
+            try {
+                const back = document.getElementById('backButton');
+                if (!back) return;
+                const leftSelectors = ['.sidebar-toggle', '.search', 'a.repo', '.app-name'];
+                let shift = 0;
+                for (const sel of leftSelectors) {
+                    const el = document.querySelector(sel);
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.width > 0) shift = Math.max(shift, rect.right + 12);
+                    }
+                }
+                if (shift === 0 && window.innerWidth > 920) shift = 20;
+                back.style.left = Math.max(10, shift) + 'px';
+            } catch (e) {
+                // ignore
+            }
+        };
+    </script>
 </body>
 </html>
