@@ -16,16 +16,24 @@
             --sidebar-bg: rgba(255, 255, 255, 0.95);
             --border-color: rgba(0, 0, 0, 0.1);
             --code-bg: #f6f8fa;
+            --gradient-start: #ee7752;
+            --gradient-middle1: #e73c7e;
+            --gradient-middle2: #23a6d5;
+            --gradient-end: #23d5ab;
         }
         
         .dark-mode {
+            --primary-color: #5b8def;
+            --secondary-color: #6a4bd1;
             --text-color: #f0f0f0;
             --bg-color: rgba(30, 30, 40, 0.95);
             --sidebar-bg: rgba(30, 30, 40, 0.95);
             --border-color: rgba(255, 255, 255, 0.1);
             --code-bg: #2d2d3d;
-            --primary-color: #5b8def;
-            --secondary-color: #6a4bd1;
+            --gradient-start: #667eea;
+            --gradient-middle1: #764ba2;
+            --gradient-middle2: #23a6d5;
+            --gradient-end: #23d5ab;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,13 +45,18 @@
             transition: all 0.3s ease;
         }
         
+        /* 渐变背景 - 保持与主页一致 */
         .gradient-bg {
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background: linear-gradient(-45deg, 
+                var(--gradient-start), 
+                var(--gradient-middle1), 
+                var(--gradient-middle2), 
+                var(--gradient-end));
             background-size: 400% 400%; 
             animation: gradientFlow 15s ease infinite; 
             z-index: -2;
@@ -66,10 +79,10 @@
             transition: background 0.3s ease;
         }
         
-        body.dark-mode .gradient-bg { 
+        .dark-mode .gradient-bg { 
             filter: brightness(0.7) saturate(1.3);
         }
-        body.dark-mode .content-overlay { 
+        .dark-mode .content-overlay { 
             background: rgba(0, 0, 0, 0.7); 
         }
         
@@ -96,10 +109,18 @@
             font-weight: 600;
             font-size: 0.95rem;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            animation: btnPulse 2.5s infinite ease-in-out;
         }
+        
+        @keyframes btnPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
         .back-btn:hover { 
-            transform: translateY(-2px); 
+            transform: translateY(-2px) scale(1.05); 
             box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4); 
+            animation: none;
         }
         
         #app { 
@@ -133,7 +154,8 @@
         .markdown-section p,
         .markdown-section li,
         .markdown-section td,
-        .markdown-section th {
+        .markdown-section th,
+        .markdown-section blockquote {
             color: var(--text-color) !important;
         }
         
@@ -180,8 +202,8 @@
         
         /* 🔍 搜索框样式调整 */
         .search {
-            position: relative;
-            z-index: 1001;
+            position: relative !important;
+            z-index: 1001 !important;
         }
         
         .search input {
@@ -195,11 +217,30 @@
             color: rgba(var(--text-color), 0.6) !important;
         }
         
+        /* 搜索结果样式 */
+        .search .results-panel {
+            background: var(--bg-color) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+        }
+        
+        .search .matching-post {
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+        
+        .search .matching-post a {
+            color: var(--text-color) !important;
+        }
+        
+        .search .matching-post a:hover {
+            color: var(--primary-color) !important;
+            background: rgba(var(--primary-color), 0.1) !important;
+        }
+        
         /* 🎨 其他元素颜色修复 */
         .markdown-section blockquote {
             border-left-color: var(--primary-color) !important;
             background: rgba(var(--primary-color), 0.05) !important;
-            color: var(--text-color) !important;
         }
         
         .markdown-section table {
@@ -208,12 +249,44 @@
         
         .markdown-section table th {
             background: rgba(var(--primary-color), 0.1) !important;
-            color: var(--text-color) !important;
         }
         
         .markdown-section table td {
             border-color: var(--border-color) !important;
-            color: var(--text-color) !important;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 1.5rem;
+        }
+        
+        .theme-toggle-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .dark-mode .theme-toggle-btn {
+            background: rgba(255, 165, 0, 0.3);
+        }
+        
+        .dark-mode .theme-toggle-btn:hover {
+            background: rgba(255, 165, 0, 0.5);
         }
         
         /* 📱 响应式调整 */
@@ -233,19 +306,69 @@
             #app {
                 padding: 70px 10px 20px;
             }
+            .theme-toggle-btn {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
         }
         
-        /* 🖥️ 大屏幕调整 */
+        /* 大屏幕调整返回按钮位置 */
         @media (min-width: 769px) {
-            /* 调整返回按钮位置，避免遮挡搜索框 */
+            /* 动态调整返回按钮位置，避免遮挡搜索框 */
             .sidebar ~ .back-button {
-                left: 280px; /* 侧边栏宽度 + 边距 */
+                left: 320px; /* 侧边栏宽度 + 边距 */
             }
-            
-            /* 没有侧边栏时的位置 */
-            .back-button {
-                transition: left 0.3s ease;
-            }
+        }
+        
+        /* Docsify 特定样式修复 */
+        .app-nav,
+        .app-name,
+        .sidebar-toggle,
+        .sidebar-nav,
+        .anchor {
+            color: var(--text-color) !important;
+        }
+        
+        .sidebar-toggle span {
+            background-color: var(--text-color) !important;
+        }
+        
+        /* 确保代码块内的文字可见 */
+        .dark-mode pre[class*="language-"] {
+            text-shadow: none !important;
+        }
+        
+        /* 链接在暗色模式下的hover效果 */
+        .dark-mode a:hover {
+            color: #71b7ff !important;
+        }
+        
+        /* 图片缩放插件的暗色模式适配 */
+        .medium-zoom-overlay,
+        .medium-zoom-image--opened {
+            background: rgba(0, 0, 0, 0.9) !important;
+            z-index: 9999 !important;
+        }
+        
+        /* 确保侧边栏滚动条可见 */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(var(--text-color), 0.2);
+            border-radius: 3px;
+        }
+        
+        .dark-mode .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -259,46 +382,125 @@
         </button>
     </div>
     
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle-btn" id="themeToggle">🌙</button>
+    
     <div id="app">正在加载文档系统...</div>
     
     <script>
         // 🎯 从主页同步主题
         function syncThemeFromHomePage() {
-            // 尝试从主页同步主题
             try {
-                // 如果从主页带过来主题参数
+                // 1. 首先检查URL参数
                 const urlParams = new URLSearchParams(window.location.search);
-                const theme = urlParams.get('theme');
-                if (theme === 'dark' || theme === 'light') {
-                    setTheme(theme);
-                    return;
+                const themeFromUrl = urlParams.get('theme');
+                
+                // 2. 检查localStorage（主页使用的键名）
+                const themeFromStorage = localStorage.getItem('theme');
+                
+                // 3. 检查主页通过localStorage传递的主题
+                const themeFromHome = localStorage.getItem('cfc-theme-sync');
+                let parsedTheme = null;
+                if (themeFromHome) {
+                    try {
+                        parsedTheme = JSON.parse(themeFromHome);
+                    } catch(e) { /* 忽略解析错误 */ }
                 }
                 
-                // 或者从 localStorage 获取（主页应该设置了相同的键名）
-                const savedTheme = localStorage.getItem('siteTheme') || 
-                                  localStorage.getItem('theme') || 
-                                  'dark';
-                setTheme(savedTheme);
+                // 优先级：URL参数 > 主页同步 > localStorage存储
+                let theme = themeFromUrl || 
+                           (parsedTheme && parsedTheme.theme) || 
+                           themeFromStorage || 
+                           'dark'; // 默认暗色模式
+                
+                console.log('🎨 主题同步:', { 
+                    themeFromUrl, 
+                    themeFromStorage, 
+                    parsedTheme, 
+                    finalTheme: theme 
+                });
+                
+                setTheme(theme);
+                
+                // 保存主题到主页可能使用的键名，确保一致性
+                localStorage.setItem('theme', theme);
+                localStorage.setItem('cfc-theme-sync', JSON.stringify({ 
+                    type: 'theme-change', 
+                    theme: theme,
+                    timestamp: Date.now(),
+                    source: 'documentation-page'
+                }));
+                
             } catch (e) {
                 console.warn('主题同步失败:', e);
-                setTheme('dark'); // 默认暗色
+                setTheme('dark');
             }
         }
         
         function setTheme(theme) {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
             if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️';
             } else {
-                document.body.classList.remove('dark-mode');
+                body.classList.remove('dark-mode');
+                themeToggle.textContent = '🌙';
             }
+            
             // 保存主题设置
-            localStorage.setItem('siteTheme', theme);
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('cfc-docs-theme', theme);
+            
+            console.log('🎨 主题已设置为:', theme);
         }
         
-        // 返回主页函数
+        // 返回主页函数 - 同步主题
         function goToHomePage() {
             const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+            
+            // 保存主题状态，供主页读取
+            localStorage.setItem('last-docs-theme', JSON.stringify({
+                theme: currentTheme,
+                timestamp: Date.now(),
+                source: 'documentation-page'
+            }));
+            
+            // 使用主页可能检查的键名
+            localStorage.setItem('theme', currentTheme);
+            
+            // 跳转回主页
             window.location.href = `index.html?theme=${currentTheme}`;
+        }
+        
+        // 主题切换功能
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const newTheme = isDark ? 'light' : 'dark';
+            setTheme(newTheme);
+            
+            // 发送主题变化事件到主页
+            const themeEvent = {
+                type: 'theme-change',
+                theme: newTheme,
+                timestamp: Date.now(),
+                source: 'documentation-toggle'
+            };
+            
+            localStorage.setItem('docs-theme-update', JSON.stringify(themeEvent));
+            localStorage.setItem('cfc-theme-sync', JSON.stringify(themeEvent));
+            
+            // 触发 storage 事件，让主页监听
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'docs-theme-update',
+                newValue: JSON.stringify(themeEvent)
+            }));
+            
+            // 3秒后清理
+            setTimeout(() => {
+                localStorage.removeItem('docs-theme-update');
+            }, 3000);
         }
         
         // 📱 动态调整返回按钮位置，避免遮挡搜索框
@@ -312,12 +514,15 @@
             if (searchInput && window.innerWidth > 768) {
                 const searchRect = searchInput.getBoundingClientRect();
                 // 如果搜索框存在且可能会被遮挡
-                if (searchRect.left < 200) { // 返回按钮大约宽度
+                if (searchRect.left < 220) { // 返回按钮大约宽度
                     backButton.style.left = (searchRect.right + 20) + 'px';
+                } else {
+                    backButton.style.left = '20px';
                 }
             } else if (sidebar && window.innerWidth > 768) {
                 // 有侧边栏时，放在侧边栏右边
-                backButton.style.left = '280px';
+                const sidebarRect = sidebar.getBoundingClientRect();
+                backButton.style.left = (sidebarRect.right + 20) + 'px';
             } else {
                 // 默认位置
                 backButton.style.left = '20px';
@@ -329,6 +534,7 @@
             name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
             
+            // 📁 文档配置
             basePath: '/docs/',
             loadSidebar: true,
             subMaxLevel: 3,
@@ -338,17 +544,21 @@
                 '/.*/_sidebar.md': '/_sidebar.md'
             },
             
+            // 🔍 搜索配置
             search: {
                 paths: 'auto',
                 placeholder: '🔍 搜索文档...',
                 noData: '😅 没有找到相关结果',
                 depth: 3,
-                namespace: 'cfc-docs'
+                namespace: 'cfc-docs',
+                hideOtherSidebarContent: false
             },
             
+            // 📄 侧边栏配置
             sidebarDisplayLevel: 2,
             loadNavbar: false,
             
+            // ⚙️ 插件配置
             plugins: [
                 function(hook, vm) {
                     hook.init(function() {
@@ -364,11 +574,32 @@
                             ' | [在 GitHub 上编辑此页](' + editUrl + ')\n';
                     });
                     
+                    hook.mounted(function() {
+                        // 添加主题切换按钮事件
+                        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+                        
+                        // 初始化调整按钮位置
+                        setTimeout(() => {
+                            adjustBackButtonPosition();
+                            // 监听搜索框的出现
+                            const observer = new MutationObserver(() => {
+                                adjustBackButtonPosition();
+                            });
+                            
+                            // 观察 body 的子节点变化
+                            observer.observe(document.body, { 
+                                childList: true, 
+                                subtree: true 
+                            });
+                        }, 500);
+                    });
+                    
                     hook.doneEach(function() {
                         // 确保所有文字颜色正确
                         document.querySelectorAll('.markdown-section *').forEach(el => {
                             if (getComputedStyle(el).color === 'rgb(51, 51, 51)' || 
-                                getComputedStyle(el).color === 'rgb(68, 68, 68)') {
+                                getComputedStyle(el).color === 'rgb(68, 68, 68)' ||
+                                getComputedStyle(el).color === 'rgb(0, 0, 0)') {
                                 el.style.color = 'var(--text-color)';
                             }
                         });
@@ -376,37 +607,30 @@
                         // 动态调整返回按钮位置
                         setTimeout(adjustBackButtonPosition, 100);
                         
-                        // 为搜索框添加主题切换按钮
-                        const searchInput = document.querySelector('.search input');
-                        if (searchInput && !document.querySelector('.theme-toggle-btn')) {
-                            const themeBtn = document.createElement('button');
-                            themeBtn.className = 'theme-toggle-btn';
-                            themeBtn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-                            themeBtn.style.cssText = `
-                                position: absolute;
-                                right: 10px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                background: transparent;
-                                border: none;
-                                font-size: 1.2em;
-                                cursor: pointer;
-                                padding: 5px;
-                                z-index: 1002;
-                            `;
-                            themeBtn.onclick = function() {
-                                const isDark = document.body.classList.contains('dark-mode');
-                                setTheme(isDark ? 'light' : 'dark');
-                                themeBtn.innerHTML = isDark ? '🌙' : '☀️';
-                            };
-                            searchInput.parentElement.style.position = 'relative';
-                            searchInput.parentElement.appendChild(themeBtn);
-                        }
+                        // 为图片添加主题适配
+                        document.querySelectorAll('.markdown-section img').forEach(img => {
+                            img.style.maxWidth = '100%';
+                            img.style.borderRadius = '8px';
+                            img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                        });
+                        
+                        // 为外部链接添加标识
+                        document.querySelectorAll('.markdown-section a[href^="http"]').forEach(link => {
+                            if (!link.href.includes(window.location.hostname)) {
+                                link.target = '_blank';
+                                link.rel = 'noopener noreferrer';
+                                if (!link.querySelector('.external-icon')) {
+                                    link.innerHTML += ' <span style="font-size:0.8em;">↗</span>';
+                                }
+                            }
+                        });
                     });
                     
                     hook.afterEach(function() {
                         // 文档切换时重新调整按钮位置
-                        setTimeout(adjustBackButtonPosition, 300);
+                        setTimeout(() => {
+                            adjustBackButtonPosition();
+                        }, 300);
                     });
                 }
             ]
@@ -414,7 +638,13 @@
         
         // 页面加载
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('📚 文档页面加载');
+            
+            // 同步主题
             syncThemeFromHomePage();
+            
+            // 设置主题切换按钮事件
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             
             // 监听窗口大小变化
             window.addEventListener('resize', adjustBackButtonPosition);
@@ -425,6 +655,24 @@
                     setTimeout(adjustBackButtonPosition, 500);
                 }
             });
+            
+            // 监听来自主页的主题变化
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'cfc-theme-sync') {
+                    try {
+                        const themeData = JSON.parse(e.newValue);
+                        if (themeData && themeData.theme && themeData.source !== 'documentation-page') {
+                            console.log('📱 收到主页主题更新:', themeData.theme);
+                            setTheme(themeData.theme);
+                        }
+                    } catch (error) {
+                        console.warn('主题同步解析错误:', error);
+                    }
+                }
+            });
+            
+            // 初始调整按钮位置
+            setTimeout(adjustBackButtonPosition, 1000);
         });
     </script>
     
