@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: "0 */2 * * *"  # 每2小时运行一次
   workflow_dispatch:        # 手动触发
-  push:
-    branches:
-      - main
 
 permissions:
   contents: write
