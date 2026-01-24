@@ -50,10 +50,10 @@
 ---
 
 ## 📈 仓库 Star 历史
-![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=1769241722
+![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=1769241613)
 
 ---
 
 ## 🗓️ 最近提交
-![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=1769241722
+![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=1769241613)
 
