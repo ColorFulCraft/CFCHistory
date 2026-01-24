@@ -1,7 +1,7 @@
-# 🎨 ColorFulCraft Admin Group 介绍
+# 🎨 ColorFulCraft 管理组
 
 ## 关于我们
-ColorFulCraft Admin Group 是一个由《我的世界》爱好者组成的专业技术团队，我们怀揣着对MC的热爱，致力于为玩家带来前所未有的游戏体验。团队由服务器运维专家、插件开发者组成，共同打造一个稳定、公平且充满创意的游戏环境。
+ColorFulCraft 管理组 是一个由《我的世界》爱好者组成的专业技术团队，我们怀揣着对MC的热爱，致力于为玩家带来前所未有的游戏体验。团队由服务器运维专家、插件开发者组成，共同打造一个稳定、公平且充满创意的游戏环境。
 
 ## 🛠 关于服务器
 
@@ -21,6 +21,6 @@ ColorFulCraft Admin Group 是一个由《我的世界》爱好者组成的专业
 - 云端数据库V2（副数据库）：存放网页地图数据
 
 ---
-**ColorFulCraft Admin Group**  
+**ColorFulCraft 管理组**  
 用色彩编织梦想，用技术创造可能！
 
