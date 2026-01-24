@@ -20,32 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check last commit time (skip if within 10 minutes)
-        id: check-time
-        run: |
-          # 获取最近一次不是由本工作流创建的commit
-          # 过滤掉 [skip ci] 和 AUTO 相关的commit
-          LAST_REAL_COMMIT_TIME=$(git log --oneline --grep="AUTO\|skip ci" --invert-grep -1 --format=%ct 2>/dev/null || echo "0")
-          
-          # 如果没找到其他commit，则获取最新的commit
-          if [ "$LAST_REAL_COMMIT_TIME" = "0" ]; then
-            LAST_REAL_COMMIT_TIME=$(git log -1 --format=%ct 2>/dev/null || echo "0")
-          fi
-          
-          CURRENT_TIME=$(date +%s)
-          TIME_DIFF=$((CURRENT_TIME - LAST_REAL_COMMIT_TIME))
-          
-          echo "Last real commit time: $(date -d @$LAST_REAL_COMMIT_TIME '+%Y-%m-%d %H:%M:%S')"
-          echo "Current time: $(date -d @$CURRENT_TIME '+%Y-%m-%d %H:%M:%S')"
-          echo "Time difference: ${TIME_DIFF} seconds"
-          
-          if [ $TIME_DIFF -lt 600 ]; then
-            echo "Last commit was ${TIME_DIFF} seconds ago (less than 10 minutes), skipping..."
-            echo "skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "Last commit was more than 10 minutes ago, proceeding with update..."
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
+
 
       - name: Get quote from hitokoto API
         if: steps.check-time.outputs.skip == 'false'
@@ -82,15 +57,6 @@ jobs:
           sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
           sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
           
-          # 检查是否有更改
-          if ! cmp -s README.md README.md.tmp; then
-            mv README.md.tmp README.md
-            echo "README images updated with new timestamp: $TIMESTAMP"
-          else
-            echo "No changes needed"
-            rm README.md.tmp
-            echo "NO_CHANGE=true" >> $GITHUB_ENV
-          fi
 
       - name: Commit and push changes
         if: steps.check-time.outputs.skip == 'false' && env.NO_CHANGE != 'true'
