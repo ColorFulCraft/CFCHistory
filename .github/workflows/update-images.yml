@@ -2,8 +2,8 @@ name: Update Images Timestamp
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
-  workflow_dispatch:
+    - cron: "0 */2 * * *"  # 每2小时运行一次
+  workflow_dispatch:        # 手动触发
   push:
     branches:
       - main
@@ -13,60 +13,48 @@ permissions:
 
 jobs:
   update-images:
-    runs-on: ubuntu-latest  # 改为 ubuntu-latest 确保环境稳定
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get quote from hitokoto API
-        id: hitokoto
-        run: |
-          RESPONSE=$(curl -s "https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=g&c=h&c=i&c=j&c=k&c=l")
-          QUOTE=$(echo $RESPONSE | jq -r '.hitokoto // "更新图片时间戳"')
-          AUTHOR=$(echo $RESPONSE | jq -r '.from // "一言"')
-          
-          if [ "$QUOTE" = "null" ] || [ -z "$QUOTE" ]; then
-            QUOTE="更新图片时间戳"
-            AUTHOR="AUTO"
-          fi
-          
-          echo "QUOTE=$QUOTE" >> $GITHUB_ENV
-          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
-          # 同时保存到输出，以便调试
-          echo "QUOTE=$QUOTE" >> $GITHUB_OUTPUT
-          echo "AUTHOR=$AUTHOR" >> $GITHUB_OUTPUT
-          echo "Commit message: $QUOTE —— $AUTHOR"
 
       - name: Update README with timestamp
         run: |
+          # 生成时间戳
           TIMESTAMP=$(date +%s)
+          
+          # 创建临时文件
           cp README.md README.md.tmp
           
-          # 修复 sed 语法错误
-          sed -i "s|(\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
-          sed -i "s|(\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
+          # 修复已有的链接（先去掉可能不完整的部分）
+          sed -i 's|star-history.svg?v=[0-9]*$|star-history.svg|g' README.md.tmp
+          sed -i 's|repobeats.svg?v=[0-9]*$|repobeats.svg|g' README.md.tmp
           
-          mv README.md.tmp README.md  
+          # 使用更精确的匹配方式
+          # 匹配星历史图片：![Star历史](URL)
+          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 匹配代码活动图片：![代码活动](URL)
+          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 另一种方法：直接替换整个图片标记
+          sed -i "s|!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg[^)]*)|![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=$TIMESTAMP)|g" README.md.tmp
+          
+          sed -i "s|!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg[^)]*)|![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=$TIMESTAMP)|g" README.md.tmp
+          
+          # 检查是否有更改
+          if ! cmp -s README.md README.md.tmp; then
+            mv README.md.tmp README.md
+            echo "README images updated with new timestamp: $TIMESTAMP"
+          else
+            echo "No changes needed"
+            rm README.md.tmp
+          fi
 
       - name: Commit and push changes
+        if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          
-          # 检查是否有实际变更
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          
-          # 从环境变量读取 QUOTE 和 AUTHOR
-          echo "QUOTE from env: ${{ env.QUOTE }}"
-          echo "AUTHOR from env: ${{ env.AUTHOR }}"
-          
-          COMMIT_MSG="🔄 ${{ env.QUOTE }} —— ${{ env.AUTHOR }} [skip ci]"
-          echo "Committing with message: $COMMIT_MSG"
-          git commit -m "$COMMIT_MSG"
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "😊我来更新图片的时间戳啦qwq~~~" && git push)
