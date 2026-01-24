@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   update-images:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest  # 改为 ubuntu-latest 确保环境稳定
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,6 +34,9 @@ jobs:
           
           echo "QUOTE=$QUOTE" >> $GITHUB_ENV
           echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
+          # 同时保存到输出，以便调试
+          echo "QUOTE=$QUOTE" >> $GITHUB_OUTPUT
+          echo "AUTHOR=$AUTHOR" >> $GITHUB_OUTPUT
           echo "Commit message: $QUOTE —— $AUTHOR"
 
       - name: Update README with timestamp
@@ -41,14 +44,13 @@ jobs:
           TIMESTAMP=$(date +%s)
           cp README.md README.md.tmp
           
-          # 修复 sed 语法错误，并确保实际写入 README.md
+          # 修复 sed 语法错误
           sed -i "s|(\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
           sed -i "s|(\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
           
           mv README.md.tmp README.md  
 
       - name: Commit and push changes
-        if: env.NO_CHANGE != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -60,7 +62,11 @@ jobs:
             exit 0
           fi
           
-          COMMIT_MSG="🔄 $QUOTE —— $AUTHOR [skip ci]"
+          # 从环境变量读取 QUOTE 和 AUTHOR
+          echo "QUOTE from env: ${{ env.QUOTE }}"
+          echo "AUTHOR from env: ${{ env.AUTHOR }}"
+          
+          COMMIT_MSG="🔄 ${{ env.QUOTE }} —— ${{ env.AUTHOR }} [skip ci]"
           echo "Committing with message: $COMMIT_MSG"
           git commit -m "$COMMIT_MSG"
           git push
