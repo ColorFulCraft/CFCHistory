@@ -24,10 +24,12 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Update visit statistics
-        run: |
-          python .github/scripts/update_stats.py
+      - name: Install Python dependencies
+        run: pip install requests
 
+      - name: Update visit statistics
+        run: python .github/scripts/update_stats.py
+    
       - name: Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
