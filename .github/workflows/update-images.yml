@@ -2,8 +2,8 @@ name: Update Images Timestamp
 
 on:
   schedule:
-    - cron: "0 */2 * * *"  # 每2小时运行一次（在0分钟）
-  workflow_dispatch:        # 手动触发
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,61 +13,54 @@ permissions:
 
 jobs:
   update-images:
-    runs-on: ubuntu-slim 
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-
-
       - name: Get quote from hitokoto API
-        if: steps.check-time.outputs.skip == 'false'
         id: hitokoto
         run: |
-          # 从一言API获取句子
           RESPONSE=$(curl -s "https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=g&c=h&c=i&c=j&c=k&c=l")
-          
-          # 提取句子和作者
           QUOTE=$(echo $RESPONSE | jq -r '.hitokoto // "更新图片时间戳"')
           AUTHOR=$(echo $RESPONSE | jq -r '.from // "一言"')
           
-          # 如果获取失败，使用默认值
           if [ "$QUOTE" = "null" ] || [ -z "$QUOTE" ]; then
             QUOTE="更新图片时间戳"
             AUTHOR="AUTO"
           fi
           
-          # 输出到环境变量
           echo "QUOTE=$QUOTE" >> $GITHUB_ENV
           echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
           echo "Commit message: $QUOTE —— $AUTHOR"
 
       - name: Update README with timestamp
-        if: steps.check-time.outputs.skip == 'false'
         run: |
-          # 生成时间戳
           TIMESTAMP=$(date +%s)
-          
-          # 创建临时文件
           cp README.md README.md.tmp
           
-          # 使用sed更新图片链接，添加时间戳
-          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
-          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*|\1?v=$TIMESTAMP|g" README.md.tmp
+          # 修复 sed 语法错误，并确保实际写入 README.md
+          sed -i "s|(\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
+          sed -i "s|(\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)[^)]*)|\1?v=$TIMESTAMP|g" README.md.tmp
           
+          mv README.md.tmp README.md  
 
       - name: Commit and push changes
-        if: steps.check-time.outputs.skip == 'false' && env.NO_CHANGE != 'true'
+        if: env.NO_CHANGE != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           
-          # 使用从API获取的句子作为commit消息
+          # 检查是否有实际变更
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           COMMIT_MSG="🔄 $QUOTE —— $AUTHOR [skip ci]"
           echo "Committing with message: $COMMIT_MSG"
-          
           git commit -m "$COMMIT_MSG"
           git push
