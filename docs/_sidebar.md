@@ -1,4 +1,4 @@
-- [🏠 文档首页](/README.md)
+- [🏠 文档首页](/docs/README.md)
 
 ## 📁 资源档案
 - [🎵 音乐收藏](/music/README.md)
