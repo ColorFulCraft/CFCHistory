@@ -2,11 +2,15 @@ name: Update Visit Statistics
 permissions:
   contents: write
   
-# 触发器改为仅接受API调用
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [page_visited]
+  schedule:
+    # 增加频率：每15分钟运行一次
+    - cron: '*/15 * * * *'
+    # 每天UTC时间00:00运行（累计访问统计和重置今日访问）
+    - cron: '0 0 * * *'
+  # 添加页面部署触发
+  page_build:
 
 jobs:
   update-stats:
@@ -20,10 +24,10 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Python dependencies
+        run: pip install requests
+
       - name: Update visit statistics
-        env:
-          TRIGGER_TYPE: ${{ github.event_name }}
-          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: python .github/scripts/update_stats.py
     
       - name: Commit and push if changed
