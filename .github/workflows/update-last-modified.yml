@@ -14,14 +14,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  
+          # 使用 fetch-depth: 0 获取完整历史记录
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Update last modified date
         id: update-date
         run: |
-          CURRENT_DATE=$(date +"%Y-%m-%d")
-          sed -i "s/> 最后更新时间：.*/> 最后更新时间：$CURRENT_DATE/" README.md
+          # 使用获取到的日期
+          CURRENT_DATE="${{ steps.date.outputs.date }}"
           
+          echo "当前日期: $CURRENT_DATE"
+          
+          # 查找并替换最后更新时间的行
+          # 注意：这个模式需要根据你的 README.md 实际内容调整
+          if grep -q "> 最后更新时间：" README.md; then
+            sed -i "s/> 最后更新时间：.*/> 最后更新时间：$CURRENT_DATE/" README.md
+            echo "已更新日期"
+          else
+            # 如果找不到模式，尝试其他可能的模式
+            sed -i "s/最后更新：.*/最后更新：$CURRENT_DATE/" README.md || \
+            sed -i "s/Last updated:.*/Last updated: $CURRENT_DATE/" README.md || \
+            echo "未找到日期模式，请检查 README.md 格式"
+          fi
+
+      - name: Check for changes
+        id: check-changes
+        run: |
           # 检查是否有更改
           if git diff --exit-code --quiet README.md; then
             echo "没有变更，跳过提交"
@@ -29,13 +52,21 @@ jobs:
           else
             echo "检测到更改，准备提交"
             echo "should_commit=true" >> $GITHUB_OUTPUT
+            
+            # 显示更改内容
+            git diff README.md
           fi
 
       - name: Commit and push changes
-        if: steps.update-date.outputs.should_commit == 'true'
+        if: steps.check-changes.outputs.should_commit == 'true'
         run: |
+          CURRENT_DATE="${{ steps.date.outputs.date }}"
+          
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
           git commit -m "📅 自动更新最后修改日期 [$CURRENT_DATE]"
           git push
+        env:
+          # 确保使用正确的 token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
