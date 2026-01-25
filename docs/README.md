@@ -60,9 +60,3 @@
 - [加入QQ群](https://qm.qq.com/q/L8kNa8IJqu)
 - [问题反馈](https://github.com/ColorFulCraft/CFCHistory/issues)
 
----
-
-**文档状态**: 🟢 正常维护  
-**最后更新**: {{ new Date().toLocaleDateString('zh-CN') }}  
-**维护团队**: ColorFulCraft 历史档案组  
-**版本**: v1.0.0
