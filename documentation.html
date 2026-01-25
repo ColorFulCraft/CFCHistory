@@ -562,7 +562,7 @@ window.$docsify = {
     // 📖 封面页配置
     coverpage: false,
     
-    // ⚙️ 插件配置 - 简化版，移除自动重定向
+    // ⚙️ 插件配置 - 完全简化，让 docsify 处理路由
     plugins: [
         function(hook, vm) {
             hook.init(function() {
@@ -633,27 +633,15 @@ window.$docsify = {
                     }
                 });
                 
-                // 修复侧边栏链接（但不自动重定向）
-                document.querySelectorAll('.sidebar a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('#')) {
-                        // 检查链接是否缺少 .md 扩展名
-                        const path = href.substring(1); // 去掉 #
-                        if (path && !path.includes('.') && !path.endsWith('/')) {
-                            // 为链接添加 .md 扩展名
-                            const newHref = `#/${path}/README.md`;
-                            console.log(`修复链接: ${href} -> ${newHref}`);
-                            link.setAttribute('href', newHref);
-                            
-                            // 保持原来的点击行为
-                            link.onclick = function(e) {
-                                e.preventDefault();
-                                location.hash = newHref;
-                                return false;
-                            };
-                        }
+                // 移除之前的链接修复逻辑，让 docsify 处理
+                // 只添加一个简单的404处理
+                setTimeout(() => {
+                    const markdownSection = document.querySelector('.markdown-section');
+                    if (markdownSection && markdownSection.textContent.includes('找不到该页面')) {
+                        console.log('检测到404页面');
+                        // 可以在这里添加自定义404处理
                     }
-                });
+                }, 500);
             });
             
             hook.afterEach(function() {
@@ -705,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始调整按钮位置
     setTimeout(adjustBackButtonPosition, 1000);
     
-    // 简化初始加载逻辑 - 只处理真正的空哈希
+    // 简化初始加载逻辑
     function ensureInitialLoad() {
         const hash = location.hash;
         console.log('初始加载检查 - 当前哈希:', hash);
@@ -715,31 +703,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('空哈希，重定向到首页');
             location.hash = '#/README.md';
         }
-        // 对于其他情况，不自动修改，让 docsify 处理
     }
     
     // 延迟执行，确保 docsify 已初始化
     setTimeout(ensureInitialLoad, 100);
     
-    // 监听哈希变化，但不自动修复（避免循环）
+    // 监听哈希变化，用于调试
     window.addEventListener('hashchange', function() {
         console.log('哈希变化到:', location.hash);
-        // 这里不做任何修复，让 docsify 处理
-    });
-    
-    // 添加点击事件监听器，确保链接正确
-    document.addEventListener('click', function(e) {
-        // 检查是否是侧边栏链接
-        const link = e.target.closest('.sidebar a');
-        if (link) {
-            const href = link.getAttribute('href');
-            console.log('点击侧边栏链接:', href);
-            
-            // 检查是否是到 old-files 的链接
-            if (href && href.includes('old-files')) {
-                console.log('old-files 链接被点击');
-            }
-        }
     });
 });
     </script>
