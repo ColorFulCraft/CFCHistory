@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -535,14 +534,15 @@
             repo: 'ColorFulCraft/CFCHistory',
             
             // 📁 文档配置 - 修复路径设置
-            basePath: 'docs/',  // 指向 docs 目录
+            basePath: './docs/',  // 改为相对路径
             loadSidebar: true,
             subMaxLevel: 3,
             auto2top: true,
-            // 移除 homepage 配置，让 docsify 自动读取 docs/README.md
+            homepage: 'README.md',  // 明确指定首页
             alias: {
                 '/.*/_sidebar.md': '/_sidebar.md',
-                '/README.md': '/docs/README.md'
+                '/': '/README.md',  // 根路径映射到README
+                '': '/README.md'    // 空路径也映射
             },
             
             // 🔍 搜索配置
@@ -562,27 +562,31 @@
             // 📖 封面页配置
             coverpage: false,
             
-            // ⚙️ 插件配置
+            // ⚙️ 插件配置 - 修复初始加载
             plugins: [
                 function(hook, vm) {
                     hook.init(function() {
                         // 从主页同步主题
                         syncThemeFromHomePage();
                         
-                        // 确保初始加载正确的文档
-                        if (!vm.route.path || vm.route.path === '/') {
-                            // 重定向到 docs/README.md
-                            vm.route.path = '/README.md';
+                        // 初始加载时确保有正确的哈希
+                        if (!location.hash || location.hash === '#/' || location.hash === '') {
+                            // 立即设置哈希，防止404
+                            location.hash = '#/README.md';
                         }
                     });
                     
-                    hook.beforeEach(function(content) {
+                    hook.beforeEach(function(content, next) {
                         const file = vm.route.file || 'README.md';
                         // 修复编辑链接
-                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file.replace(/^docs\//, '')}`;
-                        return content + '\n\n---\n\n' +
-                            '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
+                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file}`;
+                        
+                        // 添加页脚信息（所有页面都添加）
+                        content += '\n\n---\n\n' +
+                            '> **📂 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
                             ' | [在 GitHub 上编辑此页](' + editUrl + ')\n';
+                        
+                        next(content);
                     });
                     
                     hook.mounted(function() {
@@ -597,16 +601,15 @@
                                 adjustBackButtonPosition();
                             });
                             
-                            // 观察 body 的子节点变化
                             observer.observe(document.body, { 
                                 childList: true, 
                                 subtree: true 
                             });
                             
-                            // 确保加载了正确的文档
-                            if (location.hash === '' || location.hash === '#/') {
+                            // 双重保险：检查当前哈希
+                            if (!location.hash || location.hash === '#/' || location.hash === '') {
                                 setTimeout(() => {
-                                    vm.router.replace('/README.md');
+                                    location.hash = '#/README.md';
                                 }, 100);
                             }
                         }, 500);
@@ -692,12 +695,35 @@
             // 初始调整按钮位置
             setTimeout(adjustBackButtonPosition, 1000);
             
-            // 如果直接访问 documentation.html，确保加载正确的文档
-            if (location.hash === '' || location.hash === '#/') {
-                setTimeout(() => {
+            // 修复初始加载问题 - 三重保险
+            function ensureInitialLoad() {
+                const hash = location.hash;
+                console.log('当前哈希:', hash);
+                
+                if (!hash || hash === '#/' || hash === '' || hash === '#') {
+                    console.log('设置初始哈希为 #/README.md');
                     location.hash = '#/README.md';
-                }, 200);
+                }
             }
+            
+            // 立即执行一次
+            ensureInitialLoad();
+            
+            // Docsify 加载后再检查一次
+            setTimeout(ensureInitialLoad, 300);
+            
+            // 监听哈希变化，如果404就重定向
+            window.addEventListener('hashchange', function() {
+                const hash = location.hash;
+                console.log('哈希变化:', hash);
+                
+                // 如果路径看起来像是404或者空，重定向到首页
+                if (hash === '#/' || hash === '' || hash === '#') {
+                    setTimeout(() => {
+                        location.hash = '#/README.md';
+                    }, 50);
+                }
+            });
         });
     </script>
     
