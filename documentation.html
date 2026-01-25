@@ -528,134 +528,184 @@
             }
         }
         
-        // 🎯 docsify 配置 - 修复的关键部分
-        window.$docsify = {
-            name: '🏛️ ColorFulCraft 技术文档中心',
-            repo: 'ColorFulCraft/CFCHistory',
-            
-            // 📁 文档配置 - 修复路径设置
-            basePath: './docs/',  // 改为相对路径
-            loadSidebar: true,
-            subMaxLevel: 3,
-            auto2top: true,
-            homepage: 'README.md',  // 明确指定首页
-            alias: {
-                '/.*/_sidebar.md': '/_sidebar.md',
-                '/': '/README.md',  // 根路径映射到README
-                '': '/README.md'    // 空路径也映射
-            },
-            
-            // 🔍 搜索配置
-            search: {
-                paths: 'auto',
-                placeholder: '🔍 搜索文档...',
-                noData: '😅 没有找到相关结果',
-                depth: 3,
-                namespace: 'cfc-docs',
-                hideOtherSidebarContent: false
-            },
-            
-            // 📄 侧边栏配置
-            sidebarDisplayLevel: 2,
-            loadNavbar: false,
-            
-            // 📖 封面页配置
-            coverpage: false,
-            
-            // ⚙️ 插件配置 - 修复初始加载
-            plugins: [
-                function(hook, vm) {
-                    hook.init(function() {
-                        // 从主页同步主题
-                        syncThemeFromHomePage();
-                        
-                        // 初始加载时确保有正确的哈希
-                        if (!location.hash || location.hash === '#/' || location.hash === '') {
-                            // 立即设置哈希，防止404
-                            location.hash = '#/README.md';
-                        }
-                    });
-                    
-                    hook.beforeEach(function(content, next) {
-                        const file = vm.route.file || 'README.md';
-                        // 修复编辑链接
-                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file}`;
-                        
-                        // 添加页脚信息（所有页面都添加）
-                        content += '\n\n---\n\n' +
-                            '> **📂 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
-                            ' | [在 GitHub 上编辑此页](' + editUrl + ')\n';
-                        
-                        next(content);
-                    });
-                    
-                    hook.mounted(function() {
-                        // 添加主题切换按钮事件
-                        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-                        
-                        // 初始化调整按钮位置
-                        setTimeout(() => {
-                            adjustBackButtonPosition();
-                            // 监听搜索框的出现
-                            const observer = new MutationObserver(() => {
-                                adjustBackButtonPosition();
-                            });
-                            
-                            observer.observe(document.body, { 
-                                childList: true, 
-                                subtree: true 
-                            });
-                            
-                            // 双重保险：检查当前哈希
-                            if (!location.hash || location.hash === '#/' || location.hash === '') {
-                                setTimeout(() => {
-                                    location.hash = '#/README.md';
-                                }, 100);
-                            }
-                        }, 500);
-                    });
-                    
-                    hook.doneEach(function() {
-                        // 确保所有文字颜色正确
-                        document.querySelectorAll('.markdown-section *').forEach(el => {
-                            if (getComputedStyle(el).color === 'rgb(51, 51, 51)' || 
-                                getComputedStyle(el).color === 'rgb(68, 68, 68)' ||
-                                getComputedStyle(el).color === 'rgb(0, 0, 0)') {
-                                el.style.color = 'var(--text-color)';
-                            }
-                        });
-                        
-                        // 动态调整返回按钮位置
-                        setTimeout(adjustBackButtonPosition, 100);
-                        
-                        // 为图片添加主题适配
-                        document.querySelectorAll('.markdown-section img').forEach(img => {
-                            img.style.maxWidth = '100%';
-                            img.style.borderRadius = '8px';
-                            img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                        });
-                        
-                        // 为外部链接添加标识
-                        document.querySelectorAll('.markdown-section a[href^="http"]').forEach(link => {
-                            if (!link.href.includes(window.location.hostname)) {
-                                link.target = '_blank';
-                                link.rel = 'noopener noreferrer';
-                                if (!link.querySelector('.external-icon')) {
-                                    link.innerHTML += ' <span style="font-size:0.8em;">↗</span>';
-                                }
-                            }
-                        });
-                    });
-                    
-                    hook.afterEach(function() {
-                        // 文档切换时重新调整按钮位置
-                        setTimeout(() => {
-                            adjustBackButtonPosition();
-                        }, 300);
-                    });
+// 🎯 docsify 配置 - 修复的关键部分
+window.$docsify = {
+    name: '🏛️ ColorFulCraft 技术文档中心',
+    repo: 'ColorFulCraft/CFCHistory',
+    
+    // 📁 文档配置 - 修复路径设置
+    basePath: './docs/',  // 改为相对路径
+    loadSidebar: true,
+    subMaxLevel: 3,
+    auto2top: true,
+    homepage: 'README.md',  // 明确指定首页
+    alias: {
+        '/.*/_sidebar.md': '/_sidebar.md',
+        '/': '/README.md',  // 根路径映射到README
+        '': '/README.md'    // 空路径也映射
+    },
+    
+    // 🔍 搜索配置
+    search: {
+        paths: 'auto',
+        placeholder: '🔍 搜索文档...',
+        noData: '😅 没有找到相关结果',
+        depth: 3,
+        namespace: 'cfc-docs',
+        hideOtherSidebarContent: false
+    },
+    
+    // 📄 侧边栏配置
+    sidebarDisplayLevel: 2,
+    loadNavbar: false,
+    
+    // 📖 封面页配置
+    coverpage: false,
+    
+    // 🔧 修复相对链接
+    relativePath: true,
+    
+    // 📁 自动处理文件扩展名
+    ext: '.md',
+    
+    // ⚙️ 插件配置 - 修复初始加载和路径问题
+    plugins: [
+        function(hook, vm) {
+            hook.init(function() {
+                // 从主页同步主题
+                syncThemeFromHomePage();
+                
+                // 初始加载时确保有正确的哈希
+                if (!location.hash || location.hash === '#/' || location.hash === '') {
+                    // 立即设置哈希，防止404
+                    location.hash = '#/README.md';
                 }
-            ]
-        };
+                
+                // 修复路径处理
+                vm.router.parse = function(path) {
+                    // 确保路径有正确的扩展名
+                    if (path && !path.endsWith('.md') && path !== '/') {
+                        // 尝试添加 .md 扩展名
+                        const parts = path.split('/');
+                        const lastPart = parts[parts.length - 1];
+                        if (lastPart && !lastPart.includes('.')) {
+                            path = path + '.md';
+                        }
+                    }
+                    return path;
+                };
+            });
+            
+            hook.beforeEach(function(content, next) {
+                const file = vm.route.file || 'README.md';
+                // 修复编辑链接
+                const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file}`;
+                
+                // 添加页脚信息（所有页面都添加）
+                content += '\n\n---\n\n' +
+                    '> **📂 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
+                    ' | [在 GitHub 上编辑此页](' + editUrl + ')\n';
+                
+                next(content);
+            });
+            
+            hook.mounted(function() {
+                // 添加主题切换按钮事件
+                document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+                
+                // 初始化调整按钮位置
+                setTimeout(() => {
+                    adjustBackButtonPosition();
+                    // 监听搜索框的出现
+                    const observer = new MutationObserver(() => {
+                        adjustBackButtonPosition();
+                    });
+                    
+                    observer.observe(document.body, { 
+                        childList: true, 
+                        subtree: true 
+                    });
+                    
+                    // 双重保险：检查当前哈希
+                    if (!location.hash || location.hash === '#/' || location.hash === '') {
+                        setTimeout(() => {
+                            location.hash = '#/README.md';
+                        }, 100);
+                    }
+                }, 500);
+            });
+            
+            hook.doneEach(function() {
+                // 修复链接，确保它们有正确的扩展名
+                document.querySelectorAll('.sidebar a, .markdown-section a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#') && !href.includes('.html') && !href.endsWith('.md')) {
+                        // 检查是否是目录链接
+                        const path = href.substring(1); // 去掉 #
+                        if (path && !path.includes('.') && path !== '/') {
+                            // 尝试修复为 .md 扩展名
+                            link.setAttribute('href', `#/${path}/README.md`);
+                        }
+                    }
+                });
+                
+                // 确保所有文字颜色正确
+                document.querySelectorAll('.markdown-section *').forEach(el => {
+                    if (getComputedStyle(el).color === 'rgb(51, 51, 51)' || 
+                        getComputedStyle(el).color === 'rgb(68, 68, 68)' ||
+                        getComputedStyle(el).color === 'rgb(0, 0, 0)') {
+                        el.style.color = 'var(--text-color)';
+                    }
+                });
+                
+                // 动态调整返回按钮位置
+                setTimeout(adjustBackButtonPosition, 100);
+                
+                // 为图片添加主题适配
+                document.querySelectorAll('.markdown-section img').forEach(img => {
+                    img.style.maxWidth = '100%';
+                    img.style.borderRadius = '8px';
+                    img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                });
+                
+                // 为外部链接添加标识
+                document.querySelectorAll('.markdown-section a[href^="http"]').forEach(link => {
+                    if (!link.href.includes(window.location.hostname)) {
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        if (!link.querySelector('.external-icon')) {
+                            link.innerHTML += ' <span style="font-size:0.8em;">↗</span>';
+                        }
+                    }
+                });
+                
+                // 处理404情况
+                const markdownSection = document.querySelector('.markdown-section');
+                if (markdownSection && markdownSection.textContent.includes('404')) {
+                    console.log('检测到404页面，尝试重定向');
+                    // 尝试从当前路径推断正确的文件
+                    const currentPath = vm.route.path;
+                    if (currentPath && !currentPath.endsWith('.md')) {
+                        // 尝试添加 .md 扩展名
+                        vm.router.replace(currentPath + '.md');
+                    } else if (currentPath) {
+                        // 如果已经有扩展名但仍然404，重定向到首页
+                        setTimeout(() => {
+                            vm.router.replace('/README.md');
+                        }, 1000);
+                    }
+                }
+            });
+            
+            hook.afterEach(function() {
+                // 文档切换时重新调整按钮位置
+                setTimeout(() => {
+                    adjustBackButtonPosition();
+                }, 300);
+            });
+        }
+    ]
+};
         
         // 页面加载
         document.addEventListener('DOMContentLoaded', function() {
