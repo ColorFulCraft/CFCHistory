@@ -372,7 +372,7 @@
         }
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <div class="gradient-bg"></div>
     <div class="content-overlay"></div>
     
@@ -529,19 +529,20 @@
             }
         }
         
-        // 🎯 docsify 配置
+        // 🎯 docsify 配置 - 修复的关键部分
         window.$docsify = {
             name: '🏛️ ColorFulCraft 技术文档中心',
             repo: 'ColorFulCraft/CFCHistory',
             
-            // 📁 文档配置
-            basePath: '/docs/',
+            // 📁 文档配置 - 修复路径设置
+            basePath: 'docs/',  // 指向 docs 目录
             loadSidebar: true,
             subMaxLevel: 3,
             auto2top: true,
-            homepage: 'README.md',
+            // 移除 homepage 配置，让 docsify 自动读取 docs/README.md
             alias: {
-                '/.*/_sidebar.md': '/_sidebar.md'
+                '/.*/_sidebar.md': '/_sidebar.md',
+                '/README.md': '/docs/README.md'
             },
             
             // 🔍 搜索配置
@@ -558,17 +559,27 @@
             sidebarDisplayLevel: 2,
             loadNavbar: false,
             
+            // 📖 封面页配置
+            coverpage: false,
+            
             // ⚙️ 插件配置
             plugins: [
                 function(hook, vm) {
                     hook.init(function() {
                         // 从主页同步主题
                         syncThemeFromHomePage();
+                        
+                        // 确保初始加载正确的文档
+                        if (!vm.route.path || vm.route.path === '/') {
+                            // 重定向到 docs/README.md
+                            vm.route.path = '/README.md';
+                        }
                     });
                     
                     hook.beforeEach(function(content) {
                         const file = vm.route.file || 'README.md';
-                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file}`;
+                        // 修复编辑链接
+                        const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file.replace(/^docs\//, '')}`;
                         return content + '\n\n---\n\n' +
                             '> **📝 文档信息** | 最后更新: ' + new Date().toLocaleDateString('zh-CN') + 
                             ' | [在 GitHub 上编辑此页](' + editUrl + ')\n';
@@ -591,6 +602,13 @@
                                 childList: true, 
                                 subtree: true 
                             });
+                            
+                            // 确保加载了正确的文档
+                            if (location.hash === '' || location.hash === '#/') {
+                                setTimeout(() => {
+                                    vm.router.replace('/README.md');
+                                }, 100);
+                            }
                         }, 500);
                     });
                     
@@ -673,6 +691,13 @@
             
             // 初始调整按钮位置
             setTimeout(adjustBackButtonPosition, 1000);
+            
+            // 如果直接访问 documentation.html，确保加载正确的文档
+            if (location.hash === '' || location.hash === '#/') {
+                setTimeout(() => {
+                    location.hash = '#/README.md';
+                }, 200);
+            }
         });
     </script>
     
