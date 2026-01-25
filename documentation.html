@@ -562,38 +562,12 @@ window.$docsify = {
     // 📖 封面页配置
     coverpage: false,
     
-    // 🔧 修复相对链接
-    relativePath: true,
-    
-    // 📁 自动处理文件扩展名
-    ext: '.md',
-    
-    // ⚙️ 插件配置 - 修复初始加载和路径问题
+    // ⚙️ 插件配置 - 简化版，移除自动重定向
     plugins: [
         function(hook, vm) {
             hook.init(function() {
                 // 从主页同步主题
                 syncThemeFromHomePage();
-                
-                // 初始加载时确保有正确的哈希
-                if (!location.hash || location.hash === '#/' || location.hash === '') {
-                    // 立即设置哈希，防止404
-                    location.hash = '#/README.md';
-                }
-                
-                // 修复路径处理
-                vm.router.parse = function(path) {
-                    // 确保路径有正确的扩展名
-                    if (path && !path.endsWith('.md') && path !== '/') {
-                        // 尝试添加 .md 扩展名
-                        const parts = path.split('/');
-                        const lastPart = parts[parts.length - 1];
-                        if (lastPart && !lastPart.includes('.')) {
-                            path = path + '.md';
-                        }
-                    }
-                    return path;
-                };
             });
             
             hook.beforeEach(function(content, next) {
@@ -625,30 +599,10 @@ window.$docsify = {
                         childList: true, 
                         subtree: true 
                     });
-                    
-                    // 双重保险：检查当前哈希
-                    if (!location.hash || location.hash === '#/' || location.hash === '') {
-                        setTimeout(() => {
-                            location.hash = '#/README.md';
-                        }, 100);
-                    }
                 }, 500);
             });
             
             hook.doneEach(function() {
-                // 修复链接，确保它们有正确的扩展名
-                document.querySelectorAll('.sidebar a, .markdown-section a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('#') && !href.includes('.html') && !href.endsWith('.md')) {
-                        // 检查是否是目录链接
-                        const path = href.substring(1); // 去掉 #
-                        if (path && !path.includes('.') && path !== '/') {
-                            // 尝试修复为 .md 扩展名
-                            link.setAttribute('href', `#/${path}/README.md`);
-                        }
-                    }
-                });
-                
                 // 确保所有文字颜色正确
                 document.querySelectorAll('.markdown-section *').forEach(el => {
                     if (getComputedStyle(el).color === 'rgb(51, 51, 51)' || 
@@ -679,22 +633,27 @@ window.$docsify = {
                     }
                 });
                 
-                // 处理404情况
-                const markdownSection = document.querySelector('.markdown-section');
-                if (markdownSection && markdownSection.textContent.includes('404')) {
-                    console.log('检测到404页面，尝试重定向');
-                    // 尝试从当前路径推断正确的文件
-                    const currentPath = vm.route.path;
-                    if (currentPath && !currentPath.endsWith('.md')) {
-                        // 尝试添加 .md 扩展名
-                        vm.router.replace(currentPath + '.md');
-                    } else if (currentPath) {
-                        // 如果已经有扩展名但仍然404，重定向到首页
-                        setTimeout(() => {
-                            vm.router.replace('/README.md');
-                        }, 1000);
+                // 修复侧边栏链接（但不自动重定向）
+                document.querySelectorAll('.sidebar a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        // 检查链接是否缺少 .md 扩展名
+                        const path = href.substring(1); // 去掉 #
+                        if (path && !path.includes('.') && !path.endsWith('/')) {
+                            // 为链接添加 .md 扩展名
+                            const newHref = `#/${path}/README.md`;
+                            console.log(`修复链接: ${href} -> ${newHref}`);
+                            link.setAttribute('href', newHref);
+                            
+                            // 保持原来的点击行为
+                            link.onclick = function(e) {
+                                e.preventDefault();
+                                location.hash = newHref;
+                                return false;
+                            };
+                        }
                     }
-                }
+                });
             });
             
             hook.afterEach(function() {
@@ -707,74 +666,82 @@ window.$docsify = {
     ]
 };
         
-        // 页面加载
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📚 文档页面加载');
-            
-            // 同步主题
-            syncThemeFromHomePage();
-            
-            // 设置主题切换按钮事件
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            
-            // 监听窗口大小变化
-            window.addEventListener('resize', adjustBackButtonPosition);
-            
-            // 监听侧边栏切换
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.sidebar-toggle')) {
-                    setTimeout(adjustBackButtonPosition, 500);
+// 页面加载
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📚 文档页面加载 - 当前URL:', window.location.href);
+    console.log('当前哈希:', location.hash);
+    
+    // 同步主题
+    syncThemeFromHomePage();
+    
+    // 设置主题切换按钮事件
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', adjustBackButtonPosition);
+    
+    // 监听侧边栏切换
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.sidebar-toggle')) {
+            setTimeout(adjustBackButtonPosition, 500);
+        }
+    });
+    
+    // 监听来自主页的主题变化
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'cfc-theme-sync') {
+            try {
+                const themeData = JSON.parse(e.newValue);
+                if (themeData && themeData.theme && themeData.source !== 'documentation-page') {
+                    console.log('📱 收到主页主题更新:', themeData.theme);
+                    setTheme(themeData.theme);
                 }
-            });
-            
-            // 监听来自主页的主题变化
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'cfc-theme-sync') {
-                    try {
-                        const themeData = JSON.parse(e.newValue);
-                        if (themeData && themeData.theme && themeData.source !== 'documentation-page') {
-                            console.log('📱 收到主页主题更新:', themeData.theme);
-                            setTheme(themeData.theme);
-                        }
-                    } catch (error) {
-                        console.warn('主题同步解析错误:', error);
-                    }
-                }
-            });
-            
-            // 初始调整按钮位置
-            setTimeout(adjustBackButtonPosition, 1000);
-            
-            // 修复初始加载问题 - 三重保险
-            function ensureInitialLoad() {
-                const hash = location.hash;
-                console.log('当前哈希:', hash);
-                
-                if (!hash || hash === '#/' || hash === '' || hash === '#') {
-                    console.log('设置初始哈希为 #/README.md');
-                    location.hash = '#/README.md';
-                }
+            } catch (error) {
+                console.warn('主题同步解析错误:', error);
             }
+        }
+    });
+    
+    // 初始调整按钮位置
+    setTimeout(adjustBackButtonPosition, 1000);
+    
+    // 简化初始加载逻辑 - 只处理真正的空哈希
+    function ensureInitialLoad() {
+        const hash = location.hash;
+        console.log('初始加载检查 - 当前哈希:', hash);
+        
+        // 只在完全为空时才重定向到首页
+        if (!hash || hash === '#' || hash === '') {
+            console.log('空哈希，重定向到首页');
+            location.hash = '#/README.md';
+        }
+        // 对于其他情况，不自动修改，让 docsify 处理
+    }
+    
+    // 延迟执行，确保 docsify 已初始化
+    setTimeout(ensureInitialLoad, 100);
+    
+    // 监听哈希变化，但不自动修复（避免循环）
+    window.addEventListener('hashchange', function() {
+        console.log('哈希变化到:', location.hash);
+        // 这里不做任何修复，让 docsify 处理
+    });
+    
+    // 添加点击事件监听器，确保链接正确
+    document.addEventListener('click', function(e) {
+        // 检查是否是侧边栏链接
+        const link = e.target.closest('.sidebar a');
+        if (link) {
+            const href = link.getAttribute('href');
+            console.log('点击侧边栏链接:', href);
             
-            // 立即执行一次
-            ensureInitialLoad();
-            
-            // Docsify 加载后再检查一次
-            setTimeout(ensureInitialLoad, 300);
-            
-            // 监听哈希变化，如果404就重定向
-            window.addEventListener('hashchange', function() {
-                const hash = location.hash;
-                console.log('哈希变化:', hash);
-                
-                // 如果路径看起来像是404或者空，重定向到首页
-                if (hash === '#/' || hash === '' || hash === '#') {
-                    setTimeout(() => {
-                        location.hash = '#/README.md';
-                    }, 50);
-                }
-            });
-        });
+            // 检查是否是到 old-files 的链接
+            if (href && href.includes('old-files')) {
+                console.log('old-files 链接被点击');
+            }
+        }
+    });
+});
     </script>
     
     <!-- 📚 Docsify 核心库 -->
