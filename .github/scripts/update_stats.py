@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone, timedelta
-import requests
+from collections import OrderedDict
 
 def update_stats():
     # 文件路径
@@ -12,8 +12,9 @@ def update_stats():
     
     # 获取当前日期（UTC+8）
     beijing_tz = timezone(timedelta(hours=8))
-    current_date = datetime.now(beijing_tz).strftime('%Y-%m-%d')
-    current_hour = datetime.now(beijing_tz).strftime('%Y-%m-%d %H:00:00')
+    now = datetime.now(beijing_tz)
+    current_date = now.strftime('%Y-%m-%d')
+    current_hour = now.strftime('%Y-%m-%d %H:00:00')
     
     # 读取现有统计数据
     if os.path.exists(stats_file):
@@ -50,13 +51,43 @@ def update_stats():
     today_total = sum(stats['hourly_visits'].values())
     stats['daily_visits'][current_date] = today_total
     
-    stats['last_updated'] = datetime.now(beijing_tz).isoformat()
+    # 清理旧数据（保留最近7天的数据）
+    cleanup_old_data(stats, now)
+    
+    stats['last_updated'] = now.isoformat()
     
     # 保存更新后的数据
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(stats, f, ensure_ascii=False, indent=2)
     
     print(f"Statistics updated: Total={stats['total_visits']}, Today={today_total}")
+
+def cleanup_old_data(stats, current_time):
+    """清理旧数据，只保留最近7天的数据"""
+    beijing_tz = timezone(timedelta(hours=8))
+    
+    # 清理hourly_visits：只保留最近7天
+    cutoff_date = current_time - timedelta(days=7)
+    cutoff_str = cutoff_date.strftime('%Y-%m-%d')
+    
+    # 创建新的hourly_visits字典，只保留最近7天的数据
+    new_hourly = {}
+    for hour_str, count in stats['hourly_visits'].items():
+        hour_date = hour_str.split(' ')[0]  # 获取日期部分
+        if hour_date >= cutoff_str:
+            new_hourly[hour_str] = count
+    
+    stats['hourly_visits'] = dict(OrderedDict(sorted(new_hourly.items())))
+    
+    # 清理daily_visits：只保留最近7天
+    new_daily = {}
+    for date_str, count in stats['daily_visits'].items():
+        if date_str >= cutoff_str:
+            new_daily[date_str] = count
+    
+    stats['daily_visits'] = dict(OrderedDict(sorted(new_daily.items())))
+    
+    print(f"Cleaned up data older than {cutoff_str}")
 
 if __name__ == '__main__':
     update_stats()
