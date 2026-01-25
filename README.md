@@ -55,5 +55,5 @@
 ---
 
 ## 🗓️ 最近提交
-![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=1769258421)
+![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg)
 
