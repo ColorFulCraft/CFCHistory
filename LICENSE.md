@@ -1,5 +1,5 @@
-# 本项目主体内容为MIT协议
-
+# CFCHistory主体内容继承MIT协议
+## 以下是 MIT 协议
 Copyright (c) 2026 ColorFulCraft
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,8 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+## 其他文档/文件的许可证
+
 `
-其他内容请访问各项目目录
+请访问各项目目录
 - [文档](https://github.com/ColorFulCraft/CFCHistory/tree/main/docs/LICENSE)
 - [音乐](https://github.com/ColorFulCraft/CFCHistory/tree/main/music/LICENSE)
 - [旧文件](https://github.com/ColorFulCraft/CFCHistory/tree/main/old%20files/LICENSE)
