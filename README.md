@@ -62,13 +62,13 @@
 ## 4.其他
 | 其他东西 | 跳转 |
 | --- | --- |
-| 音乐 | [戳我](music/readme.md) |
+| 音乐 | [戳我](music/README.md) |
 | 旧文件 | [戳我](old%20files/README.md) |
-| 图片  | [戳我](pictures/readme.md) |
-| 更新日志 | [戳我](https://github.com/ColorFulCraft/CFCHistory/tree/main/update-log) |
+| 图片  | [戳我](pictures/README.md) |
+| 更新日志 | [戳我](update-loh/README.md) |
 | 视频 | [戳我](videos/README.md) |
 
-> 所有解释权归ColorFulCraft所有！其他请遵循MIT协议，[许可证文件](https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE)
+> 所有解释权归ColorFulCraft所有！其他请遵循MIT协议，[许可证文件](LICENSE)
 
 ---
 
