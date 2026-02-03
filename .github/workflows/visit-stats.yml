@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CFCAT_PAT }}  # 添加这行使用PAT
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -32,8 +34,8 @@ jobs:
     
       - name: Commit and push if changed
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "CFCAT"
+          git config --local user.email "action@github.com" 
+          git config --local user.name "CFCAT" 
           git add stats/visit_stats.json
           git diff --staged --quiet || git commit -m "CFCAT: 我来更新网站的统计信息啦😄"
           git push
