@@ -1,6 +1,6 @@
 # 本项目主体内容为MIT协议
 
-Copyright (c) 2025 ColorFulCraft
+Copyright (c) 2026 ColorFulCraft
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
