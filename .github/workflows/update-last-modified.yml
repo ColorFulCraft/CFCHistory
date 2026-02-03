@@ -62,8 +62,8 @@ jobs:
         run: |
           CURRENT_DATE="${{ steps.date.outputs.date }}"
           
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "CFCAT"
+          git config --global user.email "leng@ipacel.cc"
           git add README.md
           git commit -m "📅 自动更新最后修改日期 [$CURRENT_DATE]"
           git push
