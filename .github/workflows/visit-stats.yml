@@ -9,8 +9,6 @@ on:
     - cron: '*/15 * * * *'
     # 每天UTC时间00:00运行（累计访问统计和重置今日访问）
     - cron: '0 0 * * *'
-  # 添加页面部署触发
-  page_build:
 
 jobs:
   update-stats:
