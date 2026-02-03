@@ -24,7 +24,7 @@
 
 ## 二、NVMT team时期  
 
-2022年5月中旬，VM team正式改名为NVMT，意思是"The New VM Team"，因为NVMT名称的使用跨越了计算机团队时期和mc服务器时期，故将此阶段命名为"NVMT team时期"。  
+2022年6月，VM team正式改名为NVMT，原意是"The New VM Team"（全新的VM团队），因为NVMT名称的使用跨越了计算机团队时期和mc服务器时期，故将此阶段命名为"NVMT team时期"。  
 
 ### 1. 衰落  
 
