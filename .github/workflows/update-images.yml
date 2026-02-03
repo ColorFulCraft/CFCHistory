@@ -52,7 +52,7 @@ jobs:
       - name: Commit and push changes
         if: success()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "CFCAT"
+          git config user.email "leng@ipacel.cc"
           git add README.md
           git diff --quiet && git diff --staged --quiet || (git commit -m "😊我来更新图片的时间戳啦qwq~~怎么？看见我很神奇的样纸🤔" && git push)
