@@ -3,15 +3,15 @@
 
 ---
 
-- [第一页](history.md)
-> [VM team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#%E4%B8%80vm-team%E6%97%B6%E6%9C%9F)
->>1.[建立](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#1%E5%BB%BA%E7%AB%8B)
->>2.[VM大提议](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#2vm%E5%A4%A7%E6%8F%90%E8%AE%AE)
->>3.[VM team开发过的项目](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#3vm-team%E5%BC%80%E5%8F%91%E8%BF%87%E7%9A%84%E9%A1%B9%E7%9B%AE)
+- [第一页](history_1.md)
+> [VM team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#%E4%B8%80vm-team%E6%97%B6%E6%9C%9F)
+>>1.[建立](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#1%E5%BB%BA%E7%AB%8B)
+>>2.[VM大提议](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#2vm%E5%A4%A7%E6%8F%90%E8%AE%AE)
+>>3.[VM team开发过的项目](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#3vm-team%E5%BC%80%E5%8F%91%E8%BF%87%E7%9A%84%E9%A1%B9%E7%9B%AE)
 
-> [NVMT Team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#%E4%BA%8Cnvmt-team%E6%97%B6%E6%9C%9F)
->>1.[衰落](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#1%E6%94%B9%E9%9D%A9)
->>2.[7·31事件](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history.md#3731%E4%BA%8B%E4%BB%B6)
+> [NVMT Team时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#%E4%BA%8Cnvmt-team%E6%97%B6%E6%9C%9F)
+>>1.[衰落](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#1%E6%94%B9%E9%9D%A9)
+>>2.[7·31事件](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_1.md#3731%E4%BA%8B%E4%BB%B6)
 
 - [第二页](history_2.md)
 > [NVMT SERVER/NvmtCraft时期](https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/history_2.md#%E4%B8%89nvmt-servernvmtcraft%E6%97%B6%E6%9C%9F)

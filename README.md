@@ -57,7 +57,7 @@
 
 </details>
 
-> 详细内容？ [请戳我](docs/Directory.md) 
+> 详细内容？ [请戳我](docs/history/Directory.md) 
 
 ## 4.其他
 | 其他东西 | 跳转 |
