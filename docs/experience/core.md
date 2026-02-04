@@ -135,7 +135,9 @@ world-settings:
 
 > 个人心得： 观望即可。除非你有技术团队维护定制插件，否则不建议生产环境使用。未来可期，但现在还不成熟。
 ## 二、选择决策树
+
 <img loading="lazy" src="https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/docs-pictures/core.svg"/>
+
 ## 三、性能优化通用建议
 JVM参数（适用于所有核心）
 ```bash
