@@ -135,30 +135,7 @@ world-settings:
 
 > 个人心得： 观望即可。除非你有技术团队维护定制插件，否则不建议生产环境使用。未来可期，但现在还不成熟。
 ## 二、选择决策树
-flowchart TD
-    Start[开什么类型的服？] --> A[纯净生存/小游戏/RLCraft类轻量整合]
-    Start --> B[生电服/技术向/数据包服]
-    Start --> C[大型模组整合包（ATM、Tekkit等）]
-    Start --> D[模组+插件混合]
-    Start --> E[超大型服务器（200+人）]
-    
-    A --> A1[推荐：Paper（通用）]
-    A --> A2[推荐：Purpur（需要深度定制）]
-    
-    B --> B1[推荐：Fabric + Lithium + Carpet]
-    
-    C --> C1[推荐：Forge]
-    
-    D --> D1[Forge端方案]
-    D --> D2[Fabric端方案]
-    
-    D1 --> D1a[Mohist/CatServer]
-    D2 --> D2a[Cardboard（兼容性一般）]
-    
-    E --> E1[推荐：Folia（需定制插件）]
-    E --> E2[推荐：多子服架构]
-    
-    E2 --> E2a[BungeeCord/Velocity]
+[core](picture/core.svg)
 ## 三、性能优化通用建议
 JVM参数（适用于所有核心）
 ```bash
