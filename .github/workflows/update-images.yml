@@ -55,4 +55,4 @@ jobs:
           git config user.name "CFCAT"
           git config user.email "leng@ipacel.cc"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "😊我来更新图片的时间戳啦qwq~~怎么？看见我很神奇的样纸🤔" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "CFCAT: 😊我来更新图片的时间戳啦qwq~" && git push)
