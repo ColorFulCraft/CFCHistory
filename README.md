@@ -2,7 +2,7 @@
   <img src="https://github.com/ColorFulCraft/CFCHistory/raw/main/pictures/icon.jpg " alt="ColorFulCraft Icon" width="150">
   
   # ✨ ColorFulCraft｜多彩工艺✨
-  ## <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E9%9D%A2%E5%8C%85.png" alt="面包" style="height: 1.2em; vertical-align: middle;">*[主页](https://colorfulcraft.github.io/CFCHistory/ )* | *[官网](https://colorfulcraft.github.io/CFCHistory/404NotFound.html)* <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E6%9B%B2%E5%A5%87.png" alt="曲奇" style="height: 1.2em; vertical-align: middle;"> 
+  ## <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E9%9D%A2%E5%8C%85.png" alt="面包" style="height: 1.1em; vertical-align: middle;"> *[主页](https://colorfulcraft.github.io/CFCHistory/ )* | *[官网](https://colorfulcraft.github.io/CFCHistory/404NotFound.html)*  <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E6%9B%B2%E5%A5%87.png" alt="曲奇" style="height: 1.3em; vertical-align: middle;"> 
   *默认文档*  |  *[维护文档](CONTRIBUTING.md)* | *[图片展示](pictures.md)*
 </div>
 
