@@ -47,16 +47,5 @@
 - 重要文档存档
 - 相关资源链接
 
-## 💡 使用建议
 
-1. **按时间顺序阅读**：建议从最新历史开始阅读
-2. **使用搜索**：查找特定事件或人物
-3. **查看目录**：了解整体历史结构
-
-## 🔗 相关链接
-
-- [返回首页](../index.html)
-- [GitHub仓库](https://github.com/ColorFulCraft/CFCHistory)
-- [加入QQ群](https://qm.qq.com/q/L8kNa8IJqu)
-- [问题反馈](https://github.com/ColorFulCraft/CFCHistory/issues)
 
