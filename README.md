@@ -7,7 +7,7 @@
 </div>
 
 ---
-> <img src="https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/mc-icons/%E6%A9%A1%E6%9C%A8%E5%91%8A%E7%A4%BA%E7%89%8C.png" alt="橡木告示牌" height="1em" style="vertical-align: middle;">最后更新时间：2026-02-04
+> <img src="https://github.com/ColorFulCraft/CFCHistory/blob/main/pictures/mc-icons/%E6%A9%A1%E6%9C%A8%E5%91%8A%E7%A4%BA%E7%89%8C.png" alt="橡木告示牌" height="1.2em" style="vertical-align: middle;">最后更新时间：2026-02-04
 > 
 > 文档维护：ColorFulCraft 管理组
 ---
