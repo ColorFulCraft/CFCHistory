@@ -65,7 +65,7 @@ jobs:
           git config --global user.name "CFCAT"
           git config --global user.email "leng@ipacel.cc"
           git add README.md
-          git commit -m "📅 自动更新最后修改日期 [$CURRENT_DATE]"
+          git commit -m "CFCAT: 📅 自动更新最后修改日期 [$CURRENT_DATE]"
           git push
         env:
           # 确保使用正确的 token
