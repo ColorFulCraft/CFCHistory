@@ -67,7 +67,7 @@
 | 图片  | [戳我](pictures/README.md) |
 | 更新日志 | [戳我](update-loh/README.md) |
 | 视频 | [戳我](videos/README.md) |
-| 开服经验 | [戳我](docs/experience/README.md) |
+| 开服心得 | [戳我](docs/experience/README.md) |
 
 > 所有解释权归ColorFulCraft所有！其他请遵循MIT协议，[许可证文件](LICENSE.md)
 
