@@ -135,23 +135,30 @@ world-settings:
 
 > 个人心得： 观望即可。除非你有技术团队维护定制插件，否则不建议生产环境使用。未来可期，但现在还不成熟。
 ## 二、选择决策树
-```开什么类型的服？```
-│
-├─ 纯净生存/小游戏/RLCraft类轻量整合
-│  └─ Paper（通用）或 Purpur（需要深度定制）
-│
-├─ 生电服/技术向/数据包服
-│  └─ Fabric + Lithium + Carpet
-│
-├─ 大型模组整合包（ATM、Tekkit等）
-│  └─ Forge
-│
-├─ 模组+插件混合
-│  ├─ Forge端：Mohist/CatServer
-│  └─ Fabric端：Cardboard（兼容性一般）
-│
-└─ 超大型服务器（200+人）
-   └─ Folia（需定制插件）或 多子服BungeeCord/Velocity
+flowchart TD
+    Start[开什么类型的服？] --> A[纯净生存/小游戏/RLCraft类轻量整合]
+    Start --> B[生电服/技术向/数据包服]
+    Start --> C[大型模组整合包（ATM、Tekkit等）]
+    Start --> D[模组+插件混合]
+    Start --> E[超大型服务器（200+人）]
+    
+    A --> A1[推荐：Paper（通用）]
+    A --> A2[推荐：Purpur（需要深度定制）]
+    
+    B --> B1[推荐：Fabric + Lithium + Carpet]
+    
+    C --> C1[推荐：Forge]
+    
+    D --> D1[Forge端方案]
+    D --> D2[Fabric端方案]
+    
+    D1 --> D1a[Mohist/CatServer]
+    D2 --> D2a[Cardboard（兼容性一般）]
+    
+    E --> E1[推荐：Folia（需定制插件）]
+    E --> E2[推荐：多子服架构]
+    
+    E2 --> E2a[BungeeCord/Velocity]
 ## 三、性能优化通用建议
 JVM参数（适用于所有核心）
 ```bash
@@ -178,9 +185,9 @@ java -Xms8G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled \
 
 ## 五、总结
 
-新手开服：Paper 1.20.4，插件丰富，社区支持多
-生电玩家：Fabric + Carpet，机制纯正，功能强大
-模组爱好者：Forge（大型包）或 Fabric（轻量/技术向）
-追求极致性能：Purpur（调优后）或观望Folia发展
+- 新手开服：Paper 1.20.4，插件丰富，社区支持多
+- 生电玩家：Fabric + Carpet，机制纯正，功能强大
+- 模组爱好者：Forge（大型包）或 Fabric（轻量/技术向）
+- 追求极致性能：Purpur（调优后）或观望Folia发展
 
 > 选核心没有绝对的好坏，只有适不适合你的服务器定位。建议先确定服务器类型，再选择对应生态最成熟的核心。
