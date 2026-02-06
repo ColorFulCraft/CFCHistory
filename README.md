@@ -75,7 +75,7 @@
 ---
 
 ## 📈 仓库 Star 历史
-![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=1770373770)
+![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=1770381227)
 
 ---
 
