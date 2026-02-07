@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 获取完整历史，确保git diff能正常工作
+          fetch-depth: 0
 
       - name: Update README with timestamp
         run: |
@@ -28,8 +28,9 @@ jobs:
           # 更新Star History图片 - 使用更精确的锚点匹配
           sed -i "/## 📈 仓库 Star 历史/,/^---/s|\(https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=date&legend=top-left\)\([^)]*\)|\1\&v=$TIMESTAMP|" README.md
           
-          # 更新Repobeats图片 - 使用锚点匹配
-          sed -i "/## 🗓️ 最近提交/,/^---/s|\(https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0\.svg\)\([^)]*\)|\1?v=$TIMESTAMP|" README.md
+          # 更新Repobeats图片 - 使用直接URL，去掉代理
+          # 注意：这里需要使用原始URL，不要用GitHub的camo代理
+          sed -i "/## 🗓️ 最近提交/,/^---/s|https://camo.githubusercontent.com[^\"]*|https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg?v=$TIMESTAMP|" README.md
           
           # 检查是否有更改
           if diff -q README.md README.md.bak >/dev/null 2>&1; then
