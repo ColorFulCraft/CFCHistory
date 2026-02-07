@@ -79,5 +79,5 @@
 ---
 
 ## 🗓️ 最近提交
-![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg?v=1770440706)
+![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg)
 
