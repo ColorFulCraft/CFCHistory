@@ -14,52 +14,45 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史，确保git diff能正常工作
 
       - name: Update README with timestamp
         run: |
           # 生成时间戳
           TIMESTAMP=$(date +%s)
           
-          # 创建临时文件
-          cp README.md README.md.tmp
+          # 备份原文件
+          cp README.md README.md.bak
           
-          # 修复已有的链接（先去掉可能不完整的部分）
-          sed -i 's|star-history.svg?v=[0-9]*|star-history.svg|g' README.md.tmp
-          sed -i 's|repobeats.svg?v=[0-9]*|repobeats.svg|g' README.md.tmp
+          # 更新Star History图片 - 使用更精确的锚点匹配
+          sed -i "/## 📈 仓库 Star 历史/,/^---/s|\(https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=date&legend=top-left\)\([^)]*\)|\1\&v=$TIMESTAMP|" README.md
           
-          # 更新新的Star History图片链接（star-history.com域名）
-          # 匹配格式：![Star历史](https://www.star-history.com/somepath?...)
-          sed -i "s|\(!\[Star历史\](https://www\.star-history\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 更新旧的Star History图片链接（如果还有的话）
-          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 更新Repobeats图片链接
-          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 另一种方法：直接替换整个图片标记（更精确）
-          # 处理新的star-history.com链接
-          sed -i "s|!\[Star历史\](https://www\.star-history\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 处理旧的raw.githubusercontent.com链接（Star历史）
-          sed -i "s|!\[Star历史\](https://raw\.githubusercontent\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
-          
-          # 处理Repobeats链接
-          sed -i "s|!\[代码活动\](https://raw\.githubusercontent\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
+          # 更新Repobeats图片 - 使用锚点匹配
+          sed -i "/## 🗓️ 最近提交/,/^---/s|\(https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0\.svg\)\([^)]*\)|\1?v=$TIMESTAMP|" README.md
           
           # 检查是否有更改
-          if ! cmp -s README.md README.md.tmp; then
-            mv README.md.tmp README.md
-            echo "README images updated with new timestamp: $TIMESTAMP"
-          else
+          if diff -q README.md README.md.bak >/dev/null 2>&1; then
             echo "No changes needed"
-            rm README.md.tmp
+          else
+            echo "README images updated with new timestamp: $TIMESTAMP"
           fi
+          
+          # 清理备份
+          rm README.md.bak
 
       - name: Commit and push changes
         if: success()
         run: |
           git config user.name "CFCAT"
           git config user.email "leng@ipacel.cc"
+          
+          # 检查文件是否有实际变化
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "CFCAT: 😊我来更新图片的时间戳啦qwq~" && git push)
+          git commit -m "CFCAT: 😊我来更新图片的时间戳啦qwq~ [自动更新]"
+          git push
