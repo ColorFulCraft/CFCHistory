@@ -10,7 +10,7 @@
 > <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E6%A9%A1%E6%9C%A8%E5%91%8A%E7%A4%BA%E7%89%8C.png" 
      alt="橡木告示牌" style="height: 1.2em; vertical-align: middle;">最后更新时间：2026-02-04
 > 
-> <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E8%B0%83%E8%AF%95%E6%A3%92.png" alt="调试棒" style="height: 1.2em; vertical-align: middle;"> 文档维护：ColorFulCraft 管理组
+> <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E8%B0%83%E8%AF%95%E6%A3%92.png" alt="调试棒" style="height: 1.2em; vertical-align: middle;"> 文档维护：[ColorFulCraft 管理组](docs/about.md)
 ---
 
 ## 1. 服务器简介
@@ -18,7 +18,6 @@
 - **成立日期**：2022-07-22  
 - **服务器定位**：纯净生存 / 生电友好 / 建筑友好 / 养老社区  
 - **当前版本**：Java 1.21.8（推荐）
-> [查看服务器团队及其现状](docs/about.md)
 ---
 
 ## 2. 怎么玩
