@@ -5,7 +5,6 @@ on:
     - cron: "0 */2 * * *"  # 每2小时运行一次
   workflow_dispatch:        # 手动触发
 
-
 permissions:
   contents: write
 
@@ -25,20 +24,28 @@ jobs:
           cp README.md README.md.tmp
           
           # 修复已有的链接（先去掉可能不完整的部分）
-          sed -i 's|star-history.svg?v=[0-9]*$|star-history.svg|g' README.md.tmp
-          sed -i 's|repobeats.svg?v=[0-9]*$|repobeats.svg|g' README.md.tmp
+          sed -i 's|star-history.svg?v=[0-9]*|star-history.svg|g' README.md.tmp
+          sed -i 's|repobeats.svg?v=[0-9]*|repobeats.svg|g' README.md.tmp
           
-          # 使用更精确的匹配方式
-          # 匹配星历史图片：![Star历史](URL)
-          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
+          # 更新新的Star History图片链接（star-history.com域名）
+          # 匹配格式：![Star历史](https://www.star-history.com/somepath?...)
+          sed -i "s|\(!\[Star历史\](https://www\.star-history\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
           
-          # 匹配代码活动图片：![代码活动](URL)
-          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
+          # 更新旧的Star History图片链接（如果还有的话）
+          sed -i "s|\(!\[Star历史\](https://raw\.githubusercontent\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
           
-          # 另一种方法：直接替换整个图片标记
-          sed -i "s|!\[Star历史\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/star-history\.svg[^)]*)|![Star历史](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/star-history.svg?v=$TIMESTAMP)|g" README.md.tmp
+          # 更新Repobeats图片链接
+          sed -i "s|\(!\[代码活动\](https://raw\.githubusercontent\.com/[^)]*\)\(?v=[0-9]*\)\?|\\1?v=$TIMESTAMP|g" README.md.tmp
           
-          sed -i "s|!\[代码活动\](https://raw\.githubusercontent\.com/ColorFulCraft/CFCHistory/main/pictures/repobeats\.svg[^)]*)|![代码活动](https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/repobeats.svg?v=$TIMESTAMP)|g" README.md.tmp
+          # 另一种方法：直接替换整个图片标记（更精确）
+          # 处理新的star-history.com链接
+          sed -i "s|!\[Star历史\](https://www\.star-history\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 处理旧的raw.githubusercontent.com链接（Star历史）
+          sed -i "s|!\[Star历史\](https://raw\.githubusercontent\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
+          
+          # 处理Repobeats链接
+          sed -i "s|!\[代码活动\](https://raw\.githubusercontent\.com/[^?)]*|&?v=$TIMESTAMP|g" README.md.tmp
           
           # 检查是否有更改
           if ! cmp -s README.md README.md.tmp; then
