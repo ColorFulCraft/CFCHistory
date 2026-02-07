@@ -75,10 +75,10 @@
 ---
 
 ## 📈 仓库 Star 历史
-[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=date&legend=top-left&v=1770436755)](https://www.star-history.com/#ColorFulCraft/CFCHistory&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/svg?repos=ColorFulCraft/CFCHistory&type=date&legend=top-left&v=1770440706)](https://www.star-history.com/#ColorFulCraft/CFCHistory&type=date&legend=top-left)
 
 ---
 
 ## 🗓️ 最近提交
-![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg?v=1770436755)
+![Alt](https://repobeats.axiom.co/api/embed/a30781bf5e8a72396572aed91c5588cc9e496ca0.svg?v=1770440706)
 
