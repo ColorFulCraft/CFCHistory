@@ -2,45 +2,61 @@ name: Update Last Modified Date
 
 on:
   push:
-    branches: [ "main" ]  
+    branches: [ "main" ]
 
 jobs:
   update-date:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  
+      contents: write
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # 使用 fetch-depth: 0 获取完整历史记录
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get current date
         id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          echo "date=$DATE" >> $GITHUB_OUTPUT
+          echo "获取到的日期: $DATE"
 
       - name: Update last modified date
         id: update-date
         run: |
-          # 使用获取到的日期
           CURRENT_DATE="${{ steps.date.outputs.date }}"
+          echo "开始更新日期: $CURRENT_DATE"
           
-          echo "当前日期: $CURRENT_DATE"
+          # 备份原始文件
+          cp README.md README.md.bak
           
-          # 查找并替换最后更新时间的行
-          # 注意：这个模式需要根据你的 README.md 实际内容调整
-          if grep -q "> 最后更新时间：" README.md; then
-            sed -i "s/> 最后更新时间：.*/> 最后更新时间：$CURRENT_DATE/" README.md
-            echo "已更新日期"
+          # 查看文件中的日期行
+          echo "=== 查找包含日期的行 ==="
+          grep -n "最后更新时间\|橡木告示牌" README.md
+          
+          # 专门匹配你的格式（包含 img 标签的模式）
+          # 你的格式是：<img src="...">最后更新时间：2026-02-04
+          if grep -q '<img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E6%A9%A1%E6%9C%A8%E5%91%8A%E7%A4%BA%E7%89%8C.png".*最后更新时间：' README.md; then
+            echo "找到图片+日期模式"
+            # 使用更精确的 sed 模式
+            sed -i 's/\(<img src="https:\/\/raw\.githubusercontent\.com\/ColorFulCraft\/CFCHistory\/main\/pictures\/mc-icons\/%E6%A9%A1%E6%9C%A8%E5%91%8A%E7%A4%BA%E7%89%8C\.png"[^>]*>最后更新时间：\)[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/\1'"$CURRENT_DATE"'/' README.md
+            echo "使用精确模式更新成功"
+          elif grep -q "最后更新时间：" README.md; then
+            echo "找到简单日期模式"
+            sed -i "s/最后更新时间：[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/最后更新时间：$CURRENT_DATE/" README.md
+            echo "使用简单模式更新成功"
           else
-            # 如果找不到模式，尝试其他可能的模式
-            sed -i "s/最后更新：.*/最后更新：$CURRENT_DATE/" README.md || \
-            sed -i "s/Last updated:.*/Last updated: $CURRENT_DATE/" README.md || \
-            echo "未找到日期模式，请检查 README.md 格式"
+            echo "未找到日期模式，文件内容预览："
+            head -50 README.md
+            exit 1
           fi
+          
+          # 检查更新结果
+          echo "=== 更新后的日期行 ==="
+          grep "最后更新时间" README.md
 
       - name: Check for changes
         id: check-changes
@@ -54,6 +70,7 @@ jobs:
             echo "should_commit=true" >> $GITHUB_OUTPUT
             
             # 显示更改内容
+            echo "=== 具体更改内容 ==="
             git diff README.md
           fi
 
@@ -68,5 +85,4 @@ jobs:
           git commit -m "CFCAT: 📅 自动更新最后修改日期 [$CURRENT_DATE]"
           git push
         env:
-          # 确保使用正确的 token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
