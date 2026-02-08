@@ -69,7 +69,7 @@
 | 视频 | [戳我](videos/README.md) |
 | 开服心得 | [戳我](docs/experience/README.md) |
 
-> 所有解释权归ColorFulCraft所有！其他请遵循MIT协议，[许可证文件](LICENSE.md)
+> ColorFulCraft保留解释权等相关权利！其他请遵循[许可证文件](LICENSE.md)
 
 ---
 
