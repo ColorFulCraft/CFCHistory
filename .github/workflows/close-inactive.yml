@@ -1,7 +1,16 @@
 name: Close Inactive Issues and PRs
 
 on:
-  workflow_call:
+  schedule:
+    # 每天UTC时间0点运行（北京时间8点）
+    - cron: '0 0 * * *'
+  
+  # 允许手动触发
+  workflow_dispatch:
+  
+  # 也可以配置在push到特定分支时触发
+  push:
+    branches: [ main, master ]
 
 permissions:
   contents: read
