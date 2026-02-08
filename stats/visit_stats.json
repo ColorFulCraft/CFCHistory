@@ -1,0 +1,11 @@
+{
+  "total_visits": 3,
+  "daily_visits": {
+    "2026-02-08": 3
+  },
+  "hourly_visits": {
+    "2026-02-08 08:00:00": 3
+  },
+  "last_updated": "2026-02-08T08:52:04.263047+08:00",
+  "last_updated_date": "2026-02-08"
+}
