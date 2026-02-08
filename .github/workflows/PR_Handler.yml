@@ -2,34 +2,64 @@ name: PR Handler
 
 on:
   pull_request:
-    types: [opened, closed]
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [closed]
 
 jobs:
-  pr-handler:
+  handle-new-pr:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-      issues: write
-      contents: read
     steps:
-      - name: Check PR event type
-        run: echo "Event: ${{ github.event.action }}"
+      - name: Greet PR Contributor
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          
+          # 检查是否已经有评论
+          COMMENTS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments")
+          
+          # 如果没有评论，则添加欢迎评论
+          if echo "$COMMENTS" | grep -q "body"; then
+            echo "已有评论，跳过..."
+          else
+            MESSAGE="你好 @$AUTHOR，感谢提交PR！\n我们会尽早审核回应😊\n\nHi @$AUTHOR, thanks for opening the Pull Request!\nWe will respond to it as soon as possible😊"
+            
+            curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -X POST \
+              -d "{\"body\":\"$MESSAGE\"}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+            echo "已添加欢迎评论"
+          fi
 
-      # 处理新开的PR
-      - name: Greet PR Contributor (on open)
-        if: github.event.action == 'opened'
-        uses: actions/first-interaction@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-message: |
-            你好 @${{ github.actor }}，感谢提交PR！
-            Hi @${{ github.actor }}, thanks for opening the Pull Request!
-            我们会尽早审核回应😊
-            We will respond to it as soon as possible😊
+  handle-closed-pr:
+    if: github.event_name == 'pull_request_target' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check if PR was merged
+        id: check-merged
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          PR_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}")
+          
+          MERGED=$(echo "$PR_DATA" | jq -r '.merged')
+          echo "merged=$MERGED" >> $GITHUB_OUTPUT
 
-      # 处理合并的PR
       - name: Thank Contributor (on merge)
-        if: github.event.action == 'closed' && github.event.pull_request.merged == true
+        if: steps.check-merged.outputs.merged == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -43,9 +73,8 @@ jobs:
                -d "{\"body\":\"$MESSAGE\"}" \
                "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-      # 处理关闭的PR（未合并）
       - name: Acknowledge Closed PR
-        if: github.event.action == 'closed' && github.event.pull_request.merged == false
+        if: steps.check-merged.outputs.merged == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
