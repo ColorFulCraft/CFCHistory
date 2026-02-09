@@ -2,7 +2,7 @@
 
 > MC服务器时期
 
-## 三、NVMT Server/NvmtCraft时期  
+## 二、NVMT Server/NvmtCraft时期  
 
 ### 1. 创建与早期探索  
 
