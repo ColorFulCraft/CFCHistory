@@ -13,6 +13,10 @@
 > <img src="https://raw.githubusercontent.com/ColorFulCraft/CFCHistory/main/pictures/mc-icons/%E8%B0%83%E8%AF%95%E6%A3%92.png" alt="调试棒" style="height: 1.2em; vertical-align: middle;"> 文档维护：[ColorFulCraft 管理组](docs/about.md)
 ---
 
+> [!WARNING]
+> 服务器暂停运营
+> 预计恢复时间：暑假
+
 ## 1. 服务器简介
 - **名称**：多彩工艺 | ColorFulCraft Network  
 - **成立日期**：2022-07-22  
