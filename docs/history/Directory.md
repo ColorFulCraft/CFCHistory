@@ -1,5 +1,5 @@
 # CFCHistory | Docs Directory
-## [关于我们](/docs/about.md)
+## [关于我们](../about.md)
 
 ---
 

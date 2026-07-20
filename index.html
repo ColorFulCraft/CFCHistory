@@ -3,601 +3,646 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>ColorFulCraft | 历史博物馆</title>
-            
+
                 <link rel="icon" type="image/x-icon" href="pictures/favicon.ico">
             <link rel="icon" type="image/png" sizes="32x32" href="pictures/favicon-32x32.png">
             <link rel="icon" type="image/png" sizes="16x16" href="pictures/favicon-16x16.png">
             <link rel="apple-touch-icon" sizes="180x180" href="pictures/apple-touch-icon.png">
-            
+
             <style>
+:root {
+    --pink: #e84f9b;
+    --blue: #1d9fd7;
+    --green: #4f9a35;
+    --purple: #8b5cf6;
+    --cream: #fff8dc;
+    --ink: #28324a;
+    --muted: #6b7280;
+    --panel: rgba(255, 252, 245, 0.84);
+    --panel-strong: rgba(255, 255, 255, 0.94);
+    --line: rgba(70, 44, 94, 0.16);
+    --shadow: rgba(85, 54, 120, 0.18);
+    --pixel-shadow: 0 8px 0 rgba(82, 57, 107, 0.18), 0 18px 42px rgba(87, 66, 126, 0.22);
+    --grass: #7ec850;
+    --dirt: #a06d3f;
+    --stone: #cfd7e6;
+    --radius: 24px;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    min-height: 100%;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    transition: background-color 0.5s ease;
+    font-family: "Nunito", "M PLUS Rounded 1c", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: #fff4cf;
     cursor: default;
+    isolation: isolate;
+    transition: background 0.45s ease, color 0.45s ease;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+body::before {
+    inset: 0;
+    z-index: -3;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.38) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.38) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 70%);
+}
+
+body::after {
+    bottom: 0;
+    height: 118px;
+    z-index: -2;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.22) 0 12px, transparent 12px 24px) 0 0 / 48px 18px,
+        linear-gradient(#7ec850 0 22px, #6ab33f 22px 34px, #a06d3f 34px 72px, #81512d 72px 118px);
+    box-shadow: inset 0 12px 0 rgba(255,255,255,0.18);
 }
 
 body.dark-mode {
-    background-color: rgba(0, 0, 0, 0.7);
+    --panel: rgba(31, 28, 54, 0.82);
+    --panel-strong: rgba(39, 35, 68, 0.94);
+    --line: rgba(255, 255, 255, 0.16);
+    --ink: #f7f1ff;
+    --muted: #c9c3df;
+    --shadow: rgba(0, 0, 0, 0.36);
+    background: #15152c;
+    color: var(--ink);
 }
 
-/* 流动的渐变色背景 */
+body.dark-mode::before {
+    background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+}
+
+body.dark-mode::after {
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.08) 0 12px, transparent 12px 24px) 0 0 / 48px 18px,
+        linear-gradient(#355d37 0 22px, #27482b 22px 34px, #5c3a26 34px 72px, #38271f 72px 118px);
+}
+
 .gradient-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientFlow 15s ease infinite;
-    z-index: -1;
-    transition: filter 0.5s ease;
+    position: fixed;
+    inset: 0;
+    z-index: -4;
+    background:
+        radial-gradient(circle at 16% 20%, rgba(255, 122, 182, 0.36), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(85, 214, 255, 0.34), transparent 30%),
+        radial-gradient(circle at 62% 74%, rgba(137, 230, 133, 0.28), transparent 32%),
+        linear-gradient(135deg, #ffe8f3 0%, #e6f8ff 46%, #fff7d1 100%);
+    background-size: 140% 140%;
+    animation: dreamySky 16s ease-in-out infinite alternate;
+    transition: filter 0.45s ease, opacity 0.45s ease;
 }
 
 body.dark-mode .gradient-bg {
-    filter: brightness(0.6) hue-rotate(25deg);
+    filter: brightness(0.62) saturate(1.25) hue-rotate(28deg);
 }
 
-@keyframes gradientFlow {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+@keyframes dreamySky {
+    0% { background-position: 0% 45%; }
+    100% { background-position: 100% 55%; }
 }
 
-/* 云朵样式 */
 .cloud {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    filter: blur(5px);
+    position: fixed;
+    left: -260px;
+    width: 138px;
+    height: 42px;
     z-index: -1;
-    transition: background 0.5s ease;
+    opacity: 0.76;
+    background: rgba(255, 255, 255, 0.78);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 14px;
+    box-shadow:
+        28px -20px 0 2px rgba(255,255,255,0.78),
+        72px -14px 0 10px rgba(255,255,255,0.78),
+        108px -5px 0 0 rgba(255,255,255,0.78),
+        0 12px 24px rgba(120, 150, 190, 0.12);
+    image-rendering: pixelated;
+    animation: cloudMove 38s linear infinite;
 }
 
 body.dark-mode .cloud {
-    background: rgba(150, 150, 150, 0.6);
+    background: rgba(197, 202, 255, 0.28);
+    border-color: rgba(236, 232, 255, 0.22);
+    box-shadow:
+        28px -20px 0 2px rgba(197, 202, 255, 0.28),
+        72px -14px 0 10px rgba(197, 202, 255, 0.28),
+        108px -5px 0 0 rgba(197, 202, 255, 0.28),
+        0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.cloud:nth-child(1) {
-    width: 150px;
-    height: 60px;
-    top: 20%;
-    left: -150px;
-    animation: cloudMove 25s linear infinite;
-}
-
-.cloud:nth-child(2) {
-    width: 200px;
-    height: 80px;
-    top: 40%;
-    right: -200px;
-    animation: cloudMove 30s linear infinite 5s;
-}
-
-.cloud:nth-child(3) {
-    width: 180px;
-    height: 70px;
-    bottom: 30%;
-    left: -180px;
-    animation: cloudMove 35s linear infinite 10s;
-}
-
-.cloud:nth-child(4) {
-    width: 220px;
-    height: 90px;
-    bottom: 20%;
-    right: -220px;
-    animation: cloudMove 40s linear infinite 15s;
-}
+body > .cloud:nth-of-type(4) { top: 18%; animation-duration: 34s; animation-delay: -5s; transform: scale(0.86); }
+body > .cloud:nth-of-type(5) { top: 32%; animation-duration: 44s; animation-delay: -18s; transform: scale(1.12); }
+body > .cloud:nth-of-type(6) { top: 62%; animation-duration: 52s; animation-delay: -30s; transform: scale(0.78); }
+body > .cloud:nth-of-type(7) { top: 76%; animation-duration: 58s; animation-delay: -10s; transform: scale(1.24); }
 
 @keyframes cloudMove {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(calc(100vw + 200px));
-    }
+    from { translate: -10vw 0; }
+    to { translate: calc(100vw + 360px) 0; }
 }
 
-/* 内容容器 */
 .content {
+    width: min(920px, calc(100vw - 40px));
+    position: relative;
+    z-index: 20;
+    padding: clamp(26px, 5vw, 54px);
     text-align: center;
-    animation: fadeIn 1s ease-in;
+    background:
+        linear-gradient(var(--panel), var(--panel)) padding-box,
+        linear-gradient(135deg, rgba(232,79,155,0.8), rgba(29,159,215,0.78), rgba(79,154,53,0.72), rgba(139,92,246,0.8)) border-box;
+    border: 4px solid transparent;
+    border-radius: var(--radius);
+    box-shadow: var(--pixel-shadow);
+    backdrop-filter: blur(18px) saturate(1.2);
+    animation: heroIn 0.8s cubic-bezier(.2,.85,.2,1) both;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.content::before,
+.content::after {
+    position: absolute;
+    pointer-events: none;
 }
 
-/* 按钮容器 */
+.content::before {
+    content: '❤ CFC Memory Block';
+    top: -18px;
+    left: 28px;
+    padding: 8px 16px;
+    border: 3px solid rgba(40, 50, 74, 0.16);
+    border-radius: 999px;
+    background: #fff9ee;
+    color: #e84f9b;
+    font-weight: 900;
+    font-size: 0.86rem;
+    letter-spacing: 0.04em;
+    box-shadow: 0 6px 0 rgba(232,79,155,0.16);
+}
+
+.content::after {
+    content: '';
+    right: 28px;
+    bottom: -22px;
+    width: 82px;
+    height: 82px;
+    background:
+        linear-gradient(90deg, #7ec850 0 50%, #69ad3f 50%) 0 0 / 50% 28%,
+        linear-gradient(90deg, #a06d3f 0 50%, #8b572f 50%) 0 28% / 50% 72%;
+    background-repeat: repeat;
+    border: 4px solid rgba(40, 50, 74, 0.18);
+    border-radius: 18px;
+    transform: rotate(8deg);
+    box-shadow: 0 10px 0 rgba(0,0,0,0.08);
+}
+
+body.dark-mode .content::before {
+    background: #2d294c;
+    color: #ff9ed0;
+    border-color: rgba(255,255,255,0.14);
+}
+
+@keyframes heroIn {
+    from { opacity: 0; transform: translateY(-18px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+h1 {
+    display: grid;
+    gap: 8px;
+    color: var(--ink);
+    font-size: clamp(2.3rem, 7vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: 0.015em;
+    text-shadow:
+        0 4px 0 rgba(255,255,255,0.75),
+        0 10px 24px rgba(232,79,155,0.22);
+    animation: textPulse 5s infinite ease-in-out;
+}
+
+h1 span {
+    background: linear-gradient(90deg, #e84f9b, #8b5cf6 46%, #1d9fd7 84%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+h1 small {
+    color: var(--ink);
+    font-size: clamp(1.25rem, 3.3vw, 2.05rem);
+    font-weight: 900;
+    letter-spacing: 0.16em;
+}
+
+body.dark-mode h1 {
+    text-shadow: 0 5px 0 rgba(0,0,0,0.22), 0 14px 34px rgba(139,92,246,0.34);
+}
+
+@keyframes textPulse {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+    50% { filter: drop-shadow(0 0 16px rgba(255, 158, 208, 0.35)); }
+}
+
+.hero-subtitle {
+    position: relative;
+    width: min(660px, 100%);
+    margin: 24px auto 0;
+    padding: 18px 22px;
+    color: var(--ink);
+    font-size: clamp(1rem, 2.2vw, 1.16rem);
+    line-height: 1.85;
+    font-weight: 800;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.62)) padding-box,
+        linear-gradient(135deg, rgba(232, 79, 155, 0.42), rgba(29, 159, 215, 0.38), rgba(126, 200, 80, 0.34)) border-box;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    box-shadow: inset 0 -5px 0 rgba(44, 38, 66, 0.06), 0 10px 22px rgba(44, 38, 66, 0.10);
+}
+
+.hero-subtitle::before {
+    content: '✦';
+    position: absolute;
+    top: -14px;
+    left: 22px;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e84f9b, #8b5cf6);
+    color: white;
+    box-shadow: 0 5px 0 rgba(44, 38, 66, 0.14);
+}
+
+body.dark-mode .hero-subtitle {
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+        linear-gradient(135deg, rgba(255, 122, 182, 0.46), rgba(57, 191, 240, 0.36), rgba(139, 92, 246, 0.42)) border-box;
+    box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.16), 0 12px 26px rgba(0, 0, 0, 0.22);
+}
+
 .button-container {
     display: flex;
-    gap: 20px;
-    margin-top: 20px;
+    gap: 16px;
+    margin-top: 28px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-/* 标题样式 */
-h1 {
-    color: white;
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    letter-spacing: 2px;
-    animation: textPulse 5s infinite ease-in-out;
-}
-
-@keyframes textPulse {
-    0% {
-        opacity: 0.8;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    50% {
-        opacity: 1;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    100% {
-        opacity: 0.8;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-}
-
-/* 按钮基础样式 */
-.btn {
-    position: relative;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    animation: btnPulse 2.5s infinite ease-in-out;
-}
-
-/* 跳转按钮样式 */
-.jump-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-body.dark-mode .jump-btn {
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-}
-
-/* 加入我们按钮样式 */
-.join-btn {
-    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-}
-
-body.dark-mode .join-btn {
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-}
-
-/* 文档按钮样式 - 完整定义 */
+.btn,
 .docs-btn {
-    background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%) !important;
     position: relative;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 50px;
+    min-width: 166px;
+    padding: 14px 22px;
+    border: 3px solid rgba(40, 50, 74, 0.20);
+    border-radius: 18px;
     color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    animation: btnPulse 2.5s infinite ease-in-out;
-}
-
-/* 暗色模式文档按钮 */
-body.dark-mode .docs-btn {
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%) !important;
-}
-
-@keyframes btnPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-/* 按钮波纹效果 */
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-    z-index: 1;
-}
-
-/* 暗色模式按钮波纹效果 */
-body.dark-mode .docs-btn::before {
-    background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.2), transparent);
-}
-
-.btn:hover::before {
-    left: 100%;
-}
-
-/* 按钮悬停效果 */
-.btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    overflow: visible;
+    font: inherit;
+    font-size: 1.02rem;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    box-shadow: 0 7px 0 rgba(44, 38, 66, 0.20), 0 14px 22px rgba(44, 38, 66, 0.16);
+    transition: box-shadow 0.22s ease, filter 0.22s ease, background 0.22s ease;
     animation: none;
 }
 
-body.dark-mode .docs-btn:hover {
-    box-shadow: 0 6px 20px rgba(255, 165, 0, 0.2);
+.jump-btn { background: linear-gradient(135deg, #e84f9b, #8b5cf6); }
+.join-btn { background: linear-gradient(135deg, #4f9a35, #7ec850); }
+.docs-btn { background: linear-gradient(135deg, #1d9fd7, #55d6ff) !important; }
+
+body.dark-mode .jump-btn { background: linear-gradient(135deg, #ff7ab6, #8b5cf6); }
+body.dark-mode .join-btn { background: linear-gradient(135deg, #5fbf46, #1f8a55); }
+body.dark-mode .docs-btn { background: linear-gradient(135deg, #39bff0, #5d77ff) !important; }
+
+@keyframes btnFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
 }
 
-.btn:active {
-    transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* 触摸提示 */
-.tooltip {
+.btn::before,
+.docs-btn::before {
+    content: '';
     position: absolute;
-    bottom: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    inset: 4px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    transform: translateX(-80%);
     opacity: 0;
-    transition: opacity 0.3s;
-    white-space: nowrap;
-    z-index: 10;
+    pointer-events: none;
+    transition: transform 0.45s ease, opacity 0.2s ease;
 }
 
-body.dark-mode .docs-btn .tooltip {
-    background: rgba(255, 165, 0, 0.9);
-    color: #333;
+.btn:hover,
+.docs-btn:hover,
+.btn:focus-visible,
+.docs-btn:focus-visible {
+    box-shadow: 0 7px 0 rgba(44, 38, 66, 0.20), 0 16px 28px rgba(44, 38, 66, 0.20);
+    filter: saturate(1.08) brightness(1.05);
+    animation: none;
+    outline: none;
 }
 
-.btn:hover .tooltip {
+.btn:hover::before,
+.docs-btn:hover::before {
+    transform: translateX(80%);
     opacity: 1;
 }
 
-/* 暗色模式切换按钮 */
+.btn:active,
+.docs-btn:active {
+    box-shadow: 0 5px 0 rgba(44, 38, 66, 0.22), 0 10px 18px rgba(44, 38, 66, 0.16);
+    filter: brightness(0.98);
+}
+
+.tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 7px 11px;
+    border: 2px solid rgba(255,255,255,0.75);
+    border-radius: 12px;
+    background: rgba(40, 50, 74, 0.88);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 800;
+    opacity: 0;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.btn:hover .tooltip,
+.docs-btn:hover .tooltip,
+.btn:focus-visible .tooltip,
+.docs-btn:focus-visible .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 .theme-toggle {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: none;
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    background: var(--panel-strong);
+    backdrop-filter: blur(14px);
+    border: 3px solid rgba(40, 50, 74, 0.14);
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 7px 0 rgba(44, 38, 66, 0.14), 0 12px 28px var(--shadow);
 }
 
-.theme-toggle:hover {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.3);
-}
-
-body.dark-mode .theme-toggle {
-    background: rgba(255, 165, 0, 0.3);
-}
-
-body.dark-mode .theme-toggle:hover {
-    background: rgba(255, 165, 0, 0.5);
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+    transform: translateY(-3px) rotate(-4deg);
+    outline: none;
 }
 
 .theme-toggle svg {
-    width: 24px;
-    height: 24px;
-    fill: white;
-    transition: all 0.3s ease;
+    width: 25px;
+    height: 25px;
+    fill: #e84f9b;
+    transition: transform 0.3s ease, fill 0.3s ease;
 }
 
 body.dark-mode .theme-toggle svg {
-    fill: #ffa500;
+    fill: #ffd166;
     transform: rotate(180deg);
 }
 
-/* 模式提示 */
 .theme-tooltip {
     position: fixed;
-    top: 75px;
+    top: 84px;
     left: 20px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(40, 50, 74, 0.88);
     color: white;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 0.8rem;
+    font-weight: 800;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(-4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 1000;
     white-space: nowrap;
 }
 
 .theme-toggle:hover + .theme-tooltip {
     opacity: 1;
+    transform: translateY(0);
 }
 
-/* 侧边栏样式 */
 .wiki-sidebar {
     position: fixed;
     top: 0;
-    left: -300px;
-    width: 300px;
+    left: -320px;
+    width: 320px;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1001; 
-    padding: 20px;
+    background: var(--panel-strong);
+    backdrop-filter: blur(18px) saturate(1.1);
+    box-shadow: 12px 0 34px rgba(44, 38, 66, 0.18);
+    transition: left 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+    padding: 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    border-right: 4px solid rgba(232,79,155,0.22);
 }
 
-body.dark-mode .wiki-sidebar {
-    background: rgba(40, 40, 40, 0.95);
-    color: #f0f0f0;
-}
+.wiki-sidebar.active { left: 0; }
 
-.wiki-sidebar.active {
-    left: 0;
-    z-index: 1001;
-}
-
-/* 侧边栏开关按钮 */
 .sidebar-toggle {
     position: fixed;
     top: 50%;
     left: 0;
     transform: translateY(-50%);
-    width: 24px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 0 8px 8px 0;
+    width: 30px;
+    height: 76px;
+    background: var(--panel-strong);
+    border: 3px solid rgba(40, 50, 74, 0.14);
+    border-left: none;
+    border-radius: 0 16px 16px 0;
     cursor: pointer;
     z-index: 901;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s ease;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transition: width 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 6px 8px 22px rgba(44, 38, 66, 0.14);
 }
 
-body.dark-mode .sidebar-toggle {
-    background: rgba(40, 40, 40, 0.9);
-}
-
-.sidebar-toggle:hover {
-    width: 28px;
-    background: rgba(255, 255, 255, 1);
-}
-
-body.dark-mode .sidebar-toggle:hover {
-    background: rgba(60, 60, 60, 1);
-}
+.sidebar-toggle:hover { width: 36px; }
 
 .sidebar-toggle::after {
     content: '';
-    width: 10px;
-    height: 10px;
-    border-right: 2px solid #333;
-    border-bottom: 2px solid #333;
+    width: 11px;
+    height: 11px;
+    border-right: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
     transform: rotate(-45deg);
-    transition: all 0.3s ease;
+    transition: transform 0.25s ease;
 }
 
-body.dark-mode .sidebar-toggle::after {
-    border-color: #f0f0f0;
-}
-
-.wiki-sidebar.active + .sidebar-toggle::after {
-    transform: rotate(135deg);
-}
+.wiki-sidebar.active + .sidebar-toggle::after { transform: rotate(135deg); }
 
 .wiki-sidebar h2 {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee;
-    color: #333;
-}
-
-body.dark-mode .wiki-sidebar h2 {
-    color: #f0f0f0;
-    border-bottom: 2px solid #555;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 3px dashed rgba(232,79,155,0.28);
+    color: var(--ink);
+    font-size: 1.45rem;
 }
 
 .wiki-links {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .wiki-link {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
+    padding: 13px 14px;
+    background: rgba(255, 255, 255, 0.56);
+    border: 2px solid rgba(40, 50, 74, 0.09);
+    border-radius: 16px;
     text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    color: var(--ink);
+    font-weight: 900;
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,0.04);
 }
 
-body.dark-mode .wiki-link {
-    background: rgba(60, 60, 60, 0.7);
-    color: #f0f0f0;
+body.dark-mode .wiki-link { background: rgba(255,255,255,0.08); }
+
+.wiki-link::after {
+    content: '›';
+    color: #e84f9b;
+    font-size: 1.4rem;
+    line-height: 1;
 }
 
-.wiki-link:hover {
-    transform: translateX(5px);
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.wiki-link:hover,
+.wiki-link:focus-visible {
+    transform: translateX(6px);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 -4px 0 rgba(232,79,155,0.12), 0 8px 18px rgba(44, 38, 66, 0.10);
+    outline: none;
 }
 
-body.dark-mode .wiki-link:hover {
-    background: rgba(80, 80, 80, 0.9);
-}
+body.dark-mode .wiki-link:hover { background: rgba(255,255,255,0.14); }
 
-.wiki-link span {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-}
-
-body.dark-mode .wiki-link span {
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-}
-
-.wiki-link:hover span {
-    transform: scale(1.05);
-}
-
-/* 页脚样式 */
 .footer {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px;
+    bottom: 12px;
+    left: 50%;
+    width: min(980px, calc(100vw - 24px));
+    transform: translateX(-50%);
+    padding: 10px 14px;
     text-align: center;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(40, 50, 74, 0.78);
     color: white;
-    font-size: 0.9rem;
-    z-index: 800;
-    backdrop-filter: blur(5px);
+    font-size: 0.84rem;
+    z-index: 5;
+    backdrop-filter: blur(14px);
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(44, 38, 66, 0.18);
 }
 
 .footer a {
-    color: #a0e7ff;
+    color: #9ee8ff;
     text-decoration: none;
-    transition: color 0.3s ease;
+    font-weight: 900;
 }
 
-.footer a:hover {
-    color: #ffffff;
-    text-decoration: underline;
-}
+.footer a:hover { text-decoration: underline; }
 
-/* GitHub Stars 样式 */
 .github-stars {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    background: #1c1c1c;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    margin: 0 10px;
-    transition: background-color 0.3s ease;
+    gap: 8px;
+    background: rgba(255,255,255,0.10);
+    padding: 6px 9px;
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    margin: 0 10px 0 0;
+    transition: background 0.25s ease, transform 0.25s ease;
+    vertical-align: middle;
 }
 
 .github-stars:hover {
-    background: #2a2a2a;
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-1px);
 }
 
 .github-stars a {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 5px;
     text-decoration: none;
     color: inherit;
 }
 
-.github-stars svg {
-    width: 16px;
-    height: 16px;
-    fill: #9ca3af;
-    transition: fill 0.3s ease;
-}
-
-.github-stars:hover svg {
-    fill: white;
-}
-
-.github-stars .repo-name {
-    color: #d1d5db;
-    transition: color 0.3s ease;
-}
-
-.github-stars:hover .repo-name {
-    color: white;
-}
+.github-stars svg { width: 16px; height: 16px; fill: currentColor; }
+.github-stars .repo-name { color: #fff; font-weight: 900; }
 
 .stars-count {
     display: flex;
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    background: linear-gradient(to right, #3b82f6, #06b6d4);
-    border-radius: 9999px;
-    font-size: 0.75rem;
+    background: linear-gradient(135deg, #e84f9b, #1d9fd7);
+    border-radius: 10px;
+    font-size: 0.74rem;
     color: white;
+    font-weight: 900;
 }
 
-.stars-count svg {
-    width: 12px;
-    height: 12px;
-    fill: white;
-}
+.stars-count svg { width: 12px; height: 12px; }
 
-/* 下雨效果 */
 .rain-effect {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     pointer-events: none;
     z-index: 9999;
     overflow: hidden;
@@ -605,27 +650,22 @@ body.dark-mode .wiki-link span {
 
 .raindrop {
     position: absolute;
-    width: 2px;
-    height: 15px;
-    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.8));
+    width: 3px;
+    height: 18px;
+    background: linear-gradient(to bottom, transparent, rgba(85, 214, 255, 0.85));
     border-radius: 0 0 5px 5px;
-    opacity: 0.6;
+    opacity: 0.65;
     animation: rainFall linear forwards;
     top: -20px;
 }
 
-@keyframes rainFall {
-    to {
-        transform: translateY(calc(100vh + 20px));
-    }
-}
+@keyframes rainFall { to { transform: translateY(calc(100vh + 20px)); } }
 
-/* 涟漪效果 */
 .ripple {
     position: absolute;
     width: 10px;
     height: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(85, 214, 255, 0.72);
     border-radius: 50%;
     opacity: 0;
     animation: rippleEffect 1.5s ease-out forwards;
@@ -633,49 +673,31 @@ body.dark-mode .wiki-link span {
 }
 
 @keyframes rippleEffect {
-    0% {
-        transform: scale(0.5);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(4);
-        opacity: 0;
-    }
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(4); opacity: 0; }
 }
 
-/* Emoji反馈效果 */
 .emoji-feedback {
     position: absolute;
-    font-size: 24px;
+    font-size: 25px;
     pointer-events: none;
     z-index: 10000;
-    animation: emojiRise 1.5s ease-out forwards;
+    animation: emojiRise 1.35s ease-out forwards;
     user-select: none;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.16));
 }
 
 @keyframes emojiRise {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    30% {
-        transform: translateY(-30px);
-    }
-    100% {
-        transform: translateY(60px);
-        opacity: 0;
-    }
+    0% { transform: translateY(0) rotate(0deg) scale(0.85); opacity: 1; }
+    35% { transform: translateY(-34px) rotate(8deg) scale(1.15); }
+    100% { transform: translateY(50px) rotate(-8deg) scale(0.95); opacity: 0; }
 }
 
-/* 贡献者容器样式 */
 .contributors-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     pointer-events: none;
-    z-index: 900;
+    z-index: 35;
     overflow: hidden;
 }
 
@@ -683,529 +705,342 @@ body.dark-mode .wiki-link span {
     position: absolute;
     width: 50px;
     height: 50px;
-    border-radius: 50%;
+    border-radius: 16px;
     background-size: cover;
     background-position: center;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 0 rgba(44, 38, 66, 0.16), 0 10px 22px rgba(44, 38, 66, 0.22);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     pointer-events: auto;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    border: 3px solid rgba(255, 255, 255, 0.86);
 }
 
 .contributor-avatar:hover {
-    transform: scale(1.2);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    transform: scale(1.14) rotate(-3deg);
+    box-shadow: 0 9px 0 rgba(44, 38, 66, 0.14), 0 16px 30px rgba(44, 38, 66, 0.28);
     z-index: 910;
 }
 
-/* 贡献者信息提示框 */
 .contributor-tooltip {
     position: absolute;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(40, 50, 74, 0.9);
     color: white;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    max-width: 200px;
+    padding: 10px 12px;
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    font-size: 0.86rem;
+    max-width: 210px;
     z-index: 920;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    transform: translateY(-100%) translateX(-50%);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(-110%) translateX(-50%) scale(0.96);
     left: 50%;
     top: -10px;
     text-align: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
 }
 
 .contributor-avatar:hover .contributor-tooltip {
     opacity: 1;
+    transform: translateY(-110%) translateX(-50%) scale(1);
 }
 
-.contributor-name {
-    font-weight: bold;
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.contributor-name { font-weight: 900; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.contributor-stats { font-size: 0.78rem; color: #dfe7ff; }
 
-.contributor-stats {
-    font-size: 0.8rem;
-    color: #ccc;
-}
-
-/* 评论区域样式 */
 .comments-section {
     position: fixed;
-    bottom: 60px;
+    bottom: 92px;
     right: 20px;
-    width: 400px;
-    height: 500px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: min(420px, calc(100vw - 32px));
+    height: min(540px, calc(100vh - 140px));
+    background: var(--panel-strong);
+    backdrop-filter: blur(18px);
+    border: 3px solid rgba(40, 50, 74, 0.14);
+    border-radius: 24px;
+    box-shadow: var(--pixel-shadow);
     z-index: 1000;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(calc(100% + 60px));
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(calc(100% + 120px)) scale(0.98);
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body.dark-mode .comments-section {
-    background: rgba(40, 40, 40, 0.95);
-    color: #f0f0f0;
-}
-
-.comments-section.active {
-    transform: translateY(0);
-}
+.comments-section.active { transform: translateY(0) scale(1); }
 
 .comments-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+    padding: 16px 18px;
+    border-bottom: 3px dashed rgba(232,79,155,0.22);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.42);
 }
 
-body.dark-mode .comments-header {
-    background: rgba(60, 60, 60, 0.8);
-    border-bottom: 1px solid #555;
-}
+body.dark-mode .comments-header { background: rgba(255,255,255,0.06); }
 
 .comments-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-}
-
-body.dark-mode .comments-title {
-    color: #f0f0f0;
+    font-size: 1.16rem;
+    font-weight: 900;
+    color: var(--ink);
 }
 
 .comments-close {
-    background: none;
-    border: none;
+    width: 34px;
+    height: 34px;
+    border: 2px solid rgba(40, 50, 74, 0.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.55);
     font-size: 1.5rem;
+    line-height: 1;
     cursor: pointer;
-    color: #666;
-    transition: color 0.3s ease;
+    color: var(--ink);
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.comments-close:hover {
-    color: #333;
-}
-
-body.dark-mode .comments-close {
-    color: #aaa;
-}
-
-body.dark-mode .comments-close:hover {
-    color: #fff;
-}
+.comments-close:hover { transform: rotate(8deg) scale(1.04); background: rgba(232,79,155,0.16); }
+body.dark-mode .comments-close { background: rgba(255,255,255,0.08); }
 
 .comments-container {
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: 12px;
 }
 
-/* 评论切换按钮 */
 .comments-toggle {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
+    bottom: 24px;
+    right: 24px;
+    width: 62px;
+    height: 62px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #e84f9b, #8b5cf6);
+    border: 3px solid rgba(255,255,255,0.6);
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    animation: btnPulse 2.5s infinite ease-in-out;
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
+    box-shadow: 0 8px 0 rgba(44, 38, 66, 0.20), 0 14px 28px rgba(44, 38, 66, 0.22);
+    animation: btnFloat 3.2s infinite ease-in-out;
 }
 
-body.dark-mode .comments-toggle {
-    background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-}
-
-.comments-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+.comments-toggle:hover,
+.comments-toggle:focus-visible {
+    transform: translateY(-4px) rotate(3deg);
     animation: none;
+    outline: none;
 }
 
-.comments-toggle svg {
-    width: 24px;
-    height: 24px;
-    fill: white;
-}
+.comments-toggle svg { width: 26px; height: 26px; fill: white; }
 
-/* 访问统计悬浮窗 - Dock样式 */
 .stats-dock {
     position: fixed;
-    top: 20px;
+    top: 18px;
     left: 50%;
-    transform: translateX(-50%) translateY(-100px);
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(69, 160, 73, 0.95));
-    color: white;
-    padding: 12px 25px;
-    border-radius: 25px;
-    box-shadow: 
-        0 8px 32px rgba(76, 175, 80, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateX(-50%) translateY(-26px) scale(0.96);
+    opacity: 0;
+    pointer-events: none;
+    color: var(--ink);
+    padding: 10px 14px;
+    border-radius: 22px;
+    background: var(--panel-strong);
+    border: 3px solid rgba(40, 50, 74, 0.14);
+    box-shadow: 0 8px 0 rgba(44, 38, 66, 0.12), 0 16px 36px rgba(44, 38, 66, 0.18);
     z-index: 9998;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    max-width: 400px;
+    backdrop-filter: blur(18px) saturate(1.12);
+    max-width: min(520px, calc(100vw - 136px));
     width: auto;
-    min-width: 300px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 330px;
     cursor: default;
+    transition: opacity 0.32s ease, transform 0.32s ease;
 }
 
-@keyframes dockSlideIn {
-    0% {
-        transform: translateX(-50%) translateY(-100px);
-        opacity: 0;
-    }
-    70% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
+.stats-dock.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0) scale(1);
+    animation: dockPop 0.55s cubic-bezier(.2,.85,.2,1) both;
+}
+
+@keyframes dockPop {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-28px) scale(0.94); }
+    70% { opacity: 1; transform: translateX(-50%) translateY(4px) scale(1.01); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }
 
 @keyframes dockSlideOut {
-    0% {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-    30% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-50%) translateY(-100px);
-        opacity: 0;
-    }
+    from { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    to { opacity: 0; transform: translateX(-50%) translateY(-28px) scale(0.96); }
 }
 
-.stats-dock.hiding {
-    animation: dockSlideOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
+.stats-dock.hiding { animation: dockSlideOut 0.42s ease forwards; }
 
 .dock-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
-    position: relative;
+    gap: 16px;
 }
 
 .greeting-section {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 900;
+    font-size: 0.94rem;
     white-space: nowrap;
 }
 
 .greeting-icon {
-    font-size: 1.1rem;
-    animation: iconBounce 2s infinite;
+    font-size: 1.12rem;
+    animation: iconBounce 2.4s infinite;
 }
 
 @keyframes iconBounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-3px);
-    }
-    60% {
-        transform: translateY(-2px);
-    }
+    0%, 100% { transform: translateY(0) rotate(0); }
+    45% { transform: translateY(-3px) rotate(-8deg); }
 }
 
 .stats-section {
     display: flex;
     align-items: center;
-    gap: 20px;
-    flex: 1;
+    gap: 10px;
     justify-content: center;
 }
 
 .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    display: grid;
+    gap: 2px;
+    min-width: 88px;
+    padding: 7px 11px;
+    background: rgba(255, 255, 255, 0.56);
+    border-radius: 16px;
+    border: 2px solid rgba(40, 50, 74, 0.08);
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,0.04);
+    transition: transform 0.22s ease, background 0.22s ease;
 }
 
-.stat-item:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-1px);
-}
+body.dark-mode .stat-item { background: rgba(255,255,255,0.08); }
+
+.stat-item:hover { transform: translateY(-2px); background: rgba(255,255,255,0.72); }
+body.dark-mode .stat-item:hover { background: rgba(255,255,255,0.14); }
 
 .stat-label {
-    font-size: 0.75rem;
-    opacity: 0.9;
-    font-weight: 500;
+    font-size: 0.72rem;
+    opacity: 0.78;
+    font-weight: 900;
 }
 
 .stat-value {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #ffeb3b;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    font-weight: 1000;
+    color: #1d9fd7;
+    text-shadow: none;
+    font-variant-numeric: tabular-nums;
 }
 
-/* 暗色模式适配 */
-body.dark-mode .stats-dock {
-    background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(27, 94, 32, 0.95));
-    box-shadow: 
-        0 8px 32px rgba(46, 125, 50, 0.4),
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
+.stat-item:nth-child(2) .stat-value { color: #e84f9b; }
 
-body.dark-mode .stat-item {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-body.dark-mode .stat-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* 悬浮窗出现时的背景闪烁效果 */
-@keyframes dockBackgroundPulse {
-    0% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-    50% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.5),
-            0 2px 12px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3),
-            0 0 20px rgba(76, 175, 80, 0.4);
-    }
-    100% {
-        box-shadow: 
-            0 8px 32px rgba(76, 175, 80, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-}
-
-.stats-dock.pulse {
-    animation: 
-        dockSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-        dockBackgroundPulse 2s ease-in-out 0.6s;
-}
-
-/* ==================== 响应式设计 ==================== */
+.stats-dock.pulse { box-shadow: 0 8px 0 rgba(44, 38, 66, 0.12), 0 0 0 6px rgba(232,79,155,0.12), 0 18px 40px rgba(44, 38, 66, 0.20); }
 
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2.5rem;
+    .content {
+        width: min(94vw, 720px);
+        padding: 30px 20px 36px;
     }
-    
-    .button-container {
-        flex-direction: row;
-        gap: 15px;
-    }
-    
-    .btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-        min-width: 150px;
-    }
-    
-    .cloud {
-        filter: blur(3px);
-    }
-    
-    .cloud:nth-child(1) {
-        width: 100px;
-        height: 40px;
-    }
-    
-    .cloud:nth-child(2) {
-        width: 130px;
-        height: 50px;
-    }
-    
-    .cloud:nth-child(3) {
-        width: 120px;
-        height: 45px;
-    }
-    
-    .cloud:nth-child(4) {
-        width: 150px;
-        height: 60px;
-    }
-    
-    .wiki-sidebar {
-        width: 250px;
-        left: -250px;
-    }
-    
-    .wiki-sidebar.active {
-        left: 0;
-    }
-    
-    .footer {
-        font-size: 0.8rem;
-        padding: 10px;
-    }
-    
-    .github-stars {
-        margin: 5px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-    
-    .contributor-avatar {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .contributor-tooltip {
-        font-size: 0.8rem;
-        max-width: 150px;
-    }
-    
+
+    .content::after { width: 58px; height: 58px; right: 18px; bottom: -16px; }
+    .content::before { left: 18px; font-size: 0.76rem; }
+
+    .button-container { gap: 12px; }
+    .btn, .docs-btn { min-width: 148px; padding: 12px 18px; font-size: 0.96rem; }
+
+    .wiki-sidebar { width: 280px; left: -280px; }
+
+    .footer { font-size: 0.76rem; bottom: 8px; padding: 8px 10px; }
+    .github-stars { margin: 0 0 6px 0; }
+
+    .contributor-avatar { width: 42px; height: 42px; border-radius: 14px; }
+
     .stats-dock {
-        top: 15px;
-        max-width: 90%;
-        min-width: 280px;
-        padding: 10px 20px;
+        top: 14px;
+        min-width: 0;
+        max-width: calc(100vw - 104px);
+        padding: 9px 10px;
     }
-    
-    .dock-content {
-        gap: 15px;
-    }
-    
-    .greeting-section {
-        font-size: 0.85rem;
-    }
-    
-    .stats-section {
-        gap: 15px;
-    }
-    
-    .stat-item {
-        padding: 3px 10px;
-        gap: 4px;
-    }
-    
-    .stat-label {
-        font-size: 0.7rem;
-    }
-    
-    .stat-value {
-        font-size: 0.75rem;
-    }
-    
-    .greeting-icon {
-        font-size: 1rem;
-    }
+
+    .dock-content { gap: 10px; }
+    .greeting-section { font-size: 0.82rem; }
+    .stats-section { gap: 7px; }
+    .stat-item { min-width: 72px; padding: 6px 8px; }
+    .stat-label { font-size: 0.64rem; }
+    .stat-value { font-size: 0.86rem; }
 }
 
 @media (max-width: 580px) {
-    .button-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
+    body { justify-content: center; }
+    .hero-subtitle { margin-top: 18px; padding: 15px 16px; font-size: 0.94rem; }
+    .button-container { flex-direction: column; align-items: center; margin-top: 20px; }
+    .btn, .docs-btn { width: min(280px, 92%); }
+    .stats-dock { left: 62px; right: 12px; transform: translateY(-26px) scale(0.96); max-width: none; width: auto; }
+    .stats-dock.show { transform: translateY(0) scale(1); }
+    @keyframes dockPop {
+        0% { opacity: 0; transform: translateY(-28px) scale(0.94); }
+        70% { opacity: 1; transform: translateY(4px) scale(1.01); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    
-    .btn {
-        width: 90%;
-        max-width: 280px;
-        margin: 5px 0;
+    @keyframes dockSlideOut {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(-28px) scale(0.96); }
     }
-    
-    .docs-btn {
-        margin-top: 5px;
+    .greeting-icon { display: none; }
+    .comments-section { right: 12px; bottom: 86px; }
+    .comments-toggle { right: 18px; bottom: 18px; width: 58px; height: 58px; }
+}
+
+@media (max-width: 430px) {
+    .content { padding: 28px 16px 30px; }
+    .content::before { display: none; }
+    h1 small { letter-spacing: 0.08em; }
+    .footer { display: none; }
+    .stats-dock { left: 76px; }
+    .stat-item { min-width: 64px; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-14px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
     }
 }
 
-@media (max-width: 480px) {
-    .stats-dock {
-        min-width: 250px;
-        padding: 8px 15px;
-    }
-    
-    .greeting-section {
-        font-size: 0.8rem;
-    }
-    
-    .greeting-icon {
-        display: none;
-    }
-    
-    .stat-label {
-        font-size: 0.65rem;
-    }
-    
-    .stat-value {
-        font-size: 0.7rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .btn {
-        padding: 10px 20px;
-        font-size: 0.95rem;
-    }
-    
-    .button-container {
-        gap: 10px;
-    }
-}
             </style>
         </head>
         <body>
             <div class="gradient-bg"></div>
-            
+
             <!-- 贡献者头像容器 -->
-            <div class="contributors-container" id="contributorsContainer"></div>    
+            <div class="contributors-container" id="contributorsContainer"></div>
             <!-- 下雨效果容器 -->
             <div class="rain-effect" id="rainEffect"></div>
-            
+
             <!-- 云朵元素 -->
             <div class="cloud"></div>
             <div class="cloud"></div>
             <div class="cloud"></div>
             <div class="cloud"></div>
-            
+
         <!-- 访问统计悬浮窗 -->
         <div class="stats-dock" id="statsPanel">
             <div class="dock-content">
@@ -1225,7 +1060,7 @@ body.dark-mode .stat-item:hover {
                 </div>
             </div>
         </div>
-        
+
             <!-- 暗色模式切换按钮 -->
             <button class="theme-toggle" id="themeToggle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -1233,55 +1068,55 @@ body.dark-mode .stat-item:hover {
                 </svg>
             </button>
             <div class="theme-tooltip">切换浅色/暗色模式</div>
-            
+
             <!-- 技术Wiki侧边栏 -->
             <div class="wiki-sidebar" id="wikiSidebar">
-                <h2>技术Wiki</h2>
+                <h2>📚 技术 Wiki</h2>
                 <div class="wiki-links" id="wikiLinks">
                     <!-- 内容将通过JS排序 -->
                 </div>
             </div>
-            
+
             <!-- 侧边栏开关按钮 -->
             <button class="sidebar-toggle" id="sidebarToggle"></button>
-            
+
             <div class="content">
-                <h1>ColorFulCraft | 历史博物馆</h1>
+                <h1><span>ColorFulCraft</span><small>历史博物馆</small></h1>
+                <p class="hero-subtitle">把服务器故事、图片、音乐、视频与技术文档收进一座可爱的小小方块博物馆。</p>
                 <div class="button-container">
                     <button class="btn jump-btn" onclick="window.location.href='https://github.com/ColorFulCraft/CFCHistory'">
-                        点我跳转
+                        GitHub 仓库
                         <span class="tooltip">前往 GitHub 仓库</span>
                     </button>
                     <button class="btn join-btn" onclick="window.location.href='https://qm.qq.com/q/L8kNa8IJqu'">
                         加入我们
                         <span class="tooltip">加入QQ群</span>
                     </button>
-                        <button class="btn docs-btn" onclick="window.location.href='documentation.html'" 
-                    style="background: linear-gradient(135deg, #23a6d5 0%, #23d5ab 100%);">
-                查看文档
-                <span class="tooltip">技术文档中心（带搜索）</span>
-            </button>
+                    <button class="btn docs-btn" onclick="window.location.href='documentation.html'">
+                        查看文档
+                        <span class="tooltip">技术文档中心（带搜索）</span>
+                    </button>
                 </div>
             </div>
-            
+
                 <!-- 评论区域 -->
             <div class="comments-section" id="commentsSection">
                 <div class="comments-header">
-                    <h3 class="comments-title">评论</h3>
+                    <h3 class="comments-title">💬 留言小屋</h3>
                     <button class="comments-close" id="commentsClose">×</button>
                 </div>
                 <div class="comments-container" id="commentsContainer">
                     <!-- Utterances评论将在这里加载 -->
                 </div>
             </div>
-            
+
             <!-- 评论切换按钮 -->
             <button class="comments-toggle" id="commentsToggle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
                 </svg>
             </button>
-            
+
             <!-- 页脚 -->
             <div class="footer">
                 <div class="github-stars" id="githubStars">
@@ -1300,22 +1135,22 @@ body.dark-mode .stat-item:hover {
                 </div>
                 所有解释权归ColorFulCraft所有！请查看我们的 <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" target="_blank">许可证文件</a>
             </div>
-        
+
             <script>
         // 访问统计功能
         async function updateVisitStats() {
             try {
                 console.log('📊 开始更新访问统计');
-                
+
                 // 更新问候语
                 const greetingText = document.getElementById('greetingText');
                 if (greetingText) {
                     greetingText.textContent = getGreeting();
                 }
-                
+
                 // 获取统计数据
                 await fetchAndDisplayRealStats();
-                
+
             } catch (error) {
                 console.error('更新访问统计失败:', error);
             } finally {
@@ -1324,20 +1159,20 @@ body.dark-mode .stat-item:hover {
                 showStatsPanel();
             }
         }
-        
+
         // 获取并显示真实统计数据
         async function fetchAndDisplayRealStats() {
             try {
                 const url = 'https://colorfulcraft.github.io/CFCHistory/stats/visit_stats.json?t=' + Date.now();
                 const statsResponse = await fetch(url);
-                
+
                 if (statsResponse.ok) {
                     const content = await statsResponse.json();
-                    
+
                     // 计算今日访问量
                     const today = new Date().toISOString().split('T')[0];
                     let todayVisits = 0;
-                    
+
                     if (content.hourly_visits) {
                         Object.entries(content.hourly_visits).forEach(([hourKey, count]) => {
                             if (hourKey.startsWith(today)) {
@@ -1345,7 +1180,7 @@ body.dark-mode .stat-item:hover {
                             }
                         });
                     }
-                    
+
                     // 更新显示（即使数据为0也更新）
                     updateStatsDisplay(todayVisits, content.total_visits || 0);
                 }
@@ -1354,12 +1189,12 @@ body.dark-mode .stat-item:hover {
                 updateStatsDisplay(0, 0);
             }
         }
-        
+
         // 更新统计显示
         function updateStatsDisplay(todayCount, totalCount) {
             const todayCountElement = document.getElementById('todayCount');
             const totalCountElement = document.getElementById('totalCount');
-            
+
             if (todayCountElement) {
                 todayCountElement.textContent = todayCount.toString();
             }
@@ -1367,7 +1202,7 @@ body.dark-mode .stat-item:hover {
                 totalCountElement.textContent = totalCount.toString();
             }
         }
-        
+
         // 获取问候语
         function getGreeting() {
             const hour = new Date().getHours();
@@ -1383,19 +1218,19 @@ body.dark-mode .stat-item:hover {
                 return '夜深了';
             }
         }
-        
-        
-        
+
+
+
         // 免责声明弹窗
         function showDisclaimer() {
             console.log('showDisclaimer 函数被调用');
-            
+
             // 检查用户是否已经同意过
             if (localStorage.getItem('disclaimerAccepted') === 'true') {
                 console.log('用户已同意，跳过免责声明');
                 return;
             }
-        
+
             // 创建弹窗遮罩
             const overlay = document.createElement('div');
             overlay.style.cssText = `
@@ -1411,7 +1246,7 @@ body.dark-mode .stat-item:hover {
                 z-index: 10000;
                 backdrop-filter: blur(5px);
             `;
-        
+
             // 创建弹窗内容
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -1425,16 +1260,16 @@ body.dark-mode .stat-item:hover {
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
                 animation: fadeIn 0.5s ease-in;
             `;
-        
+
             modal.innerHTML = `
                 <h2 style="margin-bottom: 20px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏛️ 免责声明</h2>
                 <div style="text-align: left; margin-bottom: 25px; line-height: 1.6; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
                     <p style="margin-bottom: 15px;">欢迎访问 <strong>ColorFulCraft 历史博物馆</strong>！</p>
-                    <p style="margin-bottom: 15px;">本网站仅作为技术 Wiki 和资料存档使用，所有内容仅供学习和参考。</p>
+                    <p style="margin-bottom: 15px;">本网站仅作为技术 Wiki 和内容展示使用，所有内容仅供学习和参考。</p>
                     <p style="margin-bottom: 15px;"><strong>ColorFulCraft 保留解释权利</strong></p>
                     <p style="margin-bottom: 15px;">请仔细阅读我们的许可证文件：</p>
-                    <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md" 
-                       target="_blank" 
+                    <a href="https://github.com/ColorFulCraft/CFCHistory/blob/main/LICENSE.md"
+                       target="_blank"
                        style="color: #a0e7ff; text-decoration: none; font-weight: bold; display: inline-block; margin: 10px 0;">
                        📄 查看完整许可证
                     </a>
@@ -1451,10 +1286,10 @@ body.dark-mode .stat-item:hover {
                     </button>
                 </div>
             `;
-        
+
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
-        
+
             // 添加按钮事件
             document.getElementById('agreeBtn').addEventListener('click', function() {
                 console.log('用户点击了同意按钮');
@@ -1467,7 +1302,7 @@ body.dark-mode .stat-item:hover {
                 // 开始正常的页面动画
                 startPageAnimations();
             });
-        
+
             document.getElementById('disagreeBtn').addEventListener('click', function() {
                 console.log('用户点击了不同意按钮');
                 // 返回上一页
@@ -1478,32 +1313,30 @@ body.dark-mode .stat-item:hover {
                     window.close() || (window.location.href = 'about:blank');
                 }
             });
-        
+
             // 添加按钮悬停效果
             const agreeBtn = document.getElementById('agreeBtn');
             const disagreeBtn = document.getElementById('disagreeBtn');
-        
+
             agreeBtn.addEventListener('mouseover', function() {
-                this.style.transform = 'translateY(-2px)';
                 this.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+                this.style.filter = 'brightness(1.05)';
             });
-        
+
             agreeBtn.addEventListener('mouseout', function() {
-                this.style.transform = 'translateY(0)';
                 this.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+                this.style.filter = 'none';
             });
-        
+
             disagreeBtn.addEventListener('mouseover', function() {
-                this.style.transform = 'translateY(-2px)';
                 this.style.background = 'rgba(255,255,255,0.3)';
             });
-        
+
             disagreeBtn.addEventListener('mouseout', function() {
-                this.style.transform = 'translateY(0)';
                 this.style.background = 'rgba(255,255,255,0.2)';
             });
         }
-        
+
         // 显示同意确认提示
         function showAgreementConfirmation() {
             console.log('显示同意确认提示');
@@ -1527,7 +1360,7 @@ body.dark-mode .stat-item:hover {
                 opacity: 0;
                 animation: slideDownFadeIn 0.6s ease-out forwards, slideUpFadeOut 0.6s ease-in 2.5s forwards;
             `;
-        
+
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="font-size: 1.5rem;">✅</span>
@@ -1537,7 +1370,7 @@ body.dark-mode .stat-item:hover {
                     </div>
                 </div>
             `;
-        
+
             // 添加动画样式
             const style = document.createElement('style');
             style.textContent = `
@@ -1563,9 +1396,9 @@ body.dark-mode .stat-item:hover {
                 }
             `;
             document.head.appendChild(style);
-        
+
             document.body.appendChild(notification);
-        
+
             // 4秒后自动移除
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -1576,56 +1409,56 @@ body.dark-mode .stat-item:hover {
                 }
             }, 4000);
         }
-        
+
         // 开始页面动画
         function startPageAnimations() {
             console.log('开始页面动画');
             // 这里可以添加其他页面初始化动画
         }
-        
+
         // 统计面板管理
         let statsPanelTimer = null;
-        
+
         function showStatsPanel() {
             // 检查用户是否已经关闭过统计面板
             if (localStorage.getItem('statsPanelClosed') === 'true') {
                 return;
             }
-        
+
             const statsPanel = document.getElementById('statsPanel');
             if (!statsPanel) return;
-            
+
             console.log('🚀 显示统计面板');
-            
+
             // 清除之前的计时器和类
             statsPanel.classList.remove('hiding', 'pulse');
-            
+
             // 显示面板
             statsPanel.style.display = 'block';
             setTimeout(() => {
                 statsPanel.classList.add('show');
             }, 10);
-            
+
             // 开始3秒后自动隐藏
             startAutoHideTimer();
         }
-        
+
         function hideStatsPanel() {
             const statsPanel = document.getElementById('statsPanel');
             if (!statsPanel) return;
-            
+
             console.log('🔻 隐藏统计面板');
-            
+
             // 清除计时器
             if (statsPanelTimer) {
                 clearTimeout(statsPanelTimer);
                 statsPanelTimer = null;
             }
-            
+
             // 添加隐藏动画
             statsPanel.classList.remove('show');
             statsPanel.classList.add('hiding');
-            
+
             // 动画完成后完全隐藏
             setTimeout(() => {
                 statsPanel.style.display = 'none';
@@ -1634,28 +1467,28 @@ body.dark-mode .stat-item:hover {
                 localStorage.setItem('statsPanelClosed', 'true');
             }, 500);
         }
-        
+
         function startAutoHideTimer() {
             console.log('⏰ 开始3秒自动隐藏计时');
-            
+
             // 清除之前的计时器
             if (statsPanelTimer) {
                 clearTimeout(statsPanelTimer);
             }
-            
+
             // 设置新的3秒计时器
             statsPanelTimer = setTimeout(() => {
                 console.log('⏰ 3秒计时器触发，隐藏面板');
                 hideStatsPanel();
             }, 3000);
         }
-        
+
         function setupStatsPanel() {
             const statsPanel = document.getElementById('statsPanel');
             if (!statsPanel) return;
-            
+
             console.log('🔧 设置统计面板事件监听');
-            
+
             // 鼠标悬停时暂停自动隐藏
             statsPanel.addEventListener('mouseenter', function() {
                 console.log('🖱️ 鼠标进入，暂停自动隐藏');
@@ -1664,20 +1497,20 @@ body.dark-mode .stat-item:hover {
                     statsPanelTimer = null;
                 }
             });
-            
+
             // 鼠标离开时重新开始计时
             statsPanel.addEventListener('mouseleave', function() {
                 console.log('🖱️ 鼠标离开，重新开始3秒计时');
                 startAutoHideTimer();
             });
-            
+
             // 点击面板也可以立即隐藏
             statsPanel.addEventListener('click', function() {
                 console.log('🖱️ 点击面板，立即隐藏');
                 hideStatsPanel();
             });
         }
-        
+
         // Wiki链接数据
         const wikiLinks = [
             { text: "官网", url: "https://blog.xhil.cn/" },
@@ -1689,15 +1522,15 @@ body.dark-mode .stat-item:hover {
             { text: "查看服务器团队及其现状", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/about.md" },
             { text: "服务器历史大事记目录", url: "https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/Directory.md" }
         ];
-        
+
         // 渲染Wiki链接（按字数排序）
         function renderWikiLinks() {
             const container = document.getElementById('wikiLinks');
             container.innerHTML = '';
-            
+
             // 按字数排序
             const sortedLinks = [...wikiLinks].sort((a, b) => a.text.length - b.text.length);
-            
+
             sortedLinks.forEach(link => {
                 const linkElement = document.createElement('a');
                 linkElement.href = link.url;
@@ -1709,7 +1542,7 @@ body.dark-mode .stat-item:hover {
                 container.appendChild(linkElement);
             });
         }
-        
+
 // 暗色模式切换功能
 const themeToggle = document.getElementById('themeToggle');
 const body = document.body;
@@ -1721,17 +1554,17 @@ if (localStorage.getItem('theme') === 'dark') {
 
 themeToggle.addEventListener('click', () => {
     body.classList.toggle('dark-mode');
-    
+
     // 保存用户偏好
     if (body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
     } else {
         localStorage.setItem('theme', 'light');
     }
-    
+
     // 更新评论系统主题（如果已加载）
     updateUtterancesTheme();
-    
+
     // 🔥 新增：同步主题到文档页面
     syncThemeToDocumentationPage();
 });
@@ -1744,15 +1577,15 @@ function syncThemeToDocumentationPage() {
         theme: body.classList.contains('dark-mode') ? 'dark' : 'light',
         timestamp: Date.now()
     };
-    
+
     // 通过 localStorage 传递主题状态（文档页面会监听）
     localStorage.setItem('cfc-theme-sync', JSON.stringify(themeEvent));
-    
+
     // 设置3秒后清理，避免存储空间占用
     setTimeout(() => {
         localStorage.removeItem('cfc-theme-sync');
     }, 3000);
-    
+
     console.log(`🎨 主题已同步: ${themeEvent.theme} 模式`);
 }
 
@@ -1763,7 +1596,7 @@ window.addEventListener('load', () => {
     if (lastThemeSync) {
         const themeData = JSON.parse(lastThemeSync);
         const currentTheme = localStorage.getItem('theme');
-        
+
         // 如果主题不一致，同步
         if (themeData.theme !== currentTheme) {
             if (themeData.theme === 'dark') {
@@ -1775,7 +1608,7 @@ window.addEventListener('load', () => {
             }
             console.log('🔄 从文档页面同步主题:', themeData.theme);
         }
-        
+
         // 清理临时存储
         localStorage.removeItem('last-docs-theme');
     }
@@ -1802,65 +1635,65 @@ window.addEventListener('storage', (e) => {
         }
     }
 });
-        
+
         // 侧边栏切换功能
         const sidebar = document.getElementById('wikiSidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
-        
+
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
-        
+
         // 点击侧边栏外部关闭侧边栏
         document.addEventListener('click', (e) => {
-            if (sidebar.classList.contains('active') && 
-                !sidebar.contains(e.target) && 
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(e.target) &&
                 !sidebarToggle.contains(e.target)) {
                 sidebar.classList.remove('active');
             }
         });
-        
+
         // 下雨效果
         function createRainEffect() {
             const rainContainer = document.getElementById('rainEffect');
             const dropsCount = 100;
-            
+
             for (let i = 0; i < dropsCount; i++) {
                 const drop = document.createElement('div');
                 drop.className = 'raindrop';
-                
+
                 // 随机位置和动画延迟
                 const left = Math.random() * 100;
                 const delay = Math.random() * 2;
                 const duration = 1 + Math.random() * 1; // 1-2秒
-                
+
                 drop.style.left = `${left}%`;
                 drop.style.animationDelay = `${delay}s`;
                 drop.style.animationDuration = `${duration}s`;
-                
+
                 // 创建涟漪效果
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
                 ripple.style.left = `${left}%`;
                 ripple.style.bottom = '0';
                 ripple.style.animationDelay = `${delay + duration - 0.2}s`;
-                
+
                 rainContainer.appendChild(drop);
                 rainContainer.appendChild(ripple);
             }
-            
+
             // 3秒后移除下雨效果
             setTimeout(() => {
                 rainContainer.remove();
             }, 3000);
         }
-        
+
         // 获取GitHub Stars数量
         async function fetchGitHubStars() {
             try {
                 const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory');
                 const data = await response.json();
-                
+
                 if (data.stargazers_count !== undefined) {
                     document.getElementById('starsCount').textContent = `${data.stargazers_count} Stars`;
                 } else {
@@ -1871,60 +1704,60 @@ window.addEventListener('storage', (e) => {
                 document.getElementById('starsCount').textContent = '获取失败';
             }
         }
-        
+
         // Emoji点击反馈
         function createEmojiFeedback(e) {
             // 排除按钮点击，避免干扰正常交互
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-            
-            const emojis = ['✨', '⭐', '🌟', '💫', '🔥', '💖', '💎', '🎉', '😊', '🤩', '😍', '🎊', '❤️', '💯'];
+
+            const emojis = ['✨', '⭐', '🌟', '💫', '💖', '🎉', '😊', '🤩', '🎊', '🍪', '🧱', '🌸', '🍀', '🐾'];
             const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-            
+
             const emojiElement = document.createElement('div');
             emojiElement.className = 'emoji-feedback';
             emojiElement.textContent = randomEmoji;
             emojiElement.style.left = `${e.clientX - 12}px`;
             emojiElement.style.top = `${e.clientY - 12}px`;
-            
+
             document.body.appendChild(emojiElement);
-            
+
             // 动画结束后移除元素
             setTimeout(() => {
                 emojiElement.remove();
             }, 1500);
         }
-        
+
         // 贡献者数据结构
         let contributors = [];
-        
+
         // 获取贡献者数据
         async function fetchContributors() {
             // 检查缓存
             const cachedContributors = localStorage.getItem('cfc_contributors');
             const cacheTimestamp = localStorage.getItem('cfc_contributors_timestamp');
-            
+
             // 如果缓存存在且未过期（1小时）
             if (cachedContributors && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < 3600000) {
                 contributors = JSON.parse(cachedContributors);
                 createContributorAvatars();
                 return;
             }
-            
+
             try {
                 const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/contributors');
                 if (!response.ok) throw new Error('获取贡献者数据失败');
-                
+
                 const data = await response.json();
-                
+
                 // 获取额外信息（贡献次数和最近贡献时间）
                 const contributorsWithDetails = await Promise.all(
                     data.map(async contributor => {
                         try {
                             const detailsResponse = await fetch(contributor.url);
                             if (!detailsResponse.ok) throw new Error('获取贡献者详情失败');
-                            
+
                             const details = await detailsResponse.json();
-                            
+
                             return {
                                 id: contributor.id,
                                 login: contributor.login,
@@ -1946,17 +1779,17 @@ window.addEventListener('storage', (e) => {
                         }
                     })
                 );
-                
+
                 contributors = contributorsWithDetails;
-                
+
                 // 保存到缓存
                 localStorage.setItem('cfc_contributors', JSON.stringify(contributors));
                 localStorage.setItem('cfc_contributors_timestamp', Date.now().toString());
-                
+
                 createContributorAvatars();
             } catch (error) {
                 console.error('获取贡献者数据出错:', error);
-                
+
                 // 如果API请求失败但缓存存在，使用缓存
                 if (cachedContributors) {
                     contributors = JSON.parse(cachedContributors);
@@ -1964,72 +1797,72 @@ window.addEventListener('storage', (e) => {
                 }
             }
         }
-        
+
         // 创建贡献者头像
         function createContributorAvatars() {
             const container = document.getElementById('contributorsContainer');
             container.innerHTML = '';
-            
+
             contributors.forEach(contributor => {
                 const avatar = document.createElement('div');
                 avatar.className = 'contributor-avatar';
                 avatar.style.backgroundImage = `url(${contributor.avatar_url})`;
-                
+
                 // 创建信息提示框
                 const tooltip = document.createElement('div');
                 tooltip.className = 'contributor-tooltip';
-                
+
                 const name = document.createElement('div');
                 name.className = 'contributor-name';
                 name.textContent = contributor.login;
-                
+
                 const stats = document.createElement('div');
                 stats.className = 'contributor-stats';
                 stats.innerHTML = `贡献次数: ${contributor.contributions}<br>
                                    最近更新: ${formatDate(contributor.updated_at)}`;
-                
+
                 tooltip.appendChild(name);
                 tooltip.appendChild(stats);
                 avatar.appendChild(tooltip);
-                
+
                 // 添加点击事件
                 avatar.addEventListener('click', (e) => {
                     if (e.button === 0) { // 左键点击
                         window.open(contributor.html_url, '_blank');
                     }
                 });
-                
+
                 container.appendChild(avatar);
-                
+
                 // 设置初始位置（屏幕顶部随机位置）
                 const startX = Math.random() * (window.innerWidth - 50);
                 avatar.style.left = `${startX}px`;
                 avatar.style.top = '-60px';
-                
+
                 // 开始掉落动画
                 setTimeout(() => {
                     dropAvatar(avatar);
                 }, Math.random() * 2000); // 随机延迟开始掉落
             });
         }
-        
+
         // 头像掉落动画
         function dropAvatar(avatar) {
             const gravity = 0.2;
             const bounceFactor = 0.7;
             const friction = 0.99;
-            
+
             let y = -60;
             let velocityY = 0;
             let velocityX = (Math.random() - 0.5) * 2; // 随机水平速度
-            
+
             function animate() {
                 velocityY += gravity;
                 y += velocityY;
-                
+
                 // 水平移动
                 let x = parseFloat(avatar.style.left) + velocityX;
-                
+
                 // 边界检测（左右边界）
                 if (x < 0) {
                     x = 0;
@@ -2038,80 +1871,80 @@ window.addEventListener('storage', (e) => {
                     x = window.innerWidth - 50;
                     velocityX = -velocityX * bounceFactor;
                 }
-                
+
                 // 底部边界检测
                 if (y > window.innerHeight - 50) {
                     y = window.innerHeight - 50;
                     velocityY = -velocityY * bounceFactor;
-                    
+
                     // 添加摩擦力
                     velocityX *= friction;
-                    
+
                     // 如果速度很小，停止动画
                     if (Math.abs(velocityY) < 0.5 && Math.abs(velocityX) < 0.2) {
                         return;
                     }
                 }
-                
+
                 avatar.style.top = `${y}px`;
                 avatar.style.left = `${x}px`;
-                
+
                 requestAnimationFrame(animate);
             }
-            
+
             animate();
         }
-        
+
         // 格式化日期
         function formatDate(dateString) {
             const date = new Date(dateString);
             return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
         }
-        
+
         // 评论功能
         const commentsSection = document.getElementById('commentsSection');
         const commentsToggle = document.getElementById('commentsToggle');
         const commentsClose = document.getElementById('commentsClose');
         const commentsContainer = document.getElementById('commentsContainer');
-        
+
         // 调试函数 - 在控制台输出详细信息
         function debugLog(message, data = null) {
             console.log(`[评论系统] ${message}`, data || '');
         }
-        
+
         // 检查是否存在评论相关的Issue
         async function checkCommentsIssue() {
             try {
                 debugLog('开始检查Issue...');
                 const response = await fetch('https://api.github.com/repos/ColorFulCraft/CFCHistory/issues?labels=comments');
-                
+
                 if (!response.ok) {
                     throw new Error(`GitHub API返回错误: ${response.status}`);
                 }
-                
+
                 const issues = await response.json();
                 debugLog('获取到的Issue列表:', issues);
-                
+
                 const hasIssue = issues.length > 0;
                 debugLog(`检查结果: ${hasIssue ? '找到Issue' : '未找到Issue'}`);
                 return hasIssue;
-                
+
             } catch (error) {
                 debugLog('检查Issue时出错:', error);
                 return false;
             }
         }
-        
+
         // 显示创建Issue的引导界面
         function showIssueCreationGuide() {
             debugLog('显示创建Issue引导界面');
             commentsContainer.innerHTML = '';
-            
+
             const guideContainer = document.createElement('div');
             guideContainer.style.padding = '20px';
             guideContainer.style.textAlign = 'center';
             guideContainer.style.color = '#666';
-            
+
             guideContainer.innerHTML = `
                 <div style="margin-bottom: 15px;">
                     <div style="font-size: 1.1rem; color: #ffa500; margin-bottom: 10px;">📝 需要创建评论专用Issue</div>
@@ -2119,22 +1952,22 @@ window.addEventListener('storage', (e) => {
                         评论系统需要一个专用的GitHub Issue来存储所有评论。
                     </div>
                 </div>
-                <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20CFCHistory%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')" 
+                <button onclick="window.open('https://github.com/ColorFulCraft/CFCHistory/issues/new?title=💬%20CFCHistory%20-%20评论专区&body=欢迎来到ColorFulCraft历史博物馆的评论专区！在这里分享你的想法和建议吧！&labels=comments', '_blank')"
                         style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 5px;">
                     📋 创建评论Issue
                 </button>
                 <div style="margin-top: 15px; font-size: 0.8rem; color: #999;">
                     创建完成后，点击下方按钮重新加载
                 </div>
-                <button onclick="location.reload()" 
+                <button onclick="location.reload()"
                         style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 10px;">
                     重新加载页面
                 </button>
             `;
-            
+
             commentsContainer.appendChild(guideContainer);
         }
-        
+
         // 更新Utterances主题
         function updateUtterancesTheme() {
             const iframe = commentsContainer.querySelector('iframe');
@@ -2144,25 +1977,25 @@ window.addEventListener('storage', (e) => {
                 initUtterances();
             }
         }
-        
+
         // 初始化Utterances评论系统
         async function initUtterances() {
             debugLog('开始初始化Utterances');
-            
+
             // 先检查是否存在Issue
             const hasIssue = await checkCommentsIssue();
-            
+
             if (!hasIssue) {
                 debugLog('未找到Issue，显示引导界面');
                 showIssueCreationGuide();
                 return;
             }
-            
+
             debugLog('找到Issue，开始加载Utterances');
-            
+
             // 清空容器
             commentsContainer.innerHTML = '';
-            
+
             // 添加加载状态提示
             const loadingMsg = document.createElement('div');
             loadingMsg.style.padding = '20px';
@@ -2175,7 +2008,7 @@ window.addEventListener('storage', (e) => {
                 </div>
             `;
             commentsContainer.appendChild(loadingMsg);
-            
+
             // 创建script元素
             const script = document.createElement('script');
             script.src = 'https://utteranc.es/client.js';
@@ -2185,29 +2018,29 @@ window.addEventListener('storage', (e) => {
             script.setAttribute('theme', body.classList.contains('dark-mode') ? 'github-dark' : 'github-light');
             script.setAttribute('crossorigin', 'anonymous');
             script.async = true;
-            
+
             let utterancesLoaded = false;
             let successDetected = false;
-        
+
             script.onload = function() {
                 debugLog('Utterances脚本加载成功');
                 utterancesLoaded = true;
-                
+
                 // 更智能的成功检测
                 checkUtterancesSuccess();
             };
-            
+
             script.onerror = function(error) {
                 debugLog('Utterances脚本加载失败:', error);
                 showErrorMessage('评论系统加载失败，请检查控制台获取详细信息');
             };
-            
+
             commentsContainer.appendChild(script);
-            
+
             // 改进的成功检测逻辑
             function checkUtterancesSuccess() {
                 const iframe = commentsContainer.querySelector('iframe');
-                
+
                 if (!iframe) {
                     debugLog('未找到Utterances iframe，稍后重试');
                     // 如果iframe还没创建，稍后重试
@@ -2216,23 +2049,23 @@ window.addEventListener('storage', (e) => {
                     }
                     return;
                 }
-                
+
                 debugLog('找到Utterances iframe');
-                
+
                 // 监听iframe加载完成
                 iframe.addEventListener('load', function() {
                     debugLog('Utterances iframe加载完成');
                     successDetected = true;
                     removeLoadingMessage();
                 });
-                
+
                 // 备用检测：通过观察iframe尺寸和内容
                 const checkContent = setInterval(() => {
                     if (successDetected) {
                         clearInterval(checkContent);
                         return;
                     }
-                    
+
                     // 如果iframe有实际高度，说明内容加载成功
                     if (iframe.offsetHeight > 100) {
                         debugLog('通过尺寸判断评论系统加载成功');
@@ -2241,7 +2074,7 @@ window.addEventListener('storage', (e) => {
                         clearInterval(checkContent);
                     }
                 }, 500);
-                
+
                 // 8秒后超时处理
                 setTimeout(() => {
                     if (!successDetected && !utterancesLoaded) {
@@ -2258,7 +2091,7 @@ window.addEventListener('storage', (e) => {
                     }
                 }, 8000);
             }
-            
+
             // 移除加载消息
             function removeLoadingMessage() {
                 if (loadingMsg && loadingMsg.parentNode) {
@@ -2267,7 +2100,7 @@ window.addEventListener('storage', (e) => {
                 }
             }
         }
-        
+
         // 显示错误信息
         function showErrorMessage(message) {
             const existingMsg = commentsContainer.querySelector('div');
@@ -2280,18 +2113,18 @@ window.addEventListener('storage', (e) => {
                         2. Utterances应用已安装<br>
                         3. 存在带有"comments"标签的Issue
                     </div>
-                    <button onclick="initUtterances()" 
+                    <button onclick="initUtterances()"
                             style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
                         重新加载
                     </button>
-                    <button onclick="location.reload()" 
+                    <button onclick="location.reload()"
                             style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
                         刷新页面
                     </button>
                 `;
             }
         }
-        
+
         // 切换评论区域显示/隐藏
         commentsToggle.addEventListener('click', async () => {
             commentsSection.classList.toggle('active');
@@ -2299,58 +2132,58 @@ window.addEventListener('storage', (e) => {
                 await initUtterances();
             }
         });
-        
+
         // 关闭评论区域
         commentsClose.addEventListener('click', () => {
             commentsSection.classList.remove('active');
         });
-        
+
         // 点击评论区域外部关闭
         document.addEventListener('click', (e) => {
-            if (commentsSection.classList.contains('active') && 
-                !commentsSection.contains(e.target) && 
+            if (commentsSection.classList.contains('active') &&
+                !commentsSection.contains(e.target) &&
                 !commentsToggle.contains(e.target)) {
                 commentsSection.classList.remove('active');
             }
         });
-        
+
         window.addEventListener('DOMContentLoaded', () => {
             console.log('🏠 页面加载完成');
-            
+
             // 先显示免责声明
             showDisclaimer();
-            
+
             // 立即更新问候语
             const greetingText = document.getElementById('greetingText');
             if (greetingText) {
                 greetingText.textContent = getGreeting();
             }
-            
+
             // 设置统计面板事件监听
             setupStatsPanel();
-            
+
             // 初始化其他功能
             renderWikiLinks();
             createRainEffect();
             fetchGitHubStars();
             fetchContributors();
-            
+
             // 添加点击事件监听器
             document.addEventListener('click', createEmojiFeedback);
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
                 createEmojiFeedback(e);
             });
-            
+
             // 禁止文本选择和复制
             document.addEventListener('selectstart', function(e) {
                 e.preventDefault();
             });
-            
+
             document.addEventListener('copy', function(e) {
                 e.preventDefault();
             });
-            
+
             // 如果用户已经同意，开始动画和统计
             if (localStorage.getItem('disclaimerAccepted') === 'true') {
                 console.log('✅ 用户已同意免责声明，显示统计面板');
@@ -2370,13 +2203,13 @@ window.addEventListener('storage', (e) => {
                 }, 100);
             }
         });
-        
+
             </script>
         </body>
-        
+
         </html>
-        
-        
+
+
 
 
 

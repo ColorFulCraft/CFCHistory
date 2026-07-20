@@ -7,379 +7,416 @@
     <link rel="icon" href="pictures/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-color: #333;
-            --bg-color: rgba(255, 255, 255, 0.95);
-            --sidebar-bg: rgba(255, 255, 255, 0.95);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --code-bg: #f6f8fa;
-            --gradient-start: #ee7752;
-            --gradient-middle1: #e73c7e;
-            --gradient-middle2: #23a6d5;
-            --gradient-end: #23d5ab;
-        }
-        
-        .dark-mode {
-            --primary-color: #5b8def;
-            --secondary-color: #6a4bd1;
-            --text-color: #f0f0f0;
-            --bg-color: rgba(30, 30, 40, 0.95);
-            --sidebar-bg: rgba(30, 30, 40, 0.95);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --code-bg: #2d2d3d;
-            --gradient-start: #667eea;
-            --gradient-middle1: #764ba2;
-            --gradient-middle2: #23a6d5;
-            --gradient-end: #23d5ab;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body, #app { height: 100%; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
-            color: var(--text-color);
-            background: #fff; 
-            transition: all 0.3s ease;
-        }
-        
-        /* 渐变背景 - 保持与主页一致 */
-        .gradient-bg {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: linear-gradient(-45deg, 
-                var(--gradient-start), 
-                var(--gradient-middle1), 
-                var(--gradient-middle2), 
-                var(--gradient-end));
-            background-size: 400% 400%; 
-            animation: gradientFlow 15s ease infinite; 
-            z-index: -2;
-        }
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .content-overlay {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(3px); 
-            z-index: -1;
-            transition: background 0.3s ease;
-        }
-        
-        .dark-mode .gradient-bg { 
-            filter: brightness(0.7) saturate(1.3);
-        }
-        .dark-mode .content-overlay { 
-            background: rgba(0, 0, 0, 0.7); 
-        }
-        
-        /* 🔧 返回按钮样式 - 跟随主页主题 */
-        .back-button {
-            position: fixed; 
-            top: 20px; 
-            left: 20px; 
-            z-index: 1000;
-        }
-        .back-btn {
-            padding: 12px 24px; 
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white; 
-            border: none; 
-            border-radius: 25px; 
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px); 
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            animation: btnPulse 2.5s infinite ease-in-out;
-        }
-        
-        @keyframes btnPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .back-btn:hover { 
-            transform: translateY(-2px) scale(1.05); 
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4); 
-            animation: none;
-        }
-        
-        #app { 
-            position: relative; 
-            z-index: 1; 
-            min-height: 100vh; 
-            padding: 80px 16px 40px;
-        }
-        
-        /* 📝 修复 markdown 文字颜色 */
-        .markdown-section {
-            max-width: 980px !important; 
-            margin: 0 auto !important; 
-            padding: 40px !important;
-            background: var(--bg-color) !important;
-            backdrop-filter: blur(10px) !important;
-            border-radius: 15px !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-            border: 1px solid var(--border-color) !important;
-            color: var(--text-color) !important;
-            transition: all 0.3s ease !important;
-        }
-        
-        /* 确保所有文本元素都使用正确的颜色 */
-        .markdown-section h1,
-        .markdown-section h2,
-        .markdown-section h3,
-        .markdown-section h4,
-        .markdown-section h5,
-        .markdown-section h6,
-        .markdown-section p,
-        .markdown-section li,
-        .markdown-section td,
-        .markdown-section th,
-        .markdown-section blockquote {
-            color: var(--text-color) !important;
-        }
-        
-        .markdown-section a {
-            color: var(--primary-color) !important;
-            transition: color 0.2s ease !important;
-        }
-        
-        .markdown-section a:hover {
-            color: var(--secondary-color) !important;
-            text-decoration: underline !important;
-        }
-        
-        .markdown-section code {
-            background: var(--code-bg) !important;
-            color: var(--text-color) !important;
-            padding: 2px 6px !important;
-            border-radius: 4px !important;
-        }
-        
-        .markdown-section pre {
-            background: var(--code-bg) !important;
-            border: 1px solid var(--border-color) !important;
-            color: var(--text-color) !important;
-        }
-        
-        /* 📚 侧边栏样式 */
-        .sidebar {
-            background: var(--sidebar-bg) !important;
-            backdrop-filter: blur(10px) !important;
-            border-right: 1px solid var(--border-color) !important;
-            transition: all 0.3s ease !important;
-        }
-        
-        .sidebar ul li a {
-            color: var(--text-color) !important;
-            transition: all 0.2s ease !important;
-        }
-        
-        .sidebar ul li a:hover {
-            color: var(--primary-color) !important;
-            background: rgba(var(--primary-color), 0.1) !important;
-        }
-        
-        /* 🔍 搜索框样式调整 */
-        .search {
-            position: relative !important;
-            z-index: 1001 !important;
-        }
-        
-        .search input {
-            background: var(--bg-color) !important;
-            color: var(--text-color) !important;
-            border: 1px solid var(--border-color) !important;
-            backdrop-filter: blur(10px) !important;
-        }
-        
-        .search input::placeholder {
-            color: rgba(var(--text-color), 0.6) !important;
-        }
-        
-        /* 搜索结果样式 */
-        .search .results-panel {
-            background: var(--bg-color) !important;
-            border: 1px solid var(--border-color) !important;
-            color: var(--text-color) !important;
-        }
-        
-        .search .matching-post {
-            border-bottom: 1px solid var(--border-color) !important;
-        }
-        
-        .search .matching-post a {
-            color: var(--text-color) !important;
-        }
-        
-        .search .matching-post a:hover {
-            color: var(--primary-color) !important;
-            background: rgba(var(--primary-color), 0.1) !important;
-        }
-        
-        /* 🎨 其他元素颜色修复 */
-        .markdown-section blockquote {
-            border-left-color: var(--primary-color) !important;
-            background: rgba(var(--primary-color), 0.05) !important;
-        }
-        
-        .markdown-section table {
-            border-color: var(--border-color) !important;
-        }
-        
-        .markdown-section table th {
-            background: rgba(var(--primary-color), 0.1) !important;
-        }
-        
-        .markdown-section table td {
-            border-color: var(--border-color) !important;
-        }
-        
-        /* 主题切换按钮 */
-        .theme-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            font-size: 1.5rem;
-        }
-        
-        .theme-toggle-btn:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .dark-mode .theme-toggle-btn {
-            background: rgba(255, 165, 0, 0.3);
-        }
-        
-        .dark-mode .theme-toggle-btn:hover {
-            background: rgba(255, 165, 0, 0.5);
-        }
-        
-        /* 📱 响应式调整 */
-        @media (max-width: 768px) {
-            .markdown-section { 
-                margin: 10px !important; 
-                padding: 20px !important; 
-            }
-            .back-button { 
-                top: 10px; 
-                left: 10px; 
-            }
-            .back-btn { 
-                padding: 10px 16px; 
-                font-size: 0.9rem; 
-            }
-            #app {
-                padding: 70px 10px 20px;
-            }
-            .theme-toggle-btn {
-                top: 10px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-        }
-        
-        /* 大屏幕调整返回按钮位置 */
-        @media (min-width: 769px) {
-            /* 动态调整返回按钮位置，避免遮挡搜索框 */
-            .sidebar ~ .back-button {
-                left: 320px; /* 侧边栏宽度 + 边距 */
-            }
-        }
-        
-        /* Docsify 特定样式修复 */
-        .app-nav,
-        .app-name,
-        .sidebar-toggle,
-        .sidebar-nav,
-        .anchor {
-            color: var(--text-color) !important;
-        }
-        
-        .sidebar-toggle span {
-            background-color: var(--text-color) !important;
-        }
-        
-        /* 确保代码块内的文字可见 */
-        .dark-mode pre[class*="language-"] {
-            text-shadow: none !important;
-        }
-        
-        /* 链接在暗色模式下的hover效果 */
-        .dark-mode a:hover {
-            color: #71b7ff !important;
-        }
-        
-        /* 图片缩放插件的暗色模式适配 */
-        .medium-zoom-overlay,
-        .medium-zoom-image--opened {
-            background: rgba(0, 0, 0, 0.9) !important;
-            z-index: 9999 !important;
-        }
-        
-        /* 确保侧边栏滚动条可见 */
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(var(--text-color), 0.2);
-            border-radius: 3px;
-        }
-        
-        .dark-mode .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-        }
+:root {
+    --pink: #e84f9b;
+    --blue: #1d9fd7;
+    --green: #4f9a35;
+    --purple: #8b5cf6;
+    --ink: #28324a;
+    --muted: #6b7280;
+    --panel: rgba(255, 252, 245, 0.88);
+    --panel-strong: rgba(255, 255, 255, 0.96);
+    --sidebar-bg: rgba(255, 252, 245, 0.92);
+    --border-color: rgba(40, 50, 74, 0.14);
+    --code-bg: rgba(244, 239, 255, 0.78);
+    --shadow: rgba(85, 54, 120, 0.18);
+    --pixel-shadow: 0 8px 0 rgba(82, 57, 107, 0.16), 0 18px 42px rgba(87, 66, 126, 0.20);
+    --radius: 24px;
+    --theme-color: var(--pink);
+    --primary-color: var(--pink);
+    --secondary-color: var(--blue);
+    --text-color: var(--ink);
+}
+
+.dark-mode {
+    --ink: #f7f1ff;
+    --muted: #c9c3df;
+    --panel: rgba(31, 28, 54, 0.86);
+    --panel-strong: rgba(39, 35, 68, 0.96);
+    --sidebar-bg: rgba(30, 28, 52, 0.94);
+    --border-color: rgba(255, 255, 255, 0.16);
+    --code-bg: rgba(18, 18, 35, 0.74);
+    --shadow: rgba(0, 0, 0, 0.34);
+    --text-color: var(--ink);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #app { min-height: 100%; }
+
+body {
+    min-height: 100vh;
+    font-family: "Nunito", "M PLUS Rounded 1c", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-color);
+    background: #fff4cf;
+    overflow-x: hidden;
+    transition: background 0.35s ease, color 0.35s ease;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+body::before {
+    inset: 0;
+    z-index: -3;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.34) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.34) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 76%);
+}
+
+body::after {
+    bottom: 0;
+    height: 96px;
+    z-index: -2;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.18) 0 12px, transparent 12px 24px) 0 0 / 48px 18px,
+        linear-gradient(#7ec850 0 20px, #6ab33f 20px 32px, #a06d3f 32px 66px, #81512d 66px 96px);
+    box-shadow: inset 0 10px 0 rgba(255,255,255,0.14);
+}
+
+body.dark-mode { background: #15152c; }
+
+body.dark-mode::before {
+    background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+}
+
+body.dark-mode::after {
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.07) 0 12px, transparent 12px 24px) 0 0 / 48px 18px,
+        linear-gradient(#355d37 0 20px, #27482b 20px 32px, #5c3a26 32px 66px, #38271f 66px 96px);
+}
+
+.gradient-bg {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 16%, rgba(255, 122, 182, 0.34), transparent 28%),
+        radial-gradient(circle at 86% 12%, rgba(85, 214, 255, 0.32), transparent 30%),
+        radial-gradient(circle at 70% 82%, rgba(126, 200, 80, 0.24), transparent 32%),
+        linear-gradient(135deg, #ffe8f3 0%, #e6f8ff 48%, #fff7d1 100%);
+    background-size: 145% 145%;
+    animation: dreamyDocsSky 16s ease-in-out infinite alternate;
+    z-index: -4;
+    transition: filter 0.35s ease;
+}
+
+@keyframes dreamyDocsSky {
+    from { background-position: 0% 42%; }
+    to { background-position: 100% 58%; }
+}
+
+.dark-mode .gradient-bg { filter: brightness(0.62) saturate(1.25) hue-rotate(28deg); }
+
+.content-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px);
+    background-size: 24px 24px;
+    backdrop-filter: blur(2px);
+    z-index: -1;
+    transition: background 0.35s ease;
+}
+
+.dark-mode .content-overlay {
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+}
+
+.theme-toggle-btn {
+    border: 3px solid rgba(40, 50, 74, 0.16);
+    background: var(--panel-strong);
+    color: var(--ink);
+    backdrop-filter: blur(16px) saturate(1.12);
+    box-shadow: 0 7px 0 rgba(44, 38, 66, 0.14), 0 12px 26px var(--shadow);
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.theme-toggle-btn:hover,
+.theme-toggle-btn:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 0 rgba(44, 38, 66, 0.12), 0 18px 34px var(--shadow);
+    outline: none;
+}
+
+.theme-toggle-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-size: 1.45rem;
+}
+
+#app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 88px 18px 52px;
+}
+
+.markdown-section {
+    position: relative;
+    max-width: 980px !important;
+    margin: 0 auto !important;
+    padding: clamp(26px, 4vw, 46px) !important;
+    color: var(--text-color) !important;
+    background:
+        linear-gradient(var(--panel), var(--panel)) padding-box,
+        linear-gradient(135deg, rgba(232,79,155,0.66), rgba(29,159,215,0.58), rgba(126,200,80,0.46), rgba(139,92,246,0.62)) border-box !important;
+    border: 4px solid transparent !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--pixel-shadow) !important;
+    backdrop-filter: blur(18px) saturate(1.14) !important;
+}
+
+.markdown-section::before {
+    content: '📚 ColorFulCraft Docs';
+    position: absolute;
+    top: -18px;
+    left: 28px;
+    padding: 8px 16px;
+    border: 3px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--panel-strong);
+    color: var(--pink);
+    font-weight: 1000;
+    font-size: 0.86rem;
+    box-shadow: 0 6px 0 rgba(232,79,155,0.14);
+}
+
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4,
+.markdown-section h5,
+.markdown-section h6,
+.markdown-section p,
+.markdown-section li,
+.markdown-section td,
+.markdown-section th,
+.markdown-section blockquote {
+    color: var(--text-color) !important;
+}
+
+.markdown-section h1,
+.markdown-section h2 {
+    border-bottom: 3px dashed rgba(232,79,155,0.24) !important;
+}
+
+.markdown-section h1 { font-weight: 1000 !important; letter-spacing: 0.02em !important; }
+.markdown-section h1 a,
+.markdown-section h2 a,
+.markdown-section h3 a { color: inherit !important; }
+
+.markdown-section a {
+    color: var(--blue) !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease, background 0.2s ease !important;
+}
+
+.markdown-section a:hover { color: var(--pink) !important; text-decoration: underline !important; }
+
+.markdown-section code {
+    background: var(--code-bg) !important;
+    color: var(--pink) !important;
+    padding: 3px 7px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    font-weight: 800 !important;
+}
+
+.markdown-section pre {
+    background: var(--code-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 18px !important;
+    color: var(--text-color) !important;
+    box-shadow: inset 0 -5px 0 rgba(0,0,0,0.04) !important;
+}
+
+.markdown-section pre code {
+    color: var(--text-color) !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.markdown-section blockquote {
+    border-left: 5px solid var(--pink) !important;
+    background: rgba(232, 79, 155, 0.08) !important;
+    border-radius: 0 16px 16px 0 !important;
+}
+
+.markdown-section table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    overflow: hidden !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 16px !important;
+}
+
+.markdown-section table th {
+    background: rgba(232, 79, 155, 0.10) !important;
+    font-weight: 1000 !important;
+}
+
+.markdown-section table td,
+.markdown-section table th { border-color: var(--border-color) !important; }
+
+.markdown-section img {
+    border-radius: 18px !important;
+    border: 3px solid rgba(255,255,255,0.58) !important;
+    box-shadow: 0 8px 0 rgba(44, 38, 66, 0.12), 0 16px 30px var(--shadow) !important;
+}
+
+.sidebar {
+    background: var(--sidebar-bg) !important;
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    border-right: 4px solid rgba(232,79,155,0.20) !important;
+    color: var(--text-color) !important;
+}
+
+.app-name,
+.app-name-link {
+    color: var(--text-color) !important;
+    font-weight: 1000 !important;
+}
+
+.sidebar ul li a,
+.sidebar-nav a,
+.sidebar-nav p {
+    color: var(--text-color) !important;
+    border-radius: 13px !important;
+    font-weight: 800 !important;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease !important;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li.active > a,
+.sidebar-nav a:hover {
+    color: var(--pink) !important;
+    background: rgba(232, 79, 155, 0.10) !important;
+    transform: translateX(4px);
+}
+
+.sidebar-toggle {
+    background: var(--panel-strong) !important;
+    border: 3px solid var(--border-color) !important;
+    border-left: none !important;
+    border-radius: 0 14px 14px 0 !important;
+    box-shadow: 6px 8px 18px var(--shadow) !important;
+}
+
+.sidebar-toggle span {
+    background-color: var(--pink) !important;
+    height: 3px !important;
+}
+
+.search {
+    position: relative !important;
+    z-index: 1001 !important;
+    border-bottom: 2px dashed rgba(232,79,155,0.18) !important;
+}
+
+.search input {
+    background: rgba(255,255,255,0.62) !important;
+    color: var(--text-color) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    font-weight: 800 !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+.dark-mode .search input { background: rgba(255,255,255,0.08) !important; }
+.search input::placeholder { color: var(--muted) !important; }
+
+.search .results-panel {
+    background: var(--panel-strong) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 18px !important;
+    color: var(--text-color) !important;
+    box-shadow: var(--pixel-shadow) !important;
+    overflow: hidden !important;
+}
+
+.search .matching-post { border-bottom: 1px solid var(--border-color) !important; }
+.search .matching-post a { color: var(--text-color) !important; }
+.search .matching-post a:hover { color: var(--pink) !important; background: rgba(232, 79, 155, 0.10) !important; }
+
+.app-nav,
+.anchor { color: var(--text-color) !important; }
+.dark-mode pre[class*="language-"] { text-shadow: none !important; }
+
+.medium-zoom-overlay,
+.medium-zoom-image--opened {
+    background: rgba(12, 12, 24, 0.92) !important;
+    z-index: 9999 !important;
+}
+
+.sidebar::-webkit-scrollbar,
+.markdown-section::-webkit-scrollbar { width: 7px; }
+.sidebar::-webkit-scrollbar-track,
+.markdown-section::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb,
+.markdown-section::-webkit-scrollbar-thumb {
+    background: rgba(232, 79, 155, 0.35);
+    border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+    #app { padding: 78px 10px 28px; }
+
+    .markdown-section {
+        margin: 0 auto !important;
+        padding: 28px 18px !important;
+        border-radius: 22px !important;
+    }
+
+    .markdown-section::before {
+        left: 18px;
+        font-size: 0.74rem;
+    }
+
+    .theme-toggle-btn {
+        top: 10px;
+        right: 10px;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        font-size: 1.22rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+    }
+}
     </style>
 </head>
 <body>
     <div class="gradient-bg"></div>
     <div class="content-overlay"></div>
-    
-    <div class="back-button" id="backButton">
-        <button class="back-btn" onclick="goToHomePage()">
-            <span>←</span> 返回主页
-        </button>
-    </div>
     
     <!-- 主题切换按钮 -->
     <button class="theme-toggle-btn" id="themeToggle">🌙</button>
@@ -455,24 +492,6 @@
             console.log('🎨 主题已设置为:', theme);
         }
         
-        // 返回主页函数 - 同步主题
-        function goToHomePage() {
-            const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            
-            // 保存主题状态，供主页读取
-            localStorage.setItem('last-docs-theme', JSON.stringify({
-                theme: currentTheme,
-                timestamp: Date.now(),
-                source: 'documentation-page'
-            }));
-            
-            // 使用主页可能检查的键名
-            localStorage.setItem('theme', currentTheme);
-            
-            // 跳转回主页
-            window.location.href = `index.html?theme=${currentTheme}`;
-        }
-        
         // 主题切换功能
         function toggleTheme() {
             const isDark = document.body.classList.contains('dark-mode');
@@ -502,30 +521,8 @@
             }, 3000);
         }
         
-        // 📱 动态调整返回按钮位置，避免遮挡搜索框
         function adjustBackButtonPosition() {
-            const backButton = document.getElementById('backButton');
-            if (!backButton) return;
-            
-            const searchInput = document.querySelector('.search input');
-            const sidebar = document.querySelector('.sidebar');
-            
-            if (searchInput && window.innerWidth > 768) {
-                const searchRect = searchInput.getBoundingClientRect();
-                // 如果搜索框存在且可能会被遮挡
-                if (searchRect.left < 220) { // 返回按钮大约宽度
-                    backButton.style.left = (searchRect.right + 20) + 'px';
-                } else {
-                    backButton.style.left = '20px';
-                }
-            } else if (sidebar && window.innerWidth > 768) {
-                // 有侧边栏时，放在侧边栏右边
-                const sidebarRect = sidebar.getBoundingClientRect();
-                backButton.style.left = (sidebarRect.right + 20) + 'px';
-            } else {
-                // 默认位置
-                backButton.style.left = '20px';
-            }
+            // 返回主页按钮已移除，保留空函数避免旧监听报错。
         }
         
 // 🎯 docsify 配置 - 修复的关键部分
@@ -541,8 +538,11 @@ window.$docsify = {
     homepage: 'README.md',  // 明确指定首页
     alias: {
         '/.*/_sidebar.md': '/_sidebar.md',
-        '/': '/README.md',  // 根路径映射到README
-        '': '/README.md'    // 空路径也映射
+        '/docs/(.*)': '/$1',
+        '/docs/history/(.*)': '/history/$1',
+        '/history/(.*)': '/history/$1',
+        '/': '/README.md',
+        '': '/README.md'
     },
     
     // 🔍 搜索配置
@@ -562,10 +562,7 @@ window.$docsify = {
     // 📖 封面页配置
     coverpage: false,
 
-        notFoundPage: {
-        '/': '/404.md',  // 根路径404时显示404页面
-        'default': '/404.md'  // 默认404页面
-    },
+    notFoundPage: '404.md',
     
     // ⚙️ 插件配置 - 完全简化，让 docsify 处理路由
     plugins: [
@@ -576,7 +573,7 @@ window.$docsify = {
             });
             
             hook.beforeEach(function(content, next) {
-                const file = vm.route.file || 'README.md';
+                const file = (vm.route.file || 'README.md').replace(/^\/?docs\//, '');
                 // 修复编辑链接
                 const editUrl = `https://github.com/ColorFulCraft/CFCHistory/blob/main/docs/${file}`;
                 
